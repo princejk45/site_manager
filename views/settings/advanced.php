@@ -6,7 +6,7 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Impostazioni Avanzate</h1>
+                    <h1><?= __('settings.advanced_title') ?></h1>
                 </div>
             </div>
         </div>
@@ -15,35 +15,35 @@
     <section class="content">
         <div class="container-fluid">
             <?php if (isset($_SESSION['message'])): ?>
-            <div class="alert alert-success"><?= htmlspecialchars($_SESSION['message']) ?></div>
-            <?php unset($_SESSION['message']); ?>
+                <div class="alert alert-success"><?= htmlspecialchars($_SESSION['message']) ?></div>
+                <?php unset($_SESSION['message']); ?>
             <?php endif; ?>
 
             <?php if (isset($_SESSION['error'])): ?>
-            <div class="alert alert-danger"><?= htmlspecialchars($_SESSION['error']) ?></div>
-            <?php unset($_SESSION['error']); ?>
+                <div class="alert alert-danger"><?= htmlspecialchars($_SESSION['error']) ?></div>
+                <?php unset($_SESSION['error']); ?>
             <?php endif; ?>
 
             <?php if (isset($_SESSION['google_sync_result'])): ?>
-            <div class="mt-4 p-3 border rounded alert-primary">
-                <h5>Ultimi Risultati della Sincronizzazione:</h5>
-                <ul>
-                    <li>Record esportati: <?= $_SESSION['google_sync_result']['exported'] ?? 0 ?></li>
-                    <li>Record importati: <?= $_SESSION['google_sync_result']['imported'] ?? 0 ?></li>
-                    <li>Record aggiornati: <?= $_SESSION['google_sync_result']['updated'] ?? 0 ?></li>
-                    <li>Conflitti risolti: <?= $_SESSION['google_sync_result']['conflicts'] ?? 0 ?></li>
-                    <?php if (!empty($_SESSION['google_sync_result']['errors'])): ?>
-                    <li>Errori:
-                        <ul>
-                            <?php foreach ($_SESSION['google_sync_result']['errors'] as $error): ?>
-                            <li><?= htmlspecialchars($error) ?></li>
-                            <?php endforeach; ?>
-                        </ul>
-                    </li>
-                    <?php endif; ?>
-                </ul>
-            </div>
-            <?php unset($_SESSION['google_sync_result']); ?>
+                <div class="mt-4 p-3 border rounded alert-primary">
+                    <h5><?= __('settings.google_sync_results') ?></h5>
+                    <ul>
+                        <li><?= __('settings.exported') ?>: <?= $_SESSION['google_sync_result']['exported'] ?? 0 ?></li>
+                        <li><?= __('settings.imported') ?>: <?= $_SESSION['google_sync_result']['imported'] ?? 0 ?></li>
+                        <li><?= __('settings.updated') ?>: <?= $_SESSION['google_sync_result']['updated'] ?? 0 ?></li>
+                        <li><?= __('settings.conflicts_resolved') ?>: <?= $_SESSION['google_sync_result']['conflicts'] ?? 0 ?></li>
+                        <?php if (!empty($_SESSION['google_sync_result']['errors'])): ?>
+                            <li><?= __('common.error') ?>:
+                                <ul>
+                                    <?php foreach ($_SESSION['google_sync_result']['errors'] as $error): ?>
+                                        <li><?= htmlspecialchars($error) ?></li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            </li>
+                        <?php endif; ?>
+                    </ul>
+                </div>
+                <?php unset($_SESSION['google_sync_result']); ?>
             <?php endif; ?>
 
             <!-- Confirmation Modal -->
@@ -51,15 +51,15 @@
                 <div class="modal-dialog modal-dialog-centered" role="document">
                     <div class="modal-content">
                         <div class="modal-header bg-success text-dark">
-                            <h5 class="modal-title">Conferma azione</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Chiudi">
+                            <h5 class="modal-title"><?= __('websites.confirm_action') ?></h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="<?= __('common.close') ?>">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
-                        <div class="modal-body" id="confirmationMessage">Sei sicuro?</div>
+                        <div class="modal-body" id="confirmationMessage"><?= __('websites.sure') ?></div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-danger" data-dismiss="modal">Annulla</button>
-                            <button type="button" class="btn btn-success" id="confirmActionBtn">Conferma</button>
+                            <button type="button" class="btn btn-danger" data-dismiss="modal"><?= __('websites.cancel') ?></button>
+                            <button type="button" class="btn btn-success" id="confirmActionBtn"><?= __('websites.confirm') ?></button>
                         </div>
                     </div>
                 </div>
@@ -69,39 +69,38 @@
                 <div class="card-header">
                     <h3 class="card-title text-primary">
                         <i class="fas fa-clock text-primary mr-1"></i>
-                        <b>Gestione Cron Job</b>
+                        <b><?= __('settings.cron_management') ?></b>
                     </h3>
                 </div>
-                <form method="post" action="index.php?action=settings&do=advanced">
+                <form method="post" action="index.php?action=settings&do=advanced&lang=<?= $_SESSION['lang'] ?? 'it' ?>">
                     <div class="card-body">
                         <div class="form-group">
                             <div class="custom-control custom-switch">
                                 <input type="checkbox" class="custom-control-input" id="cronActive" name="cron_active"
                                     value="1" <?= $cronStatus ? 'checked' : '' ?>>
-                                <label class="custom-control-label" for="cronActive">Attiva Cron Job</label>
+                                <label class="custom-control-label" for="cronActive"><?= __('settings.activate_cron') ?></label>
                             </div>
-                            <small class="form-text text-muted">Quando attivo, il sistema invierà automaticamente
-                                notifiche di scadenza</small>
+                            <small class="form-text text-muted"><?= __('settings.cron_description') ?></small>
                         </div>
 
                         <?php if ($lastRun): ?>
-                        <div class="form-group">
-                            <label>Ultima esecuzione:</label>
-                            <p><?= htmlspecialchars($lastRun) ?></p>
-                        </div>
+                            <div class="form-group">
+                                <label><?= __('settings.last_run') ?></label>
+                                <p><?= htmlspecialchars($lastRun) ?></p>
+                            </div>
                         <?php endif; ?>
                     </div>
                     <div class="card-footer">
-                        <button type="submit" class="btn btn-primary">Salva Impostazioni</button>
+                        <button type="submit" class="btn btn-primary"><?= __('settings.save_settings') ?></button>
                     </div>
                 </form>
             </div>
 
             <?php if (isset($_SESSION['google_error'])): ?>
-            <div class="alert alert-danger">
-                <strong>Google Sheets Error:</strong> <?= htmlspecialchars($_SESSION['google_error']) ?>
-                <?php unset($_SESSION['google_error']); ?>
-            </div>
+                <div class="alert alert-danger">
+                    <strong><?= __('settings.google_error') ?></strong> <?= htmlspecialchars($_SESSION['google_error']) ?>
+                    <?php unset($_SESSION['google_error']); ?>
+                </div>
             <?php endif; ?>
 
             <!-- Google Sheets Integration Card -->
@@ -109,37 +108,36 @@
                 <div class="card-header">
                     <h3 class="card-title text-success">
                         <i class="fas fa-file-excel text-success mr-1"></i>
-                        <b>Integrazione con Google Sheet</b>
+                        <b><?= __('settings.google_sheets_integration') ?></b>
                     </h3>
                 </div>
                 <div class="card-body">
-                    <form method="post" action="index.php?action=settings&do=google_sheets" id="googleSettingsForm">
+                    <form method="post" action="index.php?action=settings&do=google_sheets&lang=<?= $_SESSION['lang'] ?? 'it' ?>" id="googleSettingsForm">
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="google_sheet_id">ID del Google Sheet</label>
+                                    <label for="google_sheet_id"><?= __('settings.google_sheet_id') ?></label>
                                     <input type="text" class="form-control" id="google_sheet_id" name="google_sheet_id"
                                         value="<?= htmlspecialchars($googleSheetSettings['sheet_id'] ?? '') ?>"
-                                        placeholder="Inserisci l'ID del Google Sheet" >
-                                    <small class="form-text text-muted">Trovato nell'URL del tuo Google Sheet (tra /d/ e
-                                        /edit)</small>
+                                        placeholder="<?= __('settings.google_sheet_id') ?>">
+                                    <small class="form-text text-muted"><?= __('settings.google_sheet_id_help') ?></small>
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="google_sheet_name">Nome del Foglio</label>
+                                    <label for="google_sheet_name"><?= __('settings.sheet_name') ?></label>
                                     <input type="text" class="form-control" id="google_sheet_name"
                                         name="google_sheet_name"
                                         value="<?= htmlspecialchars($googleSheetSettings['sheet_name'] ?? '') ?>"
-                                        placeholder="Inserisci il nome del foglio (nome della tab)" >
+                                        placeholder="<?= __('settings.sheet_name_help') ?>">
                                 </div>
                             </div>
 
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="google_credentials">Credenziali del Account di Servizio (JSON)</label>
+                                    <label for="google_credentials"><?= __('settings.service_account_credentials') ?></label>
                                     <textarea class="form-control" id="google_credentials" name="google_credentials"
                                         rows="7"
-                                        placeholder="Incolla le tue credenziali JSON dell'account di servizio" ><?= htmlspecialchars($googleSheetSettings['credentials'] ?? '') ?></textarea>
+                                        placeholder="<?= __('settings.service_account_placeholder') ?>"><?= htmlspecialchars($googleSheetSettings['credentials'] ?? '') ?></textarea>
                                 </div>
                             </div>
                         </div>
@@ -149,18 +147,16 @@
                                 <input type="checkbox" class="custom-control-input" id="google_sync_enabled"
                                     name="google_sync_enabled" value="1"
                                     <?= ($googleSheetSettings['enabled'] ?? false) ? 'checked' : '' ?>>
-                                <label class="custom-control-label" for="google_sync_enabled">Abilita la
-                                    sincronizzazione con Google Sheets</label>
+                                <label class="custom-control-label" for="google_sync_enabled"><?= __('settings.google_sync_enabled') ?></label>
                             </div>
                         </div>
 
                         <div class="btn-group mt-3">
-                            <button type="submit" name="save_google_settings" class="btn btn-primary">Salva le
-                                impostazioni di Google Sheets</button>
+                            <button type="submit" name="save_google_settings" class="btn btn-primary"><?= __('settings.save_google_settings') ?></button>
                             <button type="button" name="export_to_google" id="exportBtn"
-                                class="btn btn-success ml-2">Esporta su Google Sheet</button>
+                                class="btn btn-success ml-2"><?= __('settings.export_to_google') ?></button>
                             <button type="button" name="import_from_google" id="importBtn"
-                                class="btn btn-info ml-2">Importa da Google Sheet</button>
+                                class="btn btn-info ml-2"><?= __('settings.import_from_google') ?></button>
                         </div>
                     </form>
 
@@ -193,42 +189,42 @@
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const exportBtn = document.getElementById('exportBtn');
-    const importBtn = document.getElementById('importBtn');
-    const googleSyncToggle = document.getElementById('google_sync_enabled');
+    document.addEventListener('DOMContentLoaded', function() {
+        const exportBtn = document.getElementById('exportBtn');
+        const importBtn = document.getElementById('importBtn');
+        const googleSyncToggle = document.getElementById('google_sync_enabled');
 
-    function updateButtonState() {
-        const syncOn = googleSyncToggle.checked;
-        exportBtn.disabled = !syncOn;
-        importBtn.disabled = !syncOn;
-    }
+        function updateButtonState() {
+            const syncOn = googleSyncToggle.checked;
+            exportBtn.disabled = !syncOn;
+            importBtn.disabled = !syncOn;
+        }
 
 
-    updateButtonState();
+        updateButtonState();
 
-    googleSyncToggle.addEventListener('change', updateButtonState);
+        googleSyncToggle.addEventListener('change', updateButtonState);
 
-    exportBtn.addEventListener('click', function() {
-        document.getElementById('confirmationMessage').innerHTML =
-            'Sei sicuro di voler esportare i dati su Google Sheet?';
-        $('#confirmationModal').modal('show');
-        document.getElementById('confirmActionBtn').onclick = function() {
-            $('#confirmationModal').modal('hide');
-            document.getElementById('exportForm').submit();
-        };
+        exportBtn.addEventListener('click', function() {
+            document.getElementById('confirmationMessage').innerHTML =
+                '<?= __('settings.confirm_export_google') ?>';
+            $('#confirmationModal').modal('show');
+            document.getElementById('confirmActionBtn').onclick = function() {
+                $('#confirmationModal').modal('hide');
+                document.getElementById('exportForm').submit();
+            };
+        });
+
+        importBtn.addEventListener('click', function() {
+            document.getElementById('confirmationMessage').innerHTML =
+                '<?= __('settings.confirm_import_google') ?>';
+            $('#confirmationModal').modal('show');
+            document.getElementById('confirmActionBtn').onclick = function() {
+                $('#confirmationModal').modal('hide');
+                document.getElementById('importForm').submit();
+            };
+        });
     });
-
-    importBtn.addEventListener('click', function() {
-        document.getElementById('confirmationMessage').innerHTML =
-            'Sei sicuro di voler importare i dati da Google Sheet?<br><small>Questa operazione sovrascriverà i dati esistenti.</small>';
-        $('#confirmationModal').modal('show');
-        document.getElementById('confirmActionBtn').onclick = function() {
-            $('#confirmationModal').modal('hide');
-            document.getElementById('importForm').submit();
-        };
-    });
-});
 </script>
 
 <?php include APP_PATH . '/includes/footer.php'; ?>

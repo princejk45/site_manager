@@ -9,7 +9,7 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Gestisci i servizi</h1>
+                    <h1><?= __('websites.manage_services') ?></h1>
                 </div>
             </div>
         </div>
@@ -24,15 +24,15 @@
                 <div class="modal-dialog modal-dialog-centered" role="document">
                     <div class="modal-content">
                         <div class="modal-header bg-success text-dark">
-                            <h5 class="modal-title">Conferma azione</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Chiudi">
+                            <h5 class="modal-title"><?= __('websites.confirm_action') ?></h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="<?= __('common.close') ?>">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
-                        <div class="modal-body" id="confirmationMessage">Sei sicuro?</div>
+                        <div class="modal-body" id="confirmationMessage"><?= __('websites.sure') ?></div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-danger" data-dismiss="modal">Annulla</button>
-                            <button type="button" class="btn btn-success" id="confirmActionBtn">Conferma</button>
+                            <button type="button" class="btn btn-danger" data-dismiss="modal"><?= __('websites.cancel') ?></button>
+                            <button type="button" class="btn btn-success" id="confirmActionBtn"><?= __('websites.confirm') ?></button>
                         </div>
                     </div>
                 </div>
@@ -42,16 +42,16 @@
 
             <div class="mb-3 d-flex flex-wrap justify-content-between align-items-center">
                 <div><?php if ($userRole === 'manager' || $userRole === 'super_admin'): ?>
-                        <a href="index.php?action=websites&do=create" class="btn btn-primary btn-sm mr-2">
-                            <i class="fas fa-plus"></i> Aggiungi servizio
+                        <a href="index.php?action=websites&do=create&lang=<?= $_SESSION['lang'] ?? 'it' ?>" class="btn btn-primary btn-sm mr-2">
+                            <i class="fas fa-plus"></i> <?= __('websites.add_service') ?>
                         </a><?php endif; ?>
-                    
+
                 </div>
-                <form method="post" action="index.php?action=websites&do=export" class="d-inline">
-                        <button type="submit" class="btn btn-success btn-sm">
-                            <i class="fas fa-file-export"></i> Esporta file Excel
-                        </button>
-                    </form>
+                <form method="post" action="index.php?action=websites&do=export&lang=<?= $_SESSION['lang'] ?? 'it' ?>" class="d-inline">
+                    <button type="submit" class="btn btn-success btn-sm">
+                        <i class="fas fa-file-export"></i> <?= __('websites.export_excel') ?>
+                    </button>
+                </form>
                 <!--<?php if ($userRole === 'manager' || $userRole === 'super_admin'): ?>
                     <form method="post" action="index.php?action=websites&do=import" enctype="multipart/form-data"
                         class="d-flex"
@@ -84,17 +84,17 @@
             <!-- Session messages -->
             <?php if (isset($_SESSION['import_result'])): ?>
                 <div class="alert alert-info">
-                    <h5>Importa risultati:</h5>
-                    <p>Importato: <?= $_SESSION['import_result']['imported'] ?></p>
-                    <p>Aggiornato: <?= $_SESSION['import_result']['updated'] ?></p>
-                    <p>Saltato: <?= $_SESSION['import_result']['skipped'] ?></p>
+                    <h5><?= __('common.import_results') ?>:</h5>
+                    <p><?= __('common.imported') ?>: <?= $_SESSION['import_result']['imported'] ?></p>
+                    <p><?= __('common.updated') ?>: <?= $_SESSION['import_result']['updated'] ?></p>
+                    <p><?= __('common.skipped') ?>: <?= $_SESSION['import_result']['skipped'] ?></p>
 
                     <?php if (!empty($_SESSION['import_result']['errors'])): ?>
                         <details class="mt-3">
-                            <summary>Dettagli dell'errore</summary>
+                            <summary><?= __('common.error_details') ?></summary>
                             <ul class="small">
                                 <?php foreach ($_SESSION['import_result']['errors'] as $error): ?>
-                                    <li>Row <?= $error['row'] ?> (<?= $error['domain'] ?>): <?= $error['message'] ?></li>
+                                    <li><?= __('common.row') ?> <?= $error['row'] ?> (<?= $error['domain'] ?>): <?= $error['message'] ?></li>
                                 <?php endforeach; ?>
                             </ul>
                         </details>
@@ -118,8 +118,9 @@
                 <div class="col-md-6">
                     <form method="get" action="index.php" class="form-inline">
                         <input type="hidden" name="action" value="websites">
+                        <input type="hidden" name="lang" value="<?= $_SESSION['lang'] ?? 'it' ?>">
                         <div class="input-group input-group-sm">
-                            <input type="text" class="form-control" name="search" placeholder="Cerca..."
+                            <input type="text" class="form-control" name="search" placeholder="<?= __('common.search') ?>..."
                                 value="<?= htmlspecialchars($search) ?>">
                             <div class="input-group-append">
                                 <button class="btn btn-outline-secondary" type="submit"><i
@@ -134,11 +135,12 @@
                         <input type="hidden" name="search" value="<?= htmlspecialchars($search) ?>">
                         <input type="hidden" name="sort" value="<?= htmlspecialchars($sort) ?>">
                         <input type="hidden" name="order" value="<?= htmlspecialchars($order) ?>">
-                        <label class="mr-2">Mostra:</label>
+                        <input type="hidden" name="lang" value="<?= $_SESSION['lang'] ?? 'it' ?>">
+                        <label class="mr-2"><?= __('common.show') ?>:</label>
                         <select name="per_page" class="form-control form-control-sm" onchange="this.form.submit()">
-                            <option value="10" <?= $perPage == 10 ? 'selected' : '' ?>>10 risultati</option>
-                            <option value="30" <?= $perPage == 30 ? 'selected' : '' ?>>30 risultati</option>
-                            <option value="50" <?= $perPage == 50 ? 'selected' : '' ?>>50 risultati</option>
+                            <option value="10" <?= $perPage == 10 ? 'selected' : '' ?>>10 <?= __('common.results') ?></option>
+                            <option value="30" <?= $perPage == 30 ? 'selected' : '' ?>>30 <?= __('common.results') ?></option>
+                            <option value="50" <?= $perPage == 50 ? 'selected' : '' ?>>50 <?= __('common.results') ?></option>
                         </select>
                     </form>
                 </div>
@@ -241,7 +243,7 @@
             <!-- Website Table (Wrapped in a card) -->
             <div class="card">
                 <div class="card-header">
-                    <h5>Tutti i servizi</h5>
+                    <h5><?= __('websites.manage_services') ?></h5>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
@@ -251,8 +253,8 @@
                                     <!-- Hosting Server Column -->
                                     <th>
                                         <a
-                                            href="?action=websites&sort=hosting_server&order=<?= ($sort == 'hosting_server' && $order == 'asc') ? 'desc' : 'asc' ?>&search=<?= urlencode($search) ?>&per_page=<?= $perPage ?>">
-                                            Cliente
+                                            href="?action=websites&sort=hosting_server&order=<?= ($sort == 'hosting_server' && $order == 'asc') ? 'desc' : 'asc' ?>&search=<?= urlencode($search) ?>&per_page=<?= $perPage ?>&lang=<?= $_SESSION['lang'] ?? 'it' ?>">
+                                            <?= __('websites.client') ?>
                                             <?php if ($sort == 'hosting_server'): ?>
                                                 <i class="fas fa-sort-<?= $order == 'asc' ? 'up' : 'down' ?>"></i>
                                             <?php endif; ?>
@@ -262,8 +264,8 @@
                                     <!-- Domain Column -->
                                     <th class="site-wrap">
                                         <a
-                                            href="?action=websites&sort=domain&order=<?= ($sort == 'domain' && $order == 'asc') ? 'desc' : 'asc' ?>&search=<?= urlencode($search) ?>&per_page=<?= $perPage ?>">
-                                            Dettaglio Servizi
+                                            href="?action=websites&sort=domain&order=<?= ($sort == 'domain' && $order == 'asc') ? 'desc' : 'asc' ?>&search=<?= urlencode($search) ?>&per_page=<?= $perPage ?>&lang=<?= $_SESSION['lang'] ?? 'it' ?>">
+                                            <?= __('websites.domain_name') ?>
                                             <?php if ($sort == 'domain'): ?>
                                                 <i class="fas fa-sort-<?= $order == 'asc' ? 'up' : 'down' ?>"></i>
                                             <?php endif; ?>
@@ -273,8 +275,8 @@
                                     <!-- Service Type Column -->
                                     <th>
                                         <a
-                                            href="?action=websites&sort=name&order=<?= ($sort == 'name' && $order == 'asc') ? 'desc' : 'asc' ?>&search=<?= urlencode($search) ?>&per_page=<?= $perPage ?>">
-                                            Tipologia
+                                            href="?action=websites&sort=name&order=<?= ($sort == 'name' && $order == 'asc') ? 'desc' : 'asc' ?>&search=<?= urlencode($search) ?>&per_page=<?= $perPage ?>&lang=<?= $_SESSION['lang'] ?? 'it' ?>">
+                                            <?= __('common.type') ?>
                                             <?php if ($sort == 'name'): ?>
                                                 <i class="fas fa-sort-<?= $order == 'asc' ? 'up' : 'down' ?>"></i>
                                             <?php endif; ?>
@@ -284,8 +286,8 @@
                                     <!-- Registrar Column -->
                                     <th>
                                         <a
-                                            href="?action=websites&sort=email_server&order=<?= ($sort == 'email_server' && $order == 'asc') ? 'desc' : 'asc' ?>&search=<?= urlencode($search) ?>&per_page=<?= $perPage ?>">
-                                            Registrante
+                                            href="?action=websites&sort=email_server&order=<?= ($sort == 'email_server' && $order == 'asc') ? 'desc' : 'asc' ?>&search=<?= urlencode($search) ?>&per_page=<?= $perPage ?>&lang=<?= $_SESSION['lang'] ?? 'it' ?>">
+                                            <?= __('common.registrant') ?>
                                             <?php if ($sort == 'email_server'): ?>
                                                 <i class="fas fa-sort-<?= $order == 'asc' ? 'up' : 'down' ?>"></i>
                                             <?php endif; ?>
@@ -295,17 +297,17 @@
                                     <!-- Expiry Date Column -->
                                     <th class="date-wrap">
                                         <a
-                                            href="?action=websites&sort=expiry_date&order=<?= ($sort == 'expiry_date' && $order == 'asc') ? 'desc' : 'asc' ?>&search=<?= urlencode($search) ?>&per_page=<?= $perPage ?>">
-                                            Scadenza
+                                            href="?action=websites&sort=expiry_date&order=<?= ($sort == 'expiry_date' && $order == 'asc') ? 'desc' : 'asc' ?>&search=<?= urlencode($search) ?>&per_page=<?= $perPage ?>&lang=<?= $_SESSION['lang'] ?? 'it' ?>">
+                                            <?= __('websites.expiring_date') ?>
                                             <?php if ($sort == 'expiry_date'): ?>
                                                 <i class="fas fa-sort-<?= $order == 'asc' ? 'up' : 'down' ?>"></i>
                                             <?php endif; ?>
                                         </a>
                                     </th>
 
-                                    <th>Bug?</th>
-                                    <th>Stato</th>
-                                    <th class="no-wrap">Azioni</th>
+                                    <th><?= __('common.bug') ?></th>
+                                    <th><?= __('websites.status') ?></th>
+                                    <th class="no-wrap"><?= __('websites.actions') ?></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -322,7 +324,7 @@
                                             $hasIssues = !empty($notes) && !in_array($notes, ['none', 'nessuno', '']);
                                             ?>
                                             <span class="badge badge-<?= $hasIssues ? 'warning' : 'success' ?>">
-                                                <?= $hasIssues ? 'Si' : 'No' ?>
+                                                <?= $hasIssues ? __('common.yes') : __('common.no') ?>
                                             </span>
                                         </td>
                                         <td>
@@ -333,31 +335,36 @@
                                                 'scade_presto' => 'warning',
                                                 'scaduto' => 'danger'
                                             ][$status];
+                                            $statusTranslations = [
+                                                'attivo' => __('common.active'),
+                                                'scade_presto' => __('common.expiring_soon'),
+                                                'scaduto' => __('common.expired')
+                                            ];
                                             ?>
                                             <span class="badge badge-<?= $badgeClass ?>">
-                                                <?= ucwords(str_replace('_', ' ', $status)) ?>
+                                                <?= $statusTranslations[$status] ?? ucwords(str_replace('_', ' ', $status)) ?>
                                             </span>
                                         </td>
                                         <td class="no-wrap">
-                                            <a href="index.php?action=websites&do=view&id=<?= $website['id'] ?>"
-                                                class="btn btn-sm btn-success" data-custom-tooltip="Visualizzare">
+                                            <a href="index.php?action=websites&do=view&id=<?= $website['id'] ?>&lang=<?= $_SESSION['lang'] ?? 'it' ?>"
+                                                class="btn btn-sm btn-success" data-custom-tooltip="<?= __('websites.view') ?>">
                                                 <i class="fas fa-eye"></i>
                                             </a>
                                             <?php if ($userRole === 'manager' || $userRole === 'super_admin'): ?>
-                                                <!--<a href="index.php?action=websites&do=edit&id=<?= $website['id'] ?>"
-                                                    class="btn btn-sm btn-primary" data-custom-tooltip="Modificare">
+                                                <!--<a href="index.php?action=websites&do=edit&id=<?= $website['id'] ?>&lang=<?= $_SESSION['lang'] ?? 'it' ?>"
+                                                    class="btn btn-sm btn-primary" data-custom-tooltip="<?= __('websites.edit') ?>">
                                                     <i class="fas fa-edit"></i>
                                                 </a>-->
                                                 <a href="index.php?action=email&do=expiry&id=<?= $website['id'] ?>"
                                                     class="btn btn-sm btn-info confirmable" data-type="email"
                                                     data-name="<?= htmlspecialchars($website['domain']) ?>"
-                                                    data-custom-tooltip="Invia email di scadenza">
+                                                    data-custom-tooltip="<?= __('common.send_expiry_email') ?>">
                                                     <i class="fas fa-envelope"></i>
                                                 </a>
                                                 <a href="index.php?action=email&do=status&id=<?= $website['id'] ?>"
                                                     class="btn btn-sm btn-secondary confirmable" data-type="email"
                                                     data-name="<?= htmlspecialchars($website['domain']) ?>"
-                                                    data-custom-tooltip="E-mail rapporto stato">
+                                                    data-custom-tooltip="<?= __('common.send_status_email') ?>">
                                                     <i class="fas fa-bell"></i>
                                                 </a>
                                                 <form method="post"
@@ -365,7 +372,7 @@
                                                     class="d-inline confirmable" data-type="delete"
                                                     data-name="<?= htmlspecialchars($website['domain']) ?>">
                                                     <button type="submit" class="btn btn-sm btn-danger"
-                                                        data-custom-tooltip="Eliminare">
+                                                        data-custom-tooltip="<?= __('websites.delete') ?>">
                                                         <i class="fas fa-trash"></i>
                                                     </button>
                                                 </form><?php endif; ?>
@@ -398,7 +405,7 @@
                         <?php if ($page < $totalPages): ?>
                             <li class="page-item">
                                 <a class="page-link"
-                                    href="?action=websites&page=<?= $page + 1 ?>&sort=<?= $sort ?>&order=<?= $order ?>&search=<?= urlencode($search) ?>&per_page=<?= $perPage ?>">Successivo</a>
+                                    href="?action=websites&page=<?= $page + 1 ?>&sort=<?= $sort ?>&order=<?= $order ?>&search=<?= urlencode($search) ?>&per_page=<?= $perPage ?>"><?= __('common.next') ?></a>
                             </li>
                         <?php endif; ?>
                     </ul>

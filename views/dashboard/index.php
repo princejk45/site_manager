@@ -9,7 +9,7 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Dashboard</h1>
+                    <h1><?= __('dashboard.title') ?></h1>
                 </div>
             </div>
         </div>
@@ -33,13 +33,13 @@
                     <div class="small-box bg-info">
                         <div class="inner">
                             <h3><?= $totalWebsites ?></h3>
-                            <p>Tutti i servizi</p>
+                            <p><?= __('dashboard.all_services') ?></p>
                         </div>
                         <div class="icon">
                             <i class="fas fa-globe"></i>
                         </div>
-                        <a href="index.php?action=websites" class="small-box-footer">
-                            Più info <i class="fas fa-arrow-circle-right"></i>
+                        <a href="index.php?action=websites&lang=<?= $_SESSION['lang'] ?? 'it' ?>" class="small-box-footer">
+                            <?= __('dashboard.more_info') ?> <i class="fas fa-arrow-circle-right"></i>
                         </a>
                     </div>
                 </div>
@@ -49,14 +49,14 @@
                     <div class="small-box bg-warning">
                         <div class="inner">
                             <h3><?= $expiringWebsitesCount ?></h3>
-                            <p>Servizi in scadenza</p>
+                            <p><?= __('dashboard.services_expiring') ?></p>
                         </div>
                         <div class="icon">
                             <i class="fas fa-calendar-times"></i>
                         </div>
-                        <a href="index.php?action=websites&sort=expiry_date&order=asc&search=&per_page=10"
+                        <a href="index.php?action=websites&sort=expiry_date&order=asc&search=&per_page=10&lang=<?= $_SESSION['lang'] ?? 'it' ?>"
                             class="small-box-footer">
-                            Più info <i class="fas fa-arrow-circle-right"></i>
+                            <?= __('dashboard.more_info') ?> <i class="fas fa-arrow-circle-right"></i>
                         </a>
                     </div>
                 </div>
@@ -66,13 +66,13 @@
                     <div class="small-box bg-success">
                         <div class="inner">
                             <h3><?= $totalHosting ?></h3>
-                            <p>Tutti i clienti</p>
+                            <p><?= __('dashboard.all_clients') ?></p>
                         </div>
                         <div class="icon">
                             <i class="fas fa-users"></i>
                         </div>
-                        <a href="index.php?action=hosting" class="small-box-footer">
-                            Più info <i class="fas fa-arrow-circle-right"></i>
+                        <a href="index.php?action=hosting&lang=<?= $_SESSION['lang'] ?? 'it' ?>" class="small-box-footer">
+                            <?= __('dashboard.more_info') ?> <i class="fas fa-arrow-circle-right"></i>
                         </a>
                     </div>
                 </div>
@@ -82,13 +82,13 @@
                     <div class="small-box bg-secondary">
                         <div class="inner">
                             <h3><?= $buggyWebsitesCount ?></h3>
-                            <p><small> Servizi con problemi</small></p>
+                            <p><small><?= __('dashboard.services_with_issues') ?></small></p>
                         </div>
                         <div class="icon">
                             <i class="fas fa-tools"></i>
                         </div>
                         <a href="#scaduti" class="small-box-footer">
-                            Vedi sotto <i class="fas fa-arrow-circle-down"></i>
+                            <?= __('dashboard.see_below') ?> <i class="fas fa-arrow-circle-down"></i>
                         </a>
                     </div>
                 </div>
@@ -98,13 +98,13 @@
                     <div class="small-box bg-light">
                         <div class="inner">
                             <h3><?= $liberiCount ?></h3>
-                            <p> Domini Liberi</p>
+                            <p><?= __('dashboard.free_domains') ?></p>
                         </div>
                         <div class="icon">
                             <i class="fas fa-chain-broken"></i>
                         </div>
-                        <a href="index.php?action=hosting&do=services&id=29" class="small-box-footer">
-                            Più info <i class="fas fa-arrow-circle-right"></i>
+                        <a href="index.php?action=hosting&do=services&id=29<?= '&lang=' . ($_SESSION['lang'] ?? 'it') ?>" class="small-box-footer">
+                            <?= __('dashboard.more_info') ?> <i class="fas fa-arrow-circle-right"></i>
                         </a>
                     </div>
                 </div>
@@ -114,13 +114,13 @@
                     <div class="small-box bg-danger">
                         <div class="inner">
                             <h3><?= $expiredWebsitesCount ?></h3>
-                            <p> Servizi scaduti</p>
+                            <p><?= __('dashboard.expired_services') ?></p>
                         </div>
                         <div class="icon">
                             <i class="fas fa-stopwatch"></i>
                         </div>
                         <a href="#scaduti" class="small-box-footer">
-                            Vedi sotto <i class="fas fa-arrow-circle-down"></i>
+                            <?= __('dashboard.see_below') ?> <i class="fas fa-arrow-circle-down"></i>
                         </a>
                     </div>
                 </div>
@@ -180,21 +180,21 @@
                     <div class="card">
                         <div class="card-header bg-dark">
                             <h3 class="card-title text-white mb-0">
-                                Scadenza entro 30 giorni
+                                <?= __('dashboard.expiring_in_30_days') ?>
                                 <span class="badge badge-warning"><?= $expiringWebsitesCount ?></span>
                             </h3>
                         </div>
                         <div class="card-body">
                             <?php if (empty($expiringWebsites)): ?>
-                                <p>Nessun servizio in scadenza nei prossimi 30 giorni.</p>
+                                <p><?= __('dashboard.no_expiring_services') ?></p>
                             <?php else: ?>
                                 <div class="table-responsive">
                                     <table class="table table-bordered table-striped table-sm-text">
                                         <thead>
                                             <tr>
-                                                <th>Nome</th>
-                                                <th>Servizi</th>
-                                                <th>In scadenza</th>
+                                                <th><?= __('dashboard.name') ?></th>
+                                                <th><?= __('dashboard.services') ?></th>
+                                                <th><?= __('dashboard.expiring_date') ?></th>
                                             </tr>
                                         </thead>
                                         <tbody id="expiringTableBody">
@@ -237,7 +237,7 @@
                                 <?php if (count($expiringWebsites) > 2): ?>
                                     <div class="text-center mt-2">
                                         <a href="#" class="view-more-link" data-target="expiring">
-                                            <i class="fas fa-chevron-down"></i> Visualizza tutto
+                                            <i class="fas fa-chevron-down"></i> <?= __('dashboard.view_all') ?>
                                         </a>
                                     </div>
                                 <?php endif; ?>
@@ -251,21 +251,21 @@
                     <div class="card">
                         <div class="card-header bg-dark">
                             <h3 class="card-title text-white mb-0">
-                                Servizi con problemi
+                                <?= __('dashboard.buggy_services') ?>
                                 <span class="badge badge-danger"><?= $buggyWebsitesCount ?></span>
                             </h3>
                         </div>
                         <div class="card-body">
                             <?php if (empty($buggyWebsites)): ?>
-                                <p>Nessun servizio con problemi.</p>
+                                <p><?= __('dashboard.no_buggy_services') ?></p>
                             <?php else: ?>
                                 <div class="table-responsive">
                                     <table class="table table-bordered table-striped table-sm-text">
                                         <thead>
                                             <tr>
-                                                <th>Cliente</th>
-                                                <th>Servizio</th>
-                                                <th>Bugs?</th>
+                                                <th><?= __('dashboard.client') ?></th>
+                                                <th><?= __('dashboard.services') ?></th>
+                                                <th><?= __('dashboard.bugs') ?></th>
                                             </tr>
                                         </thead>
                                         <tbody id="buggyTableBody">
@@ -273,13 +273,13 @@
                                                 <tr>
                                                     <td><?= htmlspecialchars($website['hosting_server'] ?? 'N/A') ?></td>
                                                     <td>
-                                                        <a href="index.php?action=websites&do=view&id=<?= $website['id'] ?>">
+                                                        <a href="index.php?action=websites&do=view&id=<?= $website['id'] ?>&lang=<?= $_SESSION['lang'] ?? 'it' ?>">
                                                             <?= htmlspecialchars($website['domain']) ?>
                                                         </a>
                                                     </td>
                                                     <td>
                                                         <span class="badge badge-warning">
-                                                            Si
+                                                            <?= __('dashboard.yes') ?>
                                                         </span>
                                                     </td>
                                                 </tr>
@@ -290,13 +290,13 @@
                                                 <tr class="d-none more-buggy-rows">
                                                     <td><?= htmlspecialchars($website['hosting_server'] ?? 'N/A') ?></td>
                                                     <td>
-                                                        <a href="index.php?action=websites&do=view&id=<?= $website['id'] ?>">
+                                                        <a href="index.php?action=websites&do=view&id=<?= $website['id'] ?>&lang=<?= $_SESSION['lang'] ?? 'it' ?>">
                                                             <?= htmlspecialchars($website['domain']) ?>
                                                         </a>
                                                     </td>
                                                     <td>
                                                         <span class="badge badge-warning">
-                                                            Si
+                                                            <?= __('dashboard.yes') ?>
                                                         </span>
                                                     </td>
                                                 </tr>
@@ -307,7 +307,7 @@
                                 <?php if (count($buggyWebsites) > 2): ?>
                                     <div class="text-center mt-2">
                                         <a href="#" class="view-more-link" data-target="buggy">
-                                            <i class="fas fa-chevron-down"></i> Visualizza tutto
+                                            <i class="fas fa-chevron-down"></i> <?= __('dashboard.view_all') ?>
                                         </a>
                                     </div>
                                 <?php endif; ?>
@@ -325,21 +325,21 @@
                     <div class="card">
                         <div class="card-header bg-danger">
                             <h3 class="card-title text-white mb-0">
-                                Servizi scaduti
+                                <?= __('dashboard.expired_services') ?>
                                 <span class="badge badge-light"><?= $expiredWebsitesCount ?></span>
                             </h3>
                         </div>
                         <div class="card-body">
                             <?php if (empty($expiredWebsites)): ?>
-                                <p>Nessun servizio scaduto.</p>
+                                <p><?= __('dashboard.no_expired_services') ?></p>
                             <?php else: ?>
                                 <div class="table-responsive">
                                     <table class="table table-bordered table-striped table-sm-text">
                                         <thead>
                                             <tr>
-                                                <th>Cliente</th>
-                                                <th>Servizio</th>
-                                                <th>Scaduto</th>
+                                                <th><?= __('dashboard.client') ?></th>
+                                                <th><?= __('dashboard.services') ?></th>
+                                                <th><?= __('dashboard.expiring_date') ?></th>
                                             </tr>
                                         </thead>
                                         <tbody id="expiredTableBody">
@@ -347,7 +347,7 @@
                                                 <tr>
                                                     <td><?= htmlspecialchars($website['hosting_server'] ?? 'N/A') ?></td>
                                                     <td>
-                                                        <a href="index.php?action=websites&do=view&id=<?= $website['id'] ?>">
+                                                        <a href="index.php?action=websites&do=view&id=<?= $website['id'] ?>&lang=<?= $_SESSION['lang'] ?? 'it' ?>">
                                                             <?= htmlspecialchars($website['domain']) ?>
                                                         </a>
                                                     </td>
@@ -364,7 +364,7 @@
                                                 <tr class="d-none more-expired-rows">
                                                     <td><?= htmlspecialchars($website['hosting_server'] ?? 'N/A') ?></td>
                                                     <td>
-                                                        <a href="index.php?action=websites&do=view&id=<?= $website['id'] ?>">
+                                                        <a href="index.php?action=websites&do=view&id=<?= $website['id'] ?>&lang=<?= $_SESSION['lang'] ?? 'it' ?>">
                                                             <?= htmlspecialchars($website['domain']) ?>
                                                         </a>
                                                     </td>
@@ -381,7 +381,7 @@
                                 <?php if (count($expiredWebsites) > 2): ?>
                                     <div class="text-center mt-2">
                                         <a href="#" class="view-more-link" data-target="expired">
-                                            <i class="fas fa-chevron-down"></i> Visualizza tutto
+                                            <i class="fas fa-chevron-down"></i> <?= __('dashboard.view_all') ?>
                                         </a>
                                     </div>
                                 <?php endif; ?>
@@ -395,38 +395,36 @@
                     <div class="card">
                         <div class="card-header bg-primary">
                             <h3 class="card-title text-white mb-0">
-                                Riepilogo Clienti e Servizi
+                                <?= __('dashboard.hosting_summary') ?>
                                 <span class="badge badge-light"><?= $totalHosting ?></span>
                             </h3>
                         </div>
                         <div class="card-body">
                             <?php if (empty($hostingWithCounts)): ?>
-                                <p>Nessun cliente trovato.</p>
+                                <p><?= __('dashboard.no_clients_found') ?></p>
                             <?php else: ?>
                                 <div class="table-responsive">
                                     <table class="table table-bordered table-striped table-sm-text">
                                         <thead>
                                             <tr>
-                                                <th>Cliente</th>
-                                                <th>P. Iva</th>
-                                                <th>Servizi Associati</th>
+                                                <th><?= __('dashboard.client') ?></th>
+                                                <th><?= __('dashboard.vat_number') ?></th>
+                                                <th><?= __('dashboard.associated_services') ?></th>
                                             </tr>
                                         </thead>
                                         <tbody id="hostingSummaryTableBody">
                                             <?php foreach (array_slice($hostingWithCounts, 0, 2) as $hosting): ?>
                                                 <tr>
                                                     <td>
-                                                        <a href="index.php?action=hosting&do=view&id=<?= $hosting['id'] ?>">
+                                                        <a href="index.php?action=hosting&do=view&id=<?= $hosting['id'] ?>&lang=<?= $_SESSION['lang'] ?? 'it' ?>">
                                                             <?= htmlspecialchars($hosting['server_name']) ?>
                                                         </a>
                                                     </td>
                                                     <td><?= htmlspecialchars($hosting['provider'] ?? 'N/A') ?></td>
                                                     <td class="text-center">
-                                                        <a href="index.php?action=hosting&do=services&id=<?= $hosting['id'] ?>">
+                                                        <a href="index.php?action=hosting&do=services&id=<?= $hosting['id'] ?>&lang=<?= $_SESSION['lang'] ?? 'it' ?>">
                                                             <span class="badge badge-info">
-
                                                                 <?= $hosting['service_count'] ?>
-
                                                             </span>
                                                         </a>
                                                     </td>
@@ -437,20 +435,17 @@
                                             <?php foreach (array_slice($hostingWithCounts, 2) as $hosting): ?>
                                                 <tr class="d-none more-hosting-rows">
                                                     <td>
-                                                        <a href="index.php?action=hosting&do=view&id=<?= $hosting['id'] ?>">
+                                                        <a href="index.php?action=hosting&do=view&id=<?= $hosting['id'] ?>&lang=<?= $_SESSION['lang'] ?? 'it' ?>">
                                                             <?= htmlspecialchars($hosting['server_name']) ?>
                                                         </a>
                                                     </td>
                                                     <td><?= htmlspecialchars($hosting['provider'] ?? 'N/A') ?></td>
                                                     <td class="text-center">
-                                                        <a href="index.php?action=hosting&do=services&id=<?= $hosting['id'] ?>">
+                                                        <a href="index.php?action=hosting&do=services&id=<?= $hosting['id'] ?>&lang=<?= $_SESSION['lang'] ?? 'it' ?>">
                                                             <span class="badge badge-info">
-
                                                                 <?= $hosting['service_count'] ?>
-
                                                             </span>
                                                         </a>
-                                                        </span>
                                                     </td>
                                                 </tr>
                                             <?php endforeach; ?>
@@ -460,7 +455,7 @@
                                 <?php if (count($hostingWithCounts) > 2): ?>
                                     <div class="text-center mt-2">
                                         <a href="#" class="view-more-link" data-target="hosting">
-                                            <i class="fas fa-chevron-down"></i> Visualizza tutto
+                                            <i class="fas fa-chevron-down"></i> <?= __('dashboard.view_all') ?>
                                         </a>
                                     </div>
                                 <?php endif; ?>
@@ -489,7 +484,7 @@
                     // Collapse the table
                     rows.forEach(row => row.classList.add('d-none'));
                     icon.classList.replace('fa-chevron-up', 'fa-chevron-down');
-                    this.innerHTML = '<i class="fas fa-chevron-down"></i> Visualizza tutto';
+                    this.innerHTML = '<i class="fas fa-chevron-down"></i> <?= __('dashboard.view_all') ?>';
                     this.classList.remove('expanded');
                 } else {
                     // Expand the table

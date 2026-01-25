@@ -151,4 +151,116 @@ class MessageThread
         $stmt->execute($params);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function getMessageById($messageId)
+    {
+        $stmt = $this->db->prepare("
+            SELECT m.*, u.username, u.email
+            FROM messages m
+            JOIN users u ON m.sender_id = u.id
+            WHERE m.id = ?
+            LIMIT 1
+        ");
+        $stmt->execute([$messageId]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function getThreadParticipantsWithDetails($threadId)
+    {
+        $stmt = $this->db->prepare("
+            SELECT DISTINCT 
+                u.id,
+                u.username,
+                u.email,
+                (SELECT COUNT(*) FROM messages WHERE thread_id = ? AND sender_id = u.id) as message_count
+            FROM thread_participants tp
+            JOIN users u ON tp.user_id = u.id
+            WHERE tp.thread_id = ?
+            ORDER BY u.username ASC
+        ");
+        $stmt->execute([$threadId, $threadId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getThreadSummary($threadId)
+    {
+        $stmt = $this->db->prepare("
+            SELECT 
+                t.id,
+                t.subject,
+                t.created_at,
+                (SELECT COUNT(*) FROM messages WHERE thread_id = ?) as message_count,
+                (SELECT COUNT(*) FROM thread_participants WHERE thread_id = ?) as participant_count,
+                (SELECT u.username FROM users u JOIN messages m ON m.sender_id = u.id WHERE m.thread_id = ? AND m.is_first = TRUE LIMIT 1) as creator_name
+            FROM message_threads t
+            WHERE t.id = ?
+        ");
+        $stmt->execute([$threadId, $threadId, $threadId, $threadId]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function getMessagesSinceRead($threadId, $userId)
+    {
+        // Get last read time for user in this thread
+        $stmt = $this->db->prepare("
+            SELECT last_read_at FROM thread_participants WHERE thread_id = ? AND user_id = ?
+        ");
+        $stmt->execute([$threadId, $userId]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        $lastReadAt = $result['last_read_at'] ?? null;
+
+        // Get new messages since last read
+        $sql = "
+            SELECT m.*, u.username, u.email
+            FROM messages m
+            JOIN users u ON m.sender_id = u.id
+            WHERE m.thread_id = ?
+        ";
+        $params = [$threadId];
+
+        if ($lastReadAt) {
+            $sql .= " AND m.created_at > ?";
+            $params[] = $lastReadAt;
+        }
+
+        $sql .= " ORDER BY m.created_at ASC";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getThreadCreator($threadId)
+    {
+        $stmt = $this->db->prepare("
+            SELECT sender_id FROM messages WHERE thread_id = ? AND is_first = TRUE LIMIT 1
+        ");
+        $stmt->execute([$threadId]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result['sender_id'] ?? null;
+    }
+
+    public function deleteThread($threadId)
+    {
+        $this->db->beginTransaction();
+        try {
+            // Delete all messages in the thread
+            $stmt = $this->db->prepare("DELETE FROM messages WHERE thread_id = ?");
+            $stmt->execute([$threadId]);
+
+            // Delete all thread participants
+            $stmt = $this->db->prepare("DELETE FROM thread_participants WHERE thread_id = ?");
+            $stmt->execute([$threadId]);
+
+            // Delete the thread
+            $stmt = $this->db->prepare("DELETE FROM message_threads WHERE id = ?");
+            $stmt->execute([$threadId]);
+
+            $this->db->commit();
+            return true;
+        } catch (Exception $e) {
+            $this->db->rollBack();
+            throw $e;
+        }
+    }
 }

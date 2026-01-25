@@ -30,6 +30,12 @@ switch ($action) {
     case 'logout':
         $authController->logout();
         break;
+    case 'forgot_password':
+        $authController->forgotPassword();
+        break;
+    case 'reset_password':
+        $authController->resetPassword();
+        break;
 
     // Dashboard - All roles
     case 'dashboard':
@@ -202,6 +208,12 @@ switch ($action) {
                 break;
             case 'send':
                 $messagingController->send();
+                break;
+            case 'reply':
+                $messagingController->reply();
+                break;
+            case 'delete':
+                $messagingController->delete();
                 break;
             case 'groups':
                 $messagingController->listGroups();

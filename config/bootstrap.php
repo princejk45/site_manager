@@ -9,8 +9,30 @@ define('DEFAULT_LANG', 'it');
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
+// Load auth config FIRST to get constants
+require APP_PATH . '/config/auth.php';
+
+// Configure session settings BEFORE starting session
+ini_set('session.gc_maxlifetime', SESSION_TIMEOUT);
+ini_set('session.cookie_lifetime', SESSION_TIMEOUT);
+
+// Start session FIRST before any language checking
+session_start([
+    'cookie_lifetime' => SESSION_TIMEOUT,
+    'cookie_secure' => isset($_SERVER['HTTPS']),
+    'cookie_httponly' => true,
+    'use_strict_mode' => true
+]);
+
 // Initialize language
+// Check if language is set in GET parameter
+if (isset($_GET['lang']) && in_array($_GET['lang'], ['en', 'it', 'fr'])) {
+    $_SESSION['lang'] = $_GET['lang'];
+}
+
+// Set language, defaulting to session value or default
 $lang = $_SESSION['lang'] ?? DEFAULT_LANG;
+$_SESSION['lang'] = $lang; // Ensure session is always set
 $translations = [];
 
 // Load language file
@@ -42,19 +64,10 @@ function __(string $key, array $params = []): string
     return $value;
 }
 
-// Load configuration files
-require APP_PATH . '/config/auth.php';
+// Load configuration files (auth.php already loaded above)
 require APP_PATH . '/config/database.php';
 require APP_PATH . '/config/mailer.php';
 require APP_PATH . '/config/constants.php';
-
-// Start session with secure settings
-session_start([
-    'cookie_lifetime' => SESSION_TIMEOUT,
-    'cookie_secure' => isset($_SERVER['HTTPS']), // Enable for HTTPS
-    'cookie_httponly' => true,
-    'use_strict_mode' => true
-]);
 
 // Session timeout and security management
 if (isset($_SESSION['LAST_ACTIVITY'])) {

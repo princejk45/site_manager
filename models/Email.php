@@ -57,7 +57,7 @@ class Email
     }
 
 
-    private function getEmailTemplate($title, $content)
+    public function getEmailTemplate($title, $content)
     {
         $headerBgColor = '#1f2732';
         $footerBgColor = '#1f2732';
@@ -268,7 +268,7 @@ HTML;
         return $stmt->fetchAll();
     }
 
-    private function configureMailer($mail, $smtpSettings)
+    public function configureMailer($mail, $smtpSettings)
     {
         // Server settings
         $mail->isSMTP();
@@ -284,7 +284,7 @@ HTML;
         // Handle different encryption types
         switch ($smtpSettings['encryption']) {
             case 'starttls':
-                $mail->SMTPSecure = false;  // Disable implicit TLS
+                $mail->SMTPSecure = PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
                 $mail->SMTPAutoTLS = true;  // Enable STARTTLS
                 break;
             case 'ssl':

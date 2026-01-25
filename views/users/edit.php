@@ -7,11 +7,11 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h5>Modifica utente</h5>
+                    <h5><?= __('common.edit_user') ?></h5>
                 </div>
                 <div class="col-sm-6 text-right">
-                    <a href="index.php?action=users&do=list" class="btn btn-secondary">
-                        <i class="fas fa-arrow-left"></i> Indietro
+                    <a href="index.php?action=users&do=list&lang=<?= $_SESSION['lang'] ?? 'it' ?>" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> <?= __('common.back') ?>
                     </a>
                 </div>
             </div>
@@ -38,32 +38,32 @@
                 <div class="col-md-6">
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title mb-0">Modifica utente</h3>
+                            <h3 class="card-title mb-0"><?= __('common.modify_user') ?></h3>
                         </div>
 
                         <div class="card-body">
-                            <form method="POST" action="index.php?action=users&do=update&id=<?= $user['id'] ?>">
+                            <form method="POST" action="index.php?action=users&do=update&id=<?= $user['id'] ?>&lang=<?= $_SESSION['lang'] ?? 'it' ?>">
                                 <div class="form-group">
-                                    <label>Email</label>
+                                    <label><?= __('common.email') ?></label>
                                     <input type="email" name="email" class="form-control"
                                         value="<?= htmlspecialchars($user['email'] ?? '') ?>" required>
                                 </div>
 
                                 <div class="form-group">
-                                    <label>Username</label>
+                                    <label><?= __('common.username') ?></label>
                                     <input type="text" name="username" class="form-control"
                                         value="<?= htmlspecialchars($user['username']) ?>" required>
                                 </div>
 
                                 <div class="form-group">
-                                    <label>Ruolo</label>
+                                    <label><?= __('common.role') ?></label>
                                     <select name="role" class="form-control" required>
                                         <option value="viewer" <?= $user['role'] === 'viewer' ? 'selected' : '' ?>>
-                                            Spettatore</option>
+                                            <?= __('common.viewer') ?></option>
                                         <option value="manager" <?= $user['role'] === 'manager' ? 'selected' : '' ?>>
-                                            Manager</option>
+                                            <?= __('common.manager') ?></option>
                                         <option value="super_admin"
-                                            <?= $user['role'] === 'super_admin' ? 'selected' : '' ?>>Super Admin
+                                            <?= $user['role'] === 'super_admin' ? 'selected' : '' ?>><?= __('common.super_admin') ?>
                                         </option>
                                     </select>
                                 </div>
@@ -71,11 +71,11 @@
                                 <div class="form-group form-check">
                                     <input type="checkbox" name="is_active" class="form-check-input" id="is_active"
                                         <?= $user['is_active'] ? 'checked' : '' ?>>
-                                    <label class="form-check-label" for="is_active">Utente attivo</label>
+                                    <label class="form-check-label" for="is_active"><?= __('common.active') ?></label>
                                 </div>
 
                                 <button type="submit" class="btn btn-primary">
-                                    <i class="fas fa-save"></i> Salva modifiche
+                                    <i class="fas fa-save"></i> <?= __('common.save_changes') ?>
                                 </button>
                             </form>
                         </div>
@@ -85,10 +85,10 @@
                 <!-- Image column -->
                 <div class="col-md-6 d-flex align-items-center">
                     <div class="text-center w-100">
-                        <img src="assets/images/password-security.gif" alt="Gestione utenti" class="img-fluid"
+                        <img src="assets/images/password-security.gif" alt="<?= __('common.user_management') ?>" class="img-fluid"
                             style="max-height: 400px;">
-                        <h4 class="mt-3">Gestione degli utenti</h4>
-                        <p class="text-muted">Modifica i dettagli e i permessi degli utenti esistenti.</p>
+                        <h4 class="mt-3"><?= __('common.user_management') ?></h4>
+                        <p class="text-muted"><?= __('common.modify_details') ?></p>
                     </div>
                 </div>
             </div>

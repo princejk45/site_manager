@@ -76,29 +76,37 @@ class SettingsController
 
             $mail = new PHPMailer\PHPMailer\PHPMailer(true);
 
+            // Enable debug mode to capture detailed error info
+            $mail->SMTPDebug = 0; // Set to 2 for verbose debug output
+            $mail->Debugoutput = 'error_log';
+
             // Server settings
             $mail->isSMTP();
-            $mail->Host = $smtpSettings['host'];
+            $mail->Host = trim($smtpSettings['host']);
             $mail->SMTPAuth = true;
-            $mail->Username = $smtpSettings['username'];
+            $mail->Username = trim($smtpSettings['username']);
             $mail->Password = $smtpSettings['password'];
-            $mail->Port = $smtpSettings['port'];
+            $mail->Port = (int)$smtpSettings['port'];
 
-            // Handle encryption
+            // Handle encryption - key setting for STARTTLS
             if ($smtpSettings['encryption'] === 'starttls') {
-                $mail->SMTPSecure = false;
+                $mail->SMTPSecure = PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
                 $mail->SMTPAutoTLS = true;
+            } elseif ($smtpSettings['encryption'] === 'ssl') {
+                $mail->SMTPSecure = PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_SMTPS;
+            } elseif ($smtpSettings['encryption'] === 'tls') {
+                $mail->SMTPSecure = PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
             } else {
-                $mail->SMTPSecure = $smtpSettings['encryption'];
+                $mail->SMTPSecure = false;
             }
 
             // Recipients
-            $mail->setFrom($smtpSettings['from_email'], $smtpSettings['from_name']);
+            $mail->setFrom(trim($smtpSettings['from_email']), $smtpSettings['from_name']);
             $mail->addAddress($testEmail);
 
             // Add CC email if configured
             if (!empty($smtpSettings['cc_email'])) {
-                $mail->addCC($smtpSettings['cc_email']);
+                $mail->addCC(trim($smtpSettings['cc_email']));
             }
 
             // Content
@@ -108,7 +116,7 @@ class SettingsController
             $mail->AltBody = 'Test SMTP riuscito: le impostazioni SMTP funzionano correttamente.';
 
             if (!$mail->send()) {
-                throw new Exception($mail->ErrorInfo);
+                throw new Exception('PHPMailer Error: ' . $mail->ErrorInfo);
             }
 
             // Log the test email
@@ -132,7 +140,7 @@ class SettingsController
             echo json_encode(['success' => true, 'message' => $message]);
         } catch (Exception $e) {
             // Log the failed attempt
-            if (isset($testEmail)) {
+            if (isset($testEmail) && isset($smtpSettings)) {
                 $logData = [
                     'email_type' => 'manual',
                     'sent_to' => $testEmail,
@@ -152,7 +160,7 @@ class SettingsController
             http_response_code(400);
             echo json_encode([
                 'success' => false,
-                'message' => $e->getMessage()
+                'message' => __('settings.smtp_test_error') . $e->getMessage()
             ]);
         }
         exit;

@@ -7,11 +7,11 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h5>Crea nuovo utente</h5>
+                    <h5><?= __('common.new_user') ?></h5>
                 </div>
                 <div class="col-sm-6 text-right">
                     <a onclick="window.history.back();" class="btn btn-secondary">
-                        <i class="fas fa-arrow-left"></i> Indietro
+                        <i class="fas fa-arrow-left"></i> <?= __('common.back') ?>
                     </a>
                 </div>
             </div>
@@ -30,38 +30,37 @@
                 <div class="col-md-6">
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title mb-0">Informazioni utente</h3>
+                            <h3 class="card-title mb-0"><?= __('common.modify_details') ?></h3>
                         </div>
 
                         <div class="card-body">
-                            <form method="POST" action="index.php?action=users&do=store">
+                            <form method="POST" action="index.php?action=users&do=store&lang=<?= $_SESSION['lang'] ?? 'it' ?>">
                                 <div class="form-group">
-                                    <label>Email</label>
+                                    <label><?= __('common.email') ?></label>
                                     <input type="email" name="email" class="form-control" required>
                                 </div>
                                 <div class="form-group">
-                                    <label for="username">Username</label>
+                                    <label for="username"><?= __('common.username') ?></label>
                                     <input type="text" class="form-control" id="username" name="username" required>
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="password">Password</label>
+                                    <label for="password"><?= __('common.password') ?></label>
                                     <input type="password" class="form-control" id="password" name="password" required>
-                                    <small class="form-text text-muted">La password deve contenere almeno 8
-                                        caratteri.</small>
+                                    <small class="form-text text-muted"><?= __('common.password_length_requirement') ?></small>
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="role">Ruolo</label>
+                                    <label for="role"><?= __('common.role') ?></label>
                                     <select class="form-control" id="role" name="role" required>
-                                        <option value="viewer">Spettatore</option>
-                                        <option value="manager">Manager</option>
-                                        <option value="super_admin">Super Admin</option>
+                                        <option value="viewer"><?= __('common.viewer') ?></option>
+                                        <option value="manager"><?= __('common.manager') ?></option>
+                                        <option value="super_admin"><?= __('common.super_admin') ?></option>
                                     </select>
                                 </div>
 
                                 <button type="submit" class="btn btn-primary">
-                                    <i class="fas fa-save"></i> Crea utente
+                                    <i class="fas fa-save"></i> <?= __('common.create') ?>
                                 </button>
                             </form>
                         </div>
@@ -73,8 +72,8 @@
                     <div class="text-center w-100">
                         <img src="assets/images/password-security.gif" alt="User Creation" class="img-fluid"
                             style="max-height: 400px;">
-                        <h4 class="mt-3">Gestione degli utenti</h4>
-                        <p class="text-muted">Crea nuovi utenti con livelli di accesso appropriati.</p>
+                        <h4 class="mt-3"><?= __('common.user_management') ?></h4>
+                        <p class="text-muted"><?= __('auth.subtitle') ?? 'Manage application users and permissions' ?></p>
                     </div>
                 </div>
             </div>
