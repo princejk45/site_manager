@@ -146,7 +146,7 @@
                             <h6><?= __('common.bug') ?></h6>
                             <div class="card">
                                 <div class="card-body">
-                                    <p><?= !empty($website['notes']) ? nl2br(htmlspecialchars($website['notes'])) : __('common.leave_empty') ?>
+                                    <p><?= !empty($website['notes']) ? nl2br(htmlspecialchars($website['notes'])) : '-' ?>
                                     </p>
                                 </div>
                             </div>
@@ -155,7 +155,7 @@
                             <h6><?= __('common.notes') ?></h6>
                             <div class="card">
                                 <div class="card-body">
-                                    <p><?= !empty($website['remark']) ? nl2br(htmlspecialchars($website['remark'])) : __('common.enter_notes') ?>
+                                    <p><?= !empty($website['remark']) ? nl2br(htmlspecialchars($website['remark'])) : '-' ?>
                                     </p>
                                 </div>
                             </div>

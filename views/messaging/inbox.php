@@ -51,6 +51,17 @@ if (isset($_SESSION['user_id'])) {
                         </h3>
                     </div>
                     <div class="card-body p-0">
+                        <div style="padding: 10px 15px; background-color: #f8f9fa; border-bottom: 1px solid #ddd; display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                            <input type="checkbox" id="selectAll" style="cursor: pointer;"> 
+                            <label for="selectAll" style="cursor: pointer; margin-bottom: 0;"><?= __('messaging.select_all') ?></label>
+                            <div id="bulkActions" style="display: none; gap: 8px; margin-left: auto; flex-wrap: wrap;">
+                                <button class="btn btn-sm btn-outline-primary" id="btnMarkRead" onclick="bulkMarkRead(true)" style="display: none;"><?= __('messaging.mark_as_read') ?></button>
+                                <button class="btn btn-sm btn-outline-warning" id="btnMarkUnread" onclick="bulkMarkRead(false)" style="display: none;"><?= __('messaging.mark_as_unread') ?></button>
+                                <button class="btn btn-sm btn-outline-success" id="btnStar" onclick="bulkStar(true)" style="display: none;"><?= __('messaging.star') ?></button>
+                                <button class="btn btn-sm btn-outline-warning" id="btnUnstar" onclick="bulkStar(false)" style="display: none;"><?= __('messaging.unstar') ?></button>
+                                <button class="btn btn-sm btn-outline-secondary" onclick="clearSelection()"><?= __('messaging.clear_selection') ?></button>
+                            </div>
+                        </div>
                         <div class="list-group list-group-flush">
                             <?php foreach ($threads as $thread): ?>
                                 <?php
@@ -58,12 +69,16 @@ if (isset($_SESSION['user_id'])) {
                                 $otherParticipants = array_filter($participants, function ($p) {
                                     return $p['id'] != $_SESSION['user_id'];
                                 });
+                                $isStarred = isset($threadModel) ? $threadModel->isStarred($thread['id'], $_SESSION['user_id']) : false;
                                 ?>
-                                <a href="?action=messaging&do=view&id=<?= $thread['id'] ?>&lang=<?= $_SESSION['lang'] ?? 'it' ?>" class="list-group-item list-group-item-action px-4 py-3 thread-item" style="transition: all 0.3s ease;">
-                                    <div class="row align-items-center">
+                                <div class="list-group-item px-4 py-3 thread-item" style="transition: all 0.3s ease; display: flex; align-items: center; gap: 15px;">
+                                    <!-- Checkbox -->
+                                    <input type="checkbox" class="thread-checkbox" data-thread-id="<?= $thread['id'] ?>" data-starred="<?= $isStarred ? '1' : '0' ?>" style="cursor: pointer; flex-shrink: 0;" onchange="updateBulkUI()">
+
+                                    <!-- Clickable link wrapper for thread content -->
+                                    <a href="?action=messaging&do=view&id=<?= $thread['id'] ?>&lang=<?= $_SESSION['lang'] ?? 'it' ?>" style="flex: 1; text-decoration: none; color: inherit; display: flex; align-items: center; gap: 15px;">
                                         <!-- Avatars -->
-                                        <div class="col-auto mr-3">
-                                            <div class="avatar-stack" style="display: flex; gap: -10px;">
+                                        <div class="avatar-stack" style="display: flex; gap: -10px; flex-shrink: 0;">
                                                 <?php
                                                 $shown = 0;
                                                 foreach (array_slice($otherParticipants, 0, 2) as $participant):
@@ -106,11 +121,10 @@ if (isset($_SESSION['user_id'])) {
                                                         +<?= count($otherParticipants) - 2 ?>
                                                     </div>
                                                 <?php endif; ?>
-                                            </div>
-                                        </div>
+                                    </div>
 
-                                        <!-- Thread Content -->
-                                        <div class="col">
+                                    <!-- Thread Content -->
+                                    <div style="flex: 1;">
                                             <div class="d-flex justify-content-between align-items-start">
                                                 <div>
                                                     <div class="d-flex align-items-center">
@@ -136,7 +150,7 @@ if (isset($_SESSION['user_id'])) {
                                         </div>
 
                                         <!-- Unread Badge -->
-                                        <div class="col-auto">
+                                        <div style="flex-shrink: 0;">
                                             <?php if ($thread['unread_count'] > 0): ?>
                                                 <span class="badge badge-danger badge-lg" style="padding: 8px 10px; font-size: 14px;">
                                                     <?= $thread['unread_count'] ?>
@@ -147,8 +161,13 @@ if (isset($_SESSION['user_id'])) {
                                                 </span>
                                             <?php endif; ?>
                                         </div>
-                                    </div>
-                                </a>
+                                    </a>
+
+                                    <!-- Star button - OUTSIDE link -->
+                                    <button class="btn btn-sm btn-link" onclick="toggleStar(<?= $thread['id'] ?>, this); return false;" style="flex-shrink: 0; padding: 0.25rem 0.5rem; margin: 0;">
+                                        <i class="fas fa-star" style="font-size: 18px; color: <?= $isStarred ? '#ffc107' : '#ddd' ?>;"></i>
+                                    </button>
+                                </div>
                             <?php endforeach; ?>
                         </div>
                     </div>
@@ -162,6 +181,9 @@ if (isset($_SESSION['user_id'])) {
     .thread-item {
         border-left: 4px solid #f0f0f0;
         transition: all 0.3s ease;
+        border: 1px solid #dee2e6;
+        border-left: 4px solid #f0f0f0;
+        background-color: #fff;
     }
 
     .thread-item:hover {
@@ -172,6 +194,14 @@ if (isset($_SESSION['user_id'])) {
 
     .thread-item.unread {
         background-color: #f0f7ff;
+    }
+
+    .thread-link {
+        display: contents;
+    }
+
+    .thread-link:hover {
+        text-decoration: none;
     }
 
     .avatar-stack {
@@ -188,5 +218,118 @@ if (isset($_SESSION['user_id'])) {
         margin-left: 0;
     }
 </style>
+
+<script>
+function updateBulkUI() {
+    const checked = Array.from(document.querySelectorAll('.thread-checkbox:checked'));
+    const bulkActions = document.getElementById('bulkActions');
+    
+    if (checked.length > 0) {
+        bulkActions.style.display = 'flex';
+        
+        // Check if any selected thread is starred
+        const anyStarred = checked.some(cb => cb.dataset.starred === '1');
+        const anyUnstarred = checked.some(cb => cb.dataset.starred === '0');
+        
+        // Show/hide star buttons based on selection
+        document.getElementById('btnStar').style.display = anyUnstarred ? 'inline-block' : 'none';
+        document.getElementById('btnUnstar').style.display = anyStarred ? 'inline-block' : 'none';
+        document.getElementById('btnMarkRead').style.display = 'inline-block';
+        document.getElementById('btnMarkUnread').style.display = 'inline-block';
+    } else {
+        bulkActions.style.display = 'none';
+    }
+}
+
+function clearSelection() {
+    document.querySelectorAll('.thread-checkbox').forEach(cb => cb.checked = false);
+    document.getElementById('selectAll').checked = false;
+    updateBulkUI();
+}
+
+document.getElementById('selectAll').addEventListener('change', function() {
+    document.querySelectorAll('.thread-checkbox').forEach(cb => cb.checked = this.checked);
+    updateBulkUI();
+});
+
+function getSelectedThreadIds() {
+    return Array.from(document.querySelectorAll('.thread-checkbox:checked')).map(cb => cb.dataset.threadId);
+}
+
+function toggleStar(threadId, button) {
+    const formData = new FormData();
+    formData.append('thread_id', threadId);
+
+    fetch('?action=messaging&do=toggle_star', {
+        method: 'POST',
+        body: formData
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            const icon = button.querySelector('i');
+            const checkbox = document.querySelector(`.thread-checkbox[data-thread-id="${threadId}"]`);
+            if (data.starred) {
+                icon.style.color = '#ffc107';
+                checkbox.dataset.starred = '1';
+            } else {
+                icon.style.color = '#ddd';
+                checkbox.dataset.starred = '0';
+            }
+            // Update bulk UI in case checkbox is selected
+            updateBulkUI();
+        }
+    })
+    .catch(e => console.error('Error:', e));
+}
+
+function bulkMarkRead(isRead) {
+    const threadIds = getSelectedThreadIds();
+    if (threadIds.length === 0) {
+        alert('<?= __('messaging.no_messages') ?>');
+        return;
+    }
+
+    const formData = new FormData();
+    threadIds.forEach(id => formData.append('thread_ids[]', id));
+    formData.append('is_read', isRead ? '1' : '0');
+
+    fetch('?action=messaging&do=bulk_mark', {
+        method: 'POST',
+        body: formData
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        }
+    })
+    .catch(e => console.error('Error:', e));
+}
+
+function bulkStar(starred) {
+    const threadIds = getSelectedThreadIds();
+    if (threadIds.length === 0) {
+        alert('<?= __('messaging.no_messages') ?>');
+        return;
+    }
+
+    const formData = new FormData();
+    threadIds.forEach(id => formData.append('thread_ids[]', id));
+    formData.append('starred', starred ? '1' : '0');
+
+    fetch('?action=messaging&do=bulk_star', {
+        method: 'POST',
+        body: formData
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        }
+    })
+    .catch(e => console.error('Error:', e));
+}
+</script>
 
 <?php include APP_PATH . '/includes/footer.php'; ?>

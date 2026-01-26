@@ -70,14 +70,28 @@ class User
 
     public function updateUser($data)
     {
-        $stmt = $this->pdo->prepare("UPDATE users SET username = ?, role = ?, email = ?, is_active = ? WHERE id = ?");
-        return $stmt->execute([
-            $data['username'],
-            $data['role'],
-            $data['email'],
-            $data['is_active'],
-            $data['id']
-        ]);
+        // Check if password is being updated
+        if (!empty($data['password'])) {
+            $stmt = $this->pdo->prepare("UPDATE users SET username = ?, role = ?, email = ?, is_active = ?, password = ? WHERE id = ?");
+            return $stmt->execute([
+                $data['username'],
+                $data['role'],
+                $data['email'],
+                $data['is_active'],
+                $data['password'],
+                $data['id']
+            ]);
+        } else {
+            // Update without password
+            $stmt = $this->pdo->prepare("UPDATE users SET username = ?, role = ?, email = ?, is_active = ? WHERE id = ?");
+            return $stmt->execute([
+                $data['username'],
+                $data['role'],
+                $data['email'],
+                $data['is_active'],
+                $data['id']
+            ]);
+        }
     }
 
     public function getAllUsers()

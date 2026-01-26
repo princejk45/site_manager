@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<?= htmlspecialchars($_SESSION['lang'] ?? DEFAULT_LANG) ?>">
 
 <head>
     <meta charset="UTF-8">

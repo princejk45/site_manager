@@ -3,7 +3,11 @@ include APP_PATH . '/includes/header.php';
 // Get unread count for sidebar badge
 if (isset($_SESSION['user_id'])) {
     require_once APP_PATH . '/models/MessageThread.php';
+    require_once APP_PATH . '/models/Website.php';
+    require_once APP_PATH . '/models/User.php';
     $threadModel = new MessageThread($GLOBALS['pdo']);
+    $websiteModel = new Website($GLOBALS['pdo']);
+    $userModel = new User($GLOBALS['pdo']);
     $userThreads = $threadModel->getUserThreads($_SESSION['user_id']);
     $unreadMessageCount = array_sum(array_column($userThreads, 'unread_count'));
 
@@ -12,12 +16,25 @@ if (isset($_SESSION['user_id'])) {
     $participants = $threadModel->getThreadParticipantsWithDetails($threadId);
     $threadCreator = $threadModel->getThreadCreator($threadId);
     $isThreadCreator = $threadCreator == $_SESSION['user_id'];
+    
+    // Get service and client names if applicable
+    $serviceName = null;
+    $clientCcEmail = null;
+    if (!empty($threadSummary['service_id'])) {
+        $service = $websiteModel->getWebsiteById($threadSummary['service_id']);
+        $serviceName = $service['domain'] ?? $service['name'] ?? null;
+    }
+    if (!empty($threadSummary['client_cc_email'])) {
+        $clientCcEmail = $threadSummary['client_cc_email'];
+    }
 } else {
     $unreadMessageCount = 0;
     $threadSummary = [];
     $participants = [];
     $threadCreator = null;
     $isThreadCreator = false;
+    $serviceName = null;
+    $clientCcEmail = null;
 }
 ?>
 <?php include APP_PATH . '/includes/sidebar.php'; ?>
@@ -84,7 +101,7 @@ if (isset($_SESSION['user_id'])) {
                                 ?>
                             <div class="message-item mb-3 <?= $isCurrentUser ? 'text-right' : 'text-left' ?>">
                                 <div
-                                    class="d-flex <?= $isCurrentUser ? 'flex-row-reverse' : 'flex-row' ?> align-items-flex-end gap-2">
+                                    class="d-flex <?= $isCurrentUser ? 'flex-row-reverse' : 'flex-row' ?> align-items-flex-end" style="gap: 15px;">
                                     <!-- Avatar -->
                                     <div class="message-avatar flex-shrink-0">
                                         <div class="avatar" style="
@@ -153,11 +170,11 @@ if (isset($_SESSION['user_id'])) {
                                 <div class="input-group">
                                     <textarea name="content" id="messageContent" class="form-control"
                                         placeholder="<?= __('messaging.type_message') ?? 'Type your message here...' ?>"
-                                        rows="3" style="border-radius: 20px; padding: 10px 15px; resize: none;"
+                                        rows="3" style="border-radius: 20px 0 0 20px; padding: 10px 15px; resize: none; border-right: none;"
                                         maxlength="5000"></textarea>
                                     <span class="input-group-append">
                                         <button type="submit" class="btn btn-primary"
-                                            style="border-radius: 0 20px 20px 0;">
+                                            style="border-radius: 0 20px 20px 0; border-left: none;">
                                             <i class="fas fa-paper-plane"></i> <?= __('messaging.send') ?? 'Send' ?>
                                         </button>
                                     </span>
@@ -183,7 +200,7 @@ if (isset($_SESSION['user_id'])) {
                                 <?php foreach ($participants as $participant): ?>
                                 <li class="list-group-item d-flex align-items-center justify-content-between">
                                     <div class="d-flex align-items-center">
-                                        <div class="avatar mr-2" style="
+                                        <div class="avatar" style="
                                                 width: 36px;
                                                 height: 36px;
                                                 border-radius: 50%;
@@ -194,6 +211,8 @@ if (isset($_SESSION['user_id'])) {
                                                 color: white;
                                                 font-weight: bold;
                                                 font-size: 14px;
+                                                margin-right: 15px;
+                                                flex-shrink: 0;
                                             ">
                                             <?= strtoupper(substr($participant['username'], 0, 1)) ?>
                                         </div>
@@ -239,11 +258,23 @@ if (isset($_SESSION['user_id'])) {
                                     class="text-muted small font-weight-bold"><?= __('messaging.total_messages') ?? 'Total Messages' ?></span>
                                 <div><?= $threadSummary['message_count'] ?? 0 ?></div>
                             </div>
-                            <div class="info-item">
+                            <div class="info-item mb-3">
                                 <span
                                     class="text-muted small font-weight-bold"><?= __('messaging.total_participants') ?? 'Total Participants' ?></span>
                                 <div><?= count($participants) ?></div>
                             </div>
+                            <?php if ($serviceName): ?>
+                            <div class="info-item mb-3">
+                                <span class="text-muted small font-weight-bold"><?= __('messaging.service_attached') ?? 'Service' ?></span>
+                                <div><?= htmlspecialchars($serviceName) ?></div>
+                            </div>
+                            <?php endif; ?>
+                            <?php if ($clientCcEmail): ?>
+                            <div class="info-item">
+                                <span class="text-muted small font-weight-bold"><?= __('messaging.client_cc') ?? 'CC\'d Email' ?></span>
+                                <div><?= htmlspecialchars($clientCcEmail) ?></div>
+                            </div>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>

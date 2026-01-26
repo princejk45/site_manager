@@ -23,6 +23,9 @@ if (isset($_SESSION['user_id'])) {
                     <a href="index.php?action=messaging&lang=<?= $_SESSION['lang'] ?? 'it' ?>" class="btn btn-secondary">
                         <i class="fas fa-arrow-left"></i> <?= __('common.back') ?>
                     </a>
+                    <a href="index.php?action=messaging&do=groups_create&lang=<?= $_SESSION['lang'] ?? 'it' ?>" class="btn btn-success ml-2">
+                        <i class="fas fa-plus"></i> <?= __('messaging.create_group') ?>
+                    </a>
                 </div>
             </div>
         </div>
@@ -57,6 +60,15 @@ if (isset($_SESSION['user_id'])) {
                                                     class="btn btn-sm btn-primary">
                                                     <i class="fas fa-envelope"></i> <?= __('messaging.send') ?>
                                                 </a>
+                                                <a href="index.php?action=messaging&do=groups_edit&id=<?= $group['id'] ?>&lang=<?= $_SESSION['lang'] ?? 'it' ?>" class="btn btn-sm btn-info">
+                                                    <i class="fas fa-edit"></i> <?= __('common.edit') ?>
+                                                </a>
+                                                <form method="post" action="index.php?action=messaging&do=groups_delete" style="display:inline-block;">
+                                                    <input type="hidden" name="group_id" value="<?= $group['id'] ?>">
+                                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('<?= __('common.confirm_delete') ?>');">
+                                                        <i class="fas fa-trash"></i> <?= __('common.delete') ?>
+                                                    </button>
+                                                </form>
                                             </td>
                                         </tr>
                                     <?php endforeach; ?>

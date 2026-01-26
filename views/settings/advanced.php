@@ -32,7 +32,7 @@
                         <li><?= __('settings.imported') ?>: <?= $_SESSION['google_sync_result']['imported'] ?? 0 ?></li>
                         <li><?= __('settings.updated') ?>: <?= $_SESSION['google_sync_result']['updated'] ?? 0 ?></li>
                         <li><?= __('settings.conflicts_resolved') ?>: <?= $_SESSION['google_sync_result']['conflicts'] ?? 0 ?></li>
-                        <?php if (!empty($_SESSION['google_sync_result']['errors'])): ?>
+                        <?php if (!empty($_SESSION['google_sync_result']['errors']) && is_array($_SESSION['google_sync_result']['errors'])): ?>
                             <li><?= __('common.error') ?>:
                                 <ul>
                                     <?php foreach ($_SESSION['google_sync_result']['errors'] as $error): ?>
@@ -44,6 +44,144 @@
                     </ul>
                 </div>
                 <?php unset($_SESSION['google_sync_result']); ?>
+            <?php endif; ?>
+
+            <?php if (isset($_SESSION['comparison_result'])): ?>
+                <?php $comparison = $_SESSION['comparison_result']; ?>
+                <div class="mt-4">
+                    <div class="card">
+                        <div class="card-header bg-info text-white">
+                            <h5 class="m-0"><i class="fas fa-balance-scale"></i> <?= __('settings.comparison_results') ?></h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="text-center">
+                                        <h6><?= __('settings.database_total') ?></h6>
+                                        <p class="display-4 text-primary"><?= $comparison['summary']['db_total'] ?></p>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="text-center">
+                                        <h6><?= __('settings.google_sheets_total') ?></h6>
+                                        <p class="display-4 text-success"><?= $comparison['summary']['google_total'] ?></p>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="text-center">
+                                        <h6><?= __('settings.matching_records') ?></h6>
+                                        <p class="display-4 text-info"><?= $comparison['summary']['matches'] ?></p>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="text-center">
+                                        <h6><?= __('common.conflicts') ?></h6>
+                                        <p class="display-4 text-warning"><?= $comparison['summary']['conflicts'] ?></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Detailed Comparison Table -->
+                    <?php if (!empty($comparison['different_values']) || !empty($comparison['only_in_db']) || !empty($comparison['only_in_google'])): ?>
+                        <div class="card mt-4">
+                            <div class="card-header">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h5 class="m-0"><?= __('settings.detailed_disparities') ?></h5>
+                                    <small class="text-muted">
+                                        <?php 
+                                        $fieldDiffCount = 0;
+                                        foreach ($comparison['different_values'] as $conflict) {
+                                            $fieldDiffCount += count($conflict['differences']);
+                                        }
+                                        $totalDisparity = $fieldDiffCount + count($comparison['only_in_db']) + count($comparison['only_in_google']);
+                                        ?>
+                                        <?= $comparison['summary']['conflicts'] ?> <?= __('common.conflicts') ?> (<?= $fieldDiffCount ?> <?= $fieldDiffCount === 1 ? __('settings.field_difference') : __('settings.field_differences') ?>)
+                                    </small>
+                                </div>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-hover mb-0">
+                                        <thead class="bg-light">
+                                            <tr>
+                                                <th style="width: 15%;"><?= __('settings.domain') ?></th>
+                                                <th style="width: 15%;"><?= __('settings.field') ?></th>
+                                                <th style="width: 35%;"><?= __('settings.database_value') ?></th>
+                                                <th style="width: 35%;"><?= __('settings.google_sheets_value') ?></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php 
+                                            $totalRows = 0;
+                                            foreach ($comparison['different_values'] as $conflict):
+                                                foreach ($conflict['differences'] as $field => $diff):
+                                                    $totalRows++;
+                                                    ?>
+                                                    <tr>
+                                                        <td><strong><?= htmlspecialchars($conflict['domain']) ?></strong></td>
+                                                        <td><span class="badge badge-warning"><?= htmlspecialchars($field) ?></span></td>
+                                                        <td>
+                                                            <code class="bg-light p-2 d-block" style="max-height: 60px; overflow: auto;">
+                                                                <?= htmlspecialchars($diff['db_value']) ?>
+                                                            </code>
+                                                        </td>
+                                                        <td>
+                                                            <code class="bg-light p-2 d-block" style="max-height: 60px; overflow: auto;">
+                                                                <?= htmlspecialchars($diff['google_value']) ?>
+                                                            </code>
+                                                        </td>
+                                                    </tr>
+                                                    <?php
+                                                endforeach;
+                                            endforeach;
+                                            
+                                            // Add rows for items only in database
+                                            foreach ($comparison['only_in_db'] as $item):
+                                                $totalRows++;
+                                                ?>
+                                                <tr class="table-warning">
+                                                    <td><strong><?= htmlspecialchars($item['domain']) ?></strong></td>
+                                                    <td><span class="badge badge-info"><?= __('settings.only_in_db') ?></span></td>
+                                                    <td><em><?= __('settings.exists_in_database') ?></em></td>
+                                                    <td><em class="text-danger"><?= __('settings.not_in_google_sheets') ?></em></td>
+                                                </tr>
+                                                <?php
+                                            endforeach;
+                                            
+                                            // Add rows for items only in Google Sheets
+                                            foreach ($comparison['only_in_google'] as $item):
+                                                $totalRows++;
+                                                ?>
+                                                <tr class="table-info">
+                                                    <td><strong><?= htmlspecialchars($item['service_type'] ?? 'N/A') ?></strong></td>
+                                                    <td><span class="badge badge-success"><?= __('settings.only_in_google') ?></span></td>
+                                                    <td><em class="text-danger"><?= __('settings.not_in_database') ?></em></td>
+                                                    <td><em><?= __('settings.exists_in_google_sheets') ?></em></td>
+                                                </tr>
+                                                <?php
+                                            endforeach;
+                                            ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <?php if ($totalRows === 0): ?>
+                                    <div class="p-3 text-center text-muted">
+                                        <i class="fas fa-check-circle"></i> <?= __('settings.all_records_match') ?>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+
+                        <div class="mt-3 text-right">
+                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#mergeModal">
+                                <i class="fas fa-sync"></i> <?= __('settings.proceed_to_merge') ?>
+                            </button>
+                        </div>
+                    <?php endif; ?>
+                </div>
+                <?php unset($_SESSION['comparison_result']); ?>
             <?php endif; ?>
 
             <!-- Confirmation Modal -->
@@ -157,8 +295,56 @@
                                 class="btn btn-success ml-2"><?= __('settings.export_to_google') ?></button>
                             <button type="button" name="import_from_google" id="importBtn"
                                 class="btn btn-info ml-2"><?= __('settings.import_from_google') ?></button>
+                            <button type="button" id="compareBtn"
+                                class="btn btn-warning ml-2"><i class="fas fa-balance-scale"></i> <?= __('settings.compare_data') ?></button>
                         </div>
                     </form>
+
+                    <!-- Merge Modal -->
+                    <div class="modal fade" id="mergeModal" tabindex="-1" role="dialog" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header bg-primary text-white">
+                                    <h5 class="modal-title"><?= __('settings.merge_data') ?></h5>
+                                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <p><?= __('settings.select_merge_strategy') ?></p>
+                                    <form id="mergeForm" method="post" action="index.php?action=settings&do=merge_google">
+                                        <div class="form-group">
+                                            <div class="custom-control custom-radio">
+                                                <input type="radio" id="mergeForward" name="merge_strategy" value="forward" class="custom-control-input" checked>
+                                                <label class="custom-control-label" for="mergeForward">
+                                                    <strong><?= __('settings.merge_forward') ?></strong>
+                                                    <small class="d-block text-muted"><?= __('settings.merge_forward_desc') ?></small>
+                                                </label>
+                                            </div>
+                                            <div class="custom-control custom-radio mt-3">
+                                                <input type="radio" id="mergeBackward" name="merge_strategy" value="backward" class="custom-control-input">
+                                                <label class="custom-control-label" for="mergeBackward">
+                                                    <strong><?= __('settings.merge_backward') ?></strong>
+                                                    <small class="d-block text-muted"><?= __('settings.merge_backward_desc') ?></small>
+                                                </label>
+                                            </div>
+                                            <div class="custom-control custom-radio mt-3">
+                                                <input type="radio" id="mergeBoth" name="merge_strategy" value="together" class="custom-control-input">
+                                                <label class="custom-control-label" for="mergeBoth">
+                                                    <strong><?= __('settings.merge_both') ?></strong>
+                                                    <small class="d-block text-muted"><?= __('settings.merge_both_desc') ?></small>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal"><?= __('websites.cancel') ?></button>
+                                    <button type="button" class="btn btn-primary" id="confirmMergeBtn"><?= __('websites.confirm') ?></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
                     <!-- Hidden forms for import/export actions -->
                     <form id="exportForm" method="post" action="index.php?action=settings&do=google_sheets"
@@ -192,14 +378,15 @@
     document.addEventListener('DOMContentLoaded', function() {
         const exportBtn = document.getElementById('exportBtn');
         const importBtn = document.getElementById('importBtn');
+        const compareBtn = document.getElementById('compareBtn');
         const googleSyncToggle = document.getElementById('google_sync_enabled');
 
         function updateButtonState() {
             const syncOn = googleSyncToggle.checked;
             exportBtn.disabled = !syncOn;
             importBtn.disabled = !syncOn;
+            compareBtn.disabled = !syncOn;
         }
-
 
         updateButtonState();
 
@@ -224,6 +411,32 @@
                 document.getElementById('importForm').submit();
             };
         });
+
+        compareBtn.addEventListener('click', function() {
+            // First compare, then show merge options
+            document.getElementById('confirmationMessage').innerHTML =
+                '<?= __('settings.confirm_compare_google') ?>';
+            $('#confirmationModal').modal('show');
+            document.getElementById('confirmActionBtn').onclick = function() {
+                $('#confirmationModal').modal('hide');
+                // Create a hidden form to submit the compare request
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = 'index.php?action=settings&do=compare_google';
+                form.innerHTML = '<input type="hidden" name="compare" value="1">';
+                document.body.appendChild(form);
+                form.submit();
+            };
+        });
+
+        // Handle merge button
+        const confirmMergeBtn = document.getElementById('confirmMergeBtn');
+        if (confirmMergeBtn) {
+            confirmMergeBtn.addEventListener('click', function() {
+                $('#mergeModal').modal('hide');
+                document.getElementById('mergeForm').submit();
+            });
+        }
     });
 </script>
 

@@ -88,7 +88,7 @@ class Website
         $stmt = $this->pdo->prepare("
         INSERT INTO websites 
         (name, domain, hosting_id, email_server, expiry_date, status, vendita, assigned_email, proprietario, dns, cpanel, epanel, notes, remark) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ");
         return $stmt->execute([
             $data['name'],
@@ -363,7 +363,7 @@ class Website
         return $results;
     }
 
-    private function getWebsiteByDomain($domain)
+    public function getWebsiteByDomain($domain)
     {
         $stmt = $this->pdo->prepare("SELECT id FROM websites WHERE domain = ?");
         $stmt->execute([$domain]);

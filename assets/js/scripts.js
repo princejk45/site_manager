@@ -1,3 +1,23 @@
+// Initialize AdminLTE pushmenu and enable dropdowns
+document.addEventListener('DOMContentLoaded', function() {
+  try {
+    // Enable sidebar toggle (pushmenu)
+    const pushToggles = document.querySelectorAll('[data-widget="pushmenu"]');
+    pushToggles.forEach(btn => btn.addEventListener('click', function(e) {
+      e.preventDefault();
+      document.body.classList.toggle('sidebar-collapse');
+    }));
+
+    // Enable Bootstrap dropdowns where necessary
+    var dropdownTriggerList = [].slice.call(document.querySelectorAll('.dropdown-toggle'));
+    dropdownTriggerList.forEach(function (dropdownToggleEl) {
+      try { new bootstrap.Dropdown(dropdownToggleEl); } catch (err) {}
+    });
+  } catch (err) {
+    console.error('scripts init error', err);
+  }
+});
+
 $(function () {
   // Enable tooltips everywhere
   $('[data-toggle="tooltip"]').tooltip();

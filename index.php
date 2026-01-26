@@ -14,7 +14,8 @@ $messagingController = new MessagingController(
     new MessageThread($pdo),
     new Group($pdo),
     new User($pdo),
-    $emailModel
+    $emailModel,
+    $pdo  // Pass database connection for EmailTemplate model
 );
 
 // Get action from request
@@ -162,6 +163,27 @@ switch ($action) {
             case 'google_sheets':  // Add this new case
                 $settingsController->handleGoogleSheets();
                 break;
+            case 'site_settings':
+                $settingsController->siteSettings();
+                break;
+            case 'save_site_settings':
+                $settingsController->siteSettings();
+                break;
+            case 'save_email_header_footer':
+                $settingsController->saveEmailHeaderFooter();
+                break;
+            case 'email_templates':
+                $settingsController->emailTemplates();
+                break;
+            case 'edit_email_template':
+                $settingsController->editEmailTemplate();
+                break;
+            case 'compare_google':
+                $settingsController->compareWithGoogle();
+                break;
+            case 'merge_google':
+                $settingsController->mergeWithGoogle();
+                break;
             default:
                 header('Location: index.php?action=settings&do=smtp');
         }
@@ -215,8 +237,35 @@ switch ($action) {
             case 'delete':
                 $messagingController->delete();
                 break;
+            case 'toggle_star':
+                $messagingController->toggleStar();
+                break;
+            case 'mark_read':
+                $messagingController->markThreadRead();
+                break;
+            case 'bulk_mark':
+                $messagingController->bulkMarkRead();
+                break;
+            case 'bulk_star':
+                $messagingController->bulkStar();
+                break;
             case 'groups':
                 $messagingController->listGroups();
+                break;
+            case 'groups_create':
+                $messagingController->showCreateGroup();
+                break;
+            case 'groups_store':
+                $messagingController->storeGroup();
+                break;
+            case 'groups_edit':
+                $messagingController->showEditGroup($id);
+                break;
+            case 'groups_update':
+                $messagingController->updateGroup();
+                break;
+            case 'groups_delete':
+                $messagingController->deleteGroup();
                 break;
             default:
                 $messagingController->inbox();

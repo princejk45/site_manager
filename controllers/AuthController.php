@@ -153,6 +153,11 @@ class AuthController
             'is_active' => isset($_POST['is_active']) ? 1 : 0
         ];
 
+        // Add password if provided (optional)
+        if (!empty($_POST['password'])) {
+            $data['password'] = password_hash($_POST['password'], PASSWORD_DEFAULT);
+        }
+
         if ($this->userModel->updateUser($data)) {
             $_SESSION['message'] = "Utente aggiornato con successo";
         } else {

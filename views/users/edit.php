@@ -68,6 +68,13 @@
                                     </select>
                                 </div>
 
+                                <div class="form-group">
+                                    <label><?= __('common.password') ?> <small class="text-muted">(<?= __('common.optional') ?>)</small></label>
+                                    <input type="password" name="password" class="form-control"
+                                        placeholder="<?= __('common.leave_blank_to_keep_same') ?>">
+                                    <small class="form-text text-muted"><?= __('common.leave_blank_to_keep_same') ?></small>
+                                </div>
+
                                 <div class="form-group form-check">
                                     <input type="checkbox" name="is_active" class="form-check-input" id="is_active"
                                         <?= $user['is_active'] ? 'checked' : '' ?>>

@@ -282,14 +282,15 @@ HTML;
 
 
         // Handle different encryption types
-        switch ($smtpSettings['encryption']) {
+        switch (strtolower($smtpSettings['encryption'] ?? '')) {
             case 'starttls':
+            case 'tls':
                 $mail->SMTPSecure = PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
                 $mail->SMTPAutoTLS = true;  // Enable STARTTLS
                 break;
             case 'ssl':
-            case 'tls':
-                $mail->SMTPSecure = $smtpSettings['encryption'];
+                $mail->SMTPSecure = PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_SMTPS;
+                $mail->SMTPAutoTLS = false;
                 break;
             default:
                 $mail->SMTPSecure = false;

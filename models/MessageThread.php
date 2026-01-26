@@ -8,16 +8,16 @@ class MessageThread
         $this->db = $db;
     }
 
-    public function createThread($subject, $creatorId, $participantIds, $content, $groupId = null)
+    public function createThread($subject, $creatorId, $participantIds, $content, $groupId = null, $serviceId = null, $clientCcEmail = null)
     {
         $this->db->beginTransaction();
         try {
             // Create thread
             $stmt = $this->db->prepare("
-                INSERT INTO message_threads (subject, group_id) 
-                VALUES (?, ?)
+                INSERT INTO message_threads (subject, group_id, service_id, client_cc_email) 
+                VALUES (?, ?, ?, ?)
             ");
-            $stmt->execute([$subject, $groupId]);
+            $stmt->execute([$subject, $groupId, $serviceId, $clientCcEmail]);
             $threadId = $this->db->lastInsertId();
 
             // Add participants
@@ -189,6 +189,8 @@ class MessageThread
                 t.id,
                 t.subject,
                 t.created_at,
+                t.service_id,
+                t.client_cc_email,
                 (SELECT COUNT(*) FROM messages WHERE thread_id = ?) as message_count,
                 (SELECT COUNT(*) FROM thread_participants WHERE thread_id = ?) as participant_count,
                 (SELECT u.username FROM users u JOIN messages m ON m.sender_id = u.id WHERE m.thread_id = ? AND m.is_first = TRUE LIMIT 1) as creator_name
@@ -262,5 +264,104 @@ class MessageThread
             $this->db->rollBack();
             throw $e;
         }
+    }
+
+    // Toggle star on thread
+    public function toggleStar($threadId, $userId)
+    {
+        $stmt = $this->db->prepare("SELECT is_starred FROM thread_participants WHERE thread_id = ? AND user_id = ?");
+        $stmt->execute([$threadId, $userId]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        $isStarred = $result['is_starred'] ?? false;
+
+        $newStarred = !$isStarred;
+        $stmt = $this->db->prepare("UPDATE thread_participants SET is_starred = ? WHERE thread_id = ? AND user_id = ?");
+        $stmt->execute([$newStarred, $threadId, $userId]);
+        return $newStarred;
+    }
+
+    // Check if thread is starred
+    public function isStarred($threadId, $userId)
+    {
+        $stmt = $this->db->prepare("SELECT is_starred FROM thread_participants WHERE thread_id = ? AND user_id = ?");
+        $stmt->execute([$threadId, $userId]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result['is_starred'] ?? false;
+    }
+
+    // Get starred threads for user
+    public function getStarredThreads($userId)
+    {
+        $stmt = $this->db->prepare("
+            SELECT 
+                t.id,
+                t.subject,
+                t.created_at,
+                (SELECT content FROM messages WHERE thread_id = t.id ORDER BY created_at DESC LIMIT 1) as last_message,
+                (SELECT COUNT(*) FROM messages m 
+                 JOIN thread_participants tp ON m.thread_id = tp.thread_id 
+                 WHERE tp.user_id = ? AND tp.thread_id = t.id 
+                 AND (tp.last_read_at IS NULL OR m.created_at > tp.last_read_at)
+                 AND m.sender_id != ?) as unread_count,
+                (SELECT username FROM users u 
+                 JOIN messages m ON m.sender_id = u.id 
+                 WHERE m.thread_id = t.id 
+                 ORDER BY m.created_at DESC LIMIT 1) as last_sender
+            FROM message_threads t
+            JOIN thread_participants p ON t.id = p.thread_id
+            WHERE p.user_id = ? AND p.is_starred = TRUE
+            ORDER BY (SELECT MAX(created_at) FROM messages WHERE thread_id = t.id) DESC
+        ");
+        $stmt->execute([$userId, $userId, $userId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // Mark thread as read
+    public function markThreadAsRead($threadId, $userId)
+    {
+        $stmt = $this->db->prepare("UPDATE thread_participants SET last_read_at = NOW() WHERE thread_id = ? AND user_id = ?");
+        $stmt->execute([$threadId, $userId]);
+        return true;
+    }
+
+    // Mark thread as unread
+    public function markThreadAsUnread($threadId, $userId)
+    {
+        $stmt = $this->db->prepare("UPDATE thread_participants SET last_read_at = NULL WHERE thread_id = ? AND user_id = ?");
+        $stmt->execute([$threadId, $userId]);
+        return true;
+    }
+
+    // Bulk mark as read
+    public function bulkMarkAsRead($threadIds, $userId)
+    {
+        if (empty($threadIds)) return false;
+        $placeholders = implode(',', array_fill(0, count($threadIds), '?'));
+        $stmt = $this->db->prepare("UPDATE thread_participants SET last_read_at = NOW() WHERE thread_id IN ($placeholders) AND user_id = ?");
+        $params = array_merge($threadIds, [$userId]);
+        $stmt->execute($params);
+        return true;
+    }
+
+    // Bulk mark as unread
+    public function bulkMarkAsUnread($threadIds, $userId)
+    {
+        if (empty($threadIds)) return false;
+        $placeholders = implode(',', array_fill(0, count($threadIds), '?'));
+        $stmt = $this->db->prepare("UPDATE thread_participants SET last_read_at = NULL WHERE thread_id IN ($placeholders) AND user_id = ?");
+        $params = array_merge($threadIds, [$userId]);
+        $stmt->execute($params);
+        return true;
+    }
+
+    // Bulk star threads
+    public function bulkStar($threadIds, $userId, $starred = true)
+    {
+        if (empty($threadIds)) return false;
+        $placeholders = implode(',', array_fill(0, count($threadIds), '?'));
+        $stmt = $this->db->prepare("UPDATE thread_participants SET is_starred = ? WHERE thread_id IN ($placeholders) AND user_id = ?");
+        $params = array_merge([$starred], $threadIds, [$userId]);
+        $stmt->execute($params);
+        return true;
     }
 }
