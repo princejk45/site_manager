@@ -236,6 +236,41 @@ class WebsiteController
         exit;
     }
 
+    public function bulk_delete()
+    {
+        if (!isset($_SESSION['user_id']) || !isset($_SESSION['LAST_ACTIVITY'])) {
+            header('Location: index.php?action=login');
+            exit;
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['ids'])) {
+            header('Location: index.php?action=websites');
+            exit;
+        }
+
+        // Get and validate IDs
+        $ids = array_filter(array_map('intval', explode(',', $_POST['ids'])));
+        
+        if (empty($ids)) {
+            $_SESSION['error'] = "No items selected";
+            header('Location: index.php?action=websites');
+            exit;
+        }
+
+        try {
+            $deleted = 0;
+            foreach ($ids as $id) {
+                $this->websiteModel->deleteWebsite($id);
+                $deleted++;
+            }
+            $_SESSION['message'] = "$deleted servizio/i eliminato/i con successo";
+        } catch (Exception $e) {
+            $_SESSION['error'] = "Errore durante l'eliminazione: " . $e->getMessage();
+        }
+
+        header('Location: index.php?action=websites');
+        exit;
+    }
 
 
     public function renew($id)

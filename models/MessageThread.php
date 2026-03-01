@@ -46,8 +46,29 @@ class MessageThread
             INSERT INTO messages (thread_id, sender_id, content, is_first) 
             VALUES (?, ?, ?, ?)
         ");
-        $stmt->execute([$threadId, $senderId, $content, $isFirst]);
+        $stmt->execute([$threadId, $senderId, $content, (int)$isFirst]);
         return $this->db->lastInsertId();
+    }
+
+    // Ensure user is a participant of the thread
+    public function ensureUserIsParticipant($threadId, $userId)
+    {
+        // Check if user is already a participant
+        $stmt = $this->db->prepare("
+            SELECT COUNT(*) FROM thread_participants 
+            WHERE thread_id = ? AND user_id = ?
+        ");
+        $stmt->execute([$threadId, $userId]);
+        $exists = $stmt->fetchColumn();
+        
+        if (!$exists) {
+            // User is not a participant, add them
+            $stmt = $this->db->prepare("
+                INSERT INTO thread_participants (thread_id, user_id) 
+                VALUES (?, ?)
+            ");
+            $stmt->execute([$threadId, $userId]);
+        }
     }
 
     public function getThreadMessages($threadId, $userId)
@@ -336,22 +357,50 @@ class MessageThread
     public function bulkMarkAsRead($threadIds, $userId)
     {
         if (empty($threadIds)) return false;
+        
+        // Ensure all IDs are integers
+        $threadIds = array_map('intval', $threadIds);
+        
+        // First, ensure user is a participant in all threads
+        foreach ($threadIds as $threadId) {
+            $this->ensureUserIsParticipant($threadId, $userId);
+        }
+        
         $placeholders = implode(',', array_fill(0, count($threadIds), '?'));
         $stmt = $this->db->prepare("UPDATE thread_participants SET last_read_at = NOW() WHERE thread_id IN ($placeholders) AND user_id = ?");
         $params = array_merge($threadIds, [$userId]);
-        $stmt->execute($params);
-        return true;
+        
+        $result = $stmt->execute($params);
+        
+        // Log for debugging
+        error_log("Bulk mark read: Updated " . $stmt->rowCount() . " rows for threads: " . implode(',', $threadIds) . " user: $userId");
+        
+        return $result;
     }
 
     // Bulk mark as unread
     public function bulkMarkAsUnread($threadIds, $userId)
     {
         if (empty($threadIds)) return false;
+        
+        // Ensure all IDs are integers
+        $threadIds = array_map('intval', $threadIds);
+        
+        // First, ensure user is a participant in all threads
+        foreach ($threadIds as $threadId) {
+            $this->ensureUserIsParticipant($threadId, $userId);
+        }
+        
         $placeholders = implode(',', array_fill(0, count($threadIds), '?'));
         $stmt = $this->db->prepare("UPDATE thread_participants SET last_read_at = NULL WHERE thread_id IN ($placeholders) AND user_id = ?");
         $params = array_merge($threadIds, [$userId]);
-        $stmt->execute($params);
-        return true;
+        
+        $result = $stmt->execute($params);
+        
+        // Log for debugging
+        error_log("Bulk mark unread: Updated " . $stmt->rowCount() . " rows for threads: " . implode(',', $threadIds) . " user: $userId");
+        
+        return $result;
     }
 
     // Bulk star threads

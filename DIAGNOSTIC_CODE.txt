@@ -1,0 +1,58 @@
+<?php
+/**
+ * Diagnostic tool for Google Sheets
+ * Add this to your SettingsController class to debug sheet matching issues
+ */
+
+public function diagnosticGoogleSheets()
+{
+    if (!isset($_SESSION['user_id'])) {
+        die("Not authorized");
+    }
+    
+    header('Content-Type: text/plain; charset=utf-8');
+    
+    try {
+        $settings = $this->settingsModel->getGoogleSheetsSettings();
+        
+        echo "=== STORED SETTINGS ===\n";
+        echo "Sheet ID: " . $settings['sheet_id'] . "\n";
+        echo "Sheet Name: '" . $settings['sheet_name'] . "'\n";
+        echo "Sheet Name Length: " . strlen($settings['sheet_name']) . "\n";
+        echo "Sheet Name Hex: " . bin2hex($settings['sheet_name']) . "\n";
+        echo "Enabled: " . $settings['enabled'] . "\n";
+        echo "Credentials Present: " . (!empty($settings['credentials']) ? "YES" : "NO") . "\n\n";
+        
+        require_once APP_PATH . '/vendor/autoload.php';
+        
+        $client = $this->getGoogleClient();
+        $service = new \Google\Service\Sheets($client);
+        
+        echo "=== CONNECTING TO GOOGLE ===\n";
+        $spreadsheet = $service->spreadsheets->get($settings['sheet_id'], ['includeGridData' => false]);
+        echo "Spreadsheet Title: " . $spreadsheet->getProperties()->getTitle() . "\n";
+        echo "Spreadsheet ID: " . $spreadsheet->getSpreadsheetId() . "\n\n";
+        
+        echo "=== AVAILABLE SHEETS ===\n";
+        $sheets = $spreadsheet->getSheets();
+        echo "Total Sheets: " . count($sheets) . "\n\n";
+        
+        foreach ($sheets as $sheet) {
+            $title = $sheet->getProperties()->getTitle();
+            echo "Sheet: '" . $title . "'\n";
+            echo "  Length: " . strlen($title) . "\n";
+            echo "  Hex: " . bin2hex($title) . "\n";
+            echo "  Exact Match: " . ($title === $settings['sheet_name'] ? "YES" : "NO") . "\n";
+            echo "  Case-Insensitive Match: " . (strtolower($title) === strtolower($settings['sheet_name']) ? "YES" : "NO") . "\n";
+            echo "  Trim Match: " . (trim($title) === trim($settings['sheet_name']) ? "YES" : "NO") . "\n";
+            echo "  Trim Hex: " . bin2hex(trim($title)) . "\n";
+            echo "\n";
+        }
+        
+    } catch (Exception $e) {
+        echo "ERROR: " . $e->getMessage() . "\n";
+        echo $e->getTraceAsString();
+    }
+    
+    exit;
+}

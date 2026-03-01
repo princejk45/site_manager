@@ -1,0 +1,1602 @@
+[2026-03-01 17:39:45] [WARN] Running in DRY RUN mode - no emails will be sent
+[2026-03-01 17:39:45] [INFO] Processing 233 websites
+[2026-03-01 17:39:45] [INFO] Domain: bravolindo.it | Status: scaduto | Days: -704 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to bravolindo.it
+[2026-03-01 17:39:45] [INFO] Domain: bravocasa.net | Status: scaduto | Days: -516 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to bravocasa.net
+[2026-03-01 17:39:45] [INFO] Domain: pubblifull.com | Status: scaduto | Days: -369 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to pubblifull.com
+[2026-03-01 17:39:45] [INFO] Domain: cosenzanight.it | Status: scaduto | Days: -305 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to cosenzanight.it
+[2026-03-01 17:39:45] [INFO] Domain: biondinosrl.com | Status: scaduto | Days: -282 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to biondinosrl.com
+[2026-03-01 17:39:45] [INFO] Domain: biondinosrl.it | Status: scaduto | Days: -282 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to biondinosrl.it
+[2026-03-01 17:39:45] [INFO] Domain: reputationline.it | Status: scaduto | Days: -280 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to reputationline.it
+[2026-03-01 17:39:45] [INFO] Domain: villavomereto.it | Status: scaduto | Days: -261 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to villavomereto.it
+[2026-03-01 17:39:45] [INFO] Domain: sacrocuorecosenza.it | Status: scaduto | Days: -257 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to sacrocuorecosenza.it
+[2026-03-01 17:39:45] [INFO] Domain: quotidianoonline.info | Status: scaduto | Days: -247 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to quotidianoonline.info
+[2026-03-01 17:39:45] [INFO] Domain: hosting cloud pro 01 | Status: scaduto | Days: -243 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to hosting cloud pro 01
+[2026-03-01 17:39:45] [INFO] Domain: spazio email dedicato - 25gb - compreso in cloud pro 01 | Status: scaduto | Days: -243 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to spazio email dedicato - 25gb - compreso in cloud pro 01
+[2026-03-01 17:39:45] [INFO] Domain: camillotripicchio.com | Status: scaduto | Days: -241 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to camillotripicchio.com
+[2026-03-01 17:39:45] [INFO] Domain: camillotripicchio.it | Status: scaduto | Days: -241 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to camillotripicchio.it
+[2026-03-01 17:39:45] [INFO] Domain: quicatanzaro.it | Status: scaduto | Days: -239 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to quicatanzaro.it
+[2026-03-01 17:39:45] [INFO] Domain: quicosenza.it | Status: scaduto | Days: -239 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to quicosenza.it
+[2026-03-01 17:39:45] [INFO] Domain: quireggiocalabria.it | Status: scaduto | Days: -239 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to quireggiocalabria.it
+[2026-03-01 17:39:45] [INFO] Domain: mazzeiarredamenti.it | Status: scaduto | Days: -238 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to mazzeiarredamenti.it
+[2026-03-01 17:39:45] [INFO] Domain: quicosenza.com | Status: scaduto | Days: -236 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to quicosenza.com
+[2026-03-01 17:39:45] [INFO] Domain: pubblifull.it | Status: scaduto | Days: -230 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to pubblifull.it
+[2026-03-01 17:39:45] [INFO] Domain: anticofienile.it | Status: scaduto | Days: -214 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to anticofienile.it
+[2026-03-01 17:39:45] [INFO] Domain: martinoagrizoo.it | Status: scaduto | Days: -212 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to martinoagrizoo.it
+[2026-03-01 17:39:45] [INFO] Domain: martinoagrizoogarden.it | Status: scaduto | Days: -212 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to martinoagrizoogarden.it
+[2026-03-01 17:39:45] [INFO] Domain: portulaca.it | Status: scaduto | Days: -203 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to portulaca.it
+[2026-03-01 17:39:45] [INFO] Domain: altocasale.com | Status: scaduto | Days: -202 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to altocasale.com
+[2026-03-01 17:39:45] [INFO] Domain: altocasale.it | Status: scaduto | Days: -202 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to altocasale.it
+[2026-03-01 17:39:45] [INFO] Domain: bravocasa.it | Status: scaduto | Days: -192 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to bravocasa.it
+[2026-03-01 17:39:45] [INFO] Domain: fullmidia.it mail server outsourcing - 25gb | Status: scaduto | Days: -187 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to fullmidia.it mail server outsourcing - 25gb
+[2026-03-01 17:39:45] [INFO] Domain: quicosenza.it mail su server dedicato fully managed | Status: scaduto | Days: -187 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to quicosenza.it mail su server dedicato fully managed
+[2026-03-01 17:39:45] [INFO] Domain: rlb.it mail server outsourcing - 25gb | Status: scaduto | Days: -187 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to rlb.it mail server outsourcing - 25gb
+[2026-03-01 17:39:45] [INFO] Domain: ideaorogioielleria.com | Status: scaduto | Days: -182 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to ideaorogioielleria.com
+[2026-03-01 17:39:45] [INFO] Domain: autoricambikmzero.it | Status: scaduto | Days: -181 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to autoricambikmzero.it
+[2026-03-01 17:39:45] [INFO] Domain: cloud wordpress - 02 per serafinomazzei.it | Status: scaduto | Days: -179 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to cloud wordpress - 02 per serafinomazzei.it
+[2026-03-01 17:39:45] [INFO] Domain: cosentinoprofessional.it cloud wordpress - 02 | Status: scaduto | Days: -179 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to cosentinoprofessional.it cloud wordpress - 02
+[2026-03-01 17:39:45] [INFO] Domain: cosentinoprofessional.it spazio email dedicato - 20gb cpanel | Status: scaduto | Days: -179 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to cosentinoprofessional.it spazio email dedicato - 20gb cpanel
+[2026-03-01 17:39:45] [INFO] Domain: spazio email dedicato - 20gb cpanel per serafinomazzei.it | Status: scaduto | Days: -179 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to spazio email dedicato - 20gb cpanel per serafinomazzei.it
+[2026-03-01 17:39:45] [INFO] Domain: cosentinoprofessional.it | Status: scaduto | Days: -174 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to cosentinoprofessional.it
+[2026-03-01 17:39:45] [INFO] Domain: dkasashop.it | Status: scaduto | Days: -174 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to dkasashop.it
+[2026-03-01 17:39:45] [INFO] Domain: fullcrm.it | Status: scaduto | Days: -171 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to fullcrm.it
+[2026-03-01 17:39:45] [INFO] Domain: pubbliora.com | Status: scaduto | Days: -169 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to pubbliora.com
+[2026-03-01 17:39:45] [INFO] Domain: quiacri.it | Status: scaduto | Days: -169 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to quiacri.it
+[2026-03-01 17:39:45] [INFO] Domain: quiamantea.it | Status: scaduto | Days: -169 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to quiamantea.it
+[2026-03-01 17:39:45] [INFO] Domain: quicastrovillari.it | Status: scaduto | Days: -169 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to quicastrovillari.it
+[2026-03-01 17:39:45] [INFO] Domain: quicorigliano.it | Status: scaduto | Days: -169 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to quicorigliano.it
+[2026-03-01 17:39:45] [INFO] Domain: quicosenza.info | Status: scaduto | Days: -169 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to quicosenza.info
+[2026-03-01 17:39:45] [INFO] Domain: quipaola.it | Status: scaduto | Days: -169 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to quipaola.it
+[2026-03-01 17:39:45] [INFO] Domain: quirende.it | Status: scaduto | Days: -169 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to quirende.it
+[2026-03-01 17:39:45] [INFO] Domain: quirossano.it | Status: scaduto | Days: -169 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to quirossano.it
+[2026-03-01 17:39:45] [INFO] Domain: quitrebisacce.it | Status: scaduto | Days: -169 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to quitrebisacce.it
+[2026-03-01 17:39:45] [INFO] Domain: consorziosalumidicalabriadop.it | Status: scaduto | Days: -168 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to consorziosalumidicalabriadop.it
+[2026-03-01 17:39:45] [INFO] Domain: cloud reseller - 50 per terrainvena.it | Status: scaduto | Days: -156 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to cloud reseller - 50 per terrainvena.it
+[2026-03-01 17:39:45] [INFO] Domain: cloud reseller - 50 per vfactor.it | Status: scaduto | Days: -156 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to cloud reseller - 50 per vfactor.it
+[2026-03-01 17:39:45] [INFO] Domain: compreso in cloud reseller - 50 per terrainvena.it | Status: scaduto | Days: -156 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to compreso in cloud reseller - 50 per terrainvena.it
+[2026-03-01 17:39:45] [INFO] Domain: compreso in cloud reseller - 50 per vfactor.it | Status: scaduto | Days: -156 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to compreso in cloud reseller - 50 per vfactor.it
+[2026-03-01 17:39:45] [INFO] Domain: accademiasaporidelsole.it | Status: scaduto | Days: -155 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to accademiasaporidelsole.it
+[2026-03-01 17:39:45] [INFO] Domain: bravocasaonline.it | Status: scaduto | Days: -151 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to bravocasaonline.it
+[2026-03-01 17:39:45] [INFO] Domain: fattoriadellapiana.com | Status: scaduto | Days: -145 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to fattoriadellapiana.com
+[2026-03-01 17:39:45] [INFO] Domain: mangiofood.it | Status: scaduto | Days: -145 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to mangiofood.it
+[2026-03-01 17:39:45] [INFO] Domain: coldirettishop.com | Status: scaduto | Days: -144 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to coldirettishop.com
+[2026-03-01 17:39:45] [INFO] Domain: coldirettishop.it | Status: scaduto | Days: -144 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to coldirettishop.it
+[2026-03-01 17:39:45] [INFO] Domain: cosentinoprofessional.com | Status: scaduto | Days: -136 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to cosentinoprofessional.com
+[2026-03-01 17:39:45] [INFO] Domain: quicosenza.it server dedicato fullymanaged business - server 3.1 - | Status: scaduto | Days: -136 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to quicosenza.it server dedicato fullymanaged business - server 3.1 -
+[2026-03-01 17:39:45] [INFO] Domain: rlb.it quota su cloud reseller - 50 | Status: scaduto | Days: -136 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to rlb.it quota su cloud reseller - 50
+[2026-03-01 17:39:45] [INFO] Domain: barinalto.it | Status: scaduto | Days: -127 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to barinalto.it
+[2026-03-01 17:39:45] [INFO] Domain: accademiasaporidelsole.it - cloud reseller - 50 | Status: scaduto | Days: -126 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to accademiasaporidelsole.it - cloud reseller - 50
+[2026-03-01 17:39:45] [INFO] Domain: accademiasaporidelsole.it - compreso in cloud reseller - 50 | Status: scaduto | Days: -126 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to accademiasaporidelsole.it - compreso in cloud reseller - 50
+[2026-03-01 17:39:45] [INFO] Domain: ascsportregionecalabria.it - cloud reseller - 50 | Status: scaduto | Days: -126 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to ascsportregionecalabria.it - cloud reseller - 50
+[2026-03-01 17:39:45] [INFO] Domain: ascsportregionecalabria.it - compreso in cloud reseller - 50 | Status: scaduto | Days: -126 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to ascsportregionecalabria.it - compreso in cloud reseller - 50
+[2026-03-01 17:39:45] [INFO] Domain: compreso in cloud reseller - 50 hm | Status: scaduto | Days: -126 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to compreso in cloud reseller - 50 hm
+[2026-03-01 17:39:45] [INFO] Domain: prosciutteriacasamadeo.it - cloud reseller - 50 | Status: scaduto | Days: -126 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to prosciutteriacasamadeo.it - cloud reseller - 50
+[2026-03-01 17:39:45] [INFO] Domain: prosciutteriacasamadeo.it - compreso in cloud reseller - 50 | Status: scaduto | Days: -126 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to prosciutteriacasamadeo.it - compreso in cloud reseller - 50
+[2026-03-01 17:39:45] [INFO] Domain: quota su cloud reseller - 50 hm | Status: scaduto | Days: -126 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to quota su cloud reseller - 50 hm
+[2026-03-01 17:39:45] [INFO] Domain: quimisposo.com | Status: scaduto | Days: -125 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to quimisposo.com
+[2026-03-01 17:39:45] [INFO] Domain: quimisposo.it | Status: scaduto | Days: -125 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to quimisposo.it
+[2026-03-01 17:39:45] [INFO] Domain: lecantineditalia.com | Status: scaduto | Days: -121 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to lecantineditalia.com
+[2026-03-01 17:39:45] [INFO] Domain: lecantineditalia.it | Status: scaduto | Days: -121 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to lecantineditalia.it
+[2026-03-01 17:39:45] [INFO] Domain: lecantineitaliane.com | Status: scaduto | Days: -121 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to lecantineitaliane.com
+[2026-03-01 17:39:45] [INFO] Domain: lecantineitaliane.it | Status: scaduto | Days: -121 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to lecantineitaliane.it
+[2026-03-01 17:39:45] [INFO] Domain: semplicefficientare.com | Status: scaduto | Days: -121 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to semplicefficientare.com
+[2026-03-01 17:39:45] [INFO] Domain: quaeventi.it | Status: scaduto | Days: -114 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to quaeventi.it
+[2026-03-01 17:39:45] [INFO] Domain: qualavoro.it | Status: scaduto | Days: -114 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to qualavoro.it
+[2026-03-01 17:39:45] [INFO] Domain: cercoeventi.it | Status: scaduto | Days: -113 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to cercoeventi.it
+[2026-03-01 17:39:45] [INFO] Domain: workalabria.it | Status: scaduto | Days: -113 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to workalabria.it
+[2026-03-01 17:39:45] [INFO] Domain: shopcoldiretti.it | Status: scaduto | Days: -110 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to shopcoldiretti.it
+[2026-03-01 17:39:45] [INFO] Domain: chindamoporte.it | Status: scaduto | Days: -104 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to chindamoporte.it
+[2026-03-01 17:39:45] [INFO] Domain: salumidisuinonerodicalabria.it | Status: scaduto | Days: -101 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to salumidisuinonerodicalabria.it
+[2026-03-01 17:39:45] [INFO] Domain: benessernaturale.it | Status: scaduto | Days: -95 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to benessernaturale.it
+[2026-03-01 17:39:45] [INFO] Domain: papijon.it | Status: scaduto | Days: -92 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to papijon.it
+[2026-03-01 17:39:45] [INFO] Domain: quimeridione.it | Status: scaduto | Days: -92 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to quimeridione.it
+[2026-03-01 17:39:45] [INFO] Domain: quicrotone.it | Status: scaduto | Days: -90 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to quicrotone.it
+[2026-03-01 17:39:45] [INFO] Domain: equomondo.it | Status: scaduto | Days: -85 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to equomondo.it
+[2026-03-01 17:39:45] [INFO] Domain: laccademiadelgusto.it | Status: scaduto | Days: -85 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to laccademiadelgusto.it
+[2026-03-01 17:39:45] [INFO] Domain: vallecrati.it | Status: scaduto | Days: -81 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to vallecrati.it
+[2026-03-01 17:39:45] [INFO] Domain: valledellesaro.it | Status: scaduto | Days: -81 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to valledellesaro.it
+[2026-03-01 17:39:45] [INFO] Domain: consorziosalumidicalabriadop.com | Status: scaduto | Days: -79 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to consorziosalumidicalabriadop.com
+[2026-03-01 17:39:45] [INFO] Domain: teamimpresasrl.it - compreso in cloud reseller | Status: scaduto | Days: -72 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to teamimpresasrl.it - compreso in cloud reseller
+[2026-03-01 17:39:45] [INFO] Domain: calabriafan.it | Status: scaduto | Days: -70 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to calabriafan.it
+[2026-03-01 17:39:45] [INFO] Domain: kigold.it | Status: scaduto | Days: -63 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to kigold.it
+[2026-03-01 17:39:45] [INFO] Domain: acetoagricoltura.it | Status: scaduto | Days: -62 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to acetoagricoltura.it
+[2026-03-01 17:39:45] [INFO] Domain: kild.it | Status: scaduto | Days: -62 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to kild.it
+[2026-03-01 17:39:45] [INFO] Domain: magikashop.com | Status: scaduto | Days: -62 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to magikashop.com
+[2026-03-01 17:39:45] [INFO] Domain: coschignanoingegneria.com compreso nell'hosting | Status: scaduto | Days: -60 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to coschignanoingegneria.com compreso nell'hosting
+[2026-03-01 17:39:45] [INFO] Domain: coschignanoingegneria.com quota spazio su serverplan | Status: scaduto | Days: -60 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to coschignanoingegneria.com quota spazio su serverplan
+[2026-03-01 17:39:45] [INFO] Domain: protettocasa.it  quota spazio su serverplan | Status: scaduto | Days: -60 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to protettocasa.it  quota spazio su serverplan
+[2026-03-01 17:39:45] [INFO] Domain: fullmidia.it | Status: scaduto | Days: -51 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to fullmidia.it
+[2026-03-01 17:39:45] [INFO] Domain: hotelmiramarecoriglianorossano.it | Status: scaduto | Days: -51 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to hotelmiramarecoriglianorossano.it
+[2026-03-01 17:39:45] [INFO] Domain: parcoreginavittoria.it | Status: scaduto | Days: -51 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to parcoreginavittoria.it
+[2026-03-01 17:39:45] [INFO] Domain: rlb.it | Status: scaduto | Days: -51 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to rlb.it
+[2026-03-01 17:39:45] [INFO] Domain: rlbradioattiva.com | Status: scaduto | Days: -51 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to rlbradioattiva.com
+[2026-03-01 17:39:45] [INFO] Domain: rlbradioattiva.it | Status: scaduto | Days: -51 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to rlbradioattiva.it
+[2026-03-01 17:39:45] [INFO] Domain: terrainvena.it | Status: scaduto | Days: -51 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to terrainvena.it
+[2026-03-01 17:39:45] [INFO] Domain: vfactor.it | Status: scaduto | Days: -51 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to vfactor.it
+[2026-03-01 17:39:45] [INFO] Domain: maxpneumatici.com | Status: scaduto | Days: -50 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to maxpneumatici.com
+[2026-03-01 17:39:45] [INFO] Domain: radiocosenzacentrale.com | Status: scaduto | Days: -47 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to radiocosenzacentrale.com
+[2026-03-01 17:39:45] [INFO] Domain: radiocosenzacentrale.it | Status: scaduto | Days: -47 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to radiocosenzacentrale.it
+[2026-03-01 17:39:45] [INFO] Domain: tartufodicalabria.it | Status: scaduto | Days: -45 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to tartufodicalabria.it
+[2026-03-01 17:39:45] [INFO] Domain: terrainvena.com | Status: scaduto | Days: -44 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to terrainvena.com
+[2026-03-01 17:39:45] [INFO] Domain: quisila.com | Status: scaduto | Days: -39 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to quisila.com
+[2026-03-01 17:39:45] [INFO] Domain: ilquotidianonline.it | Status: scaduto | Days: -38 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to ilquotidianonline.it
+[2026-03-01 17:39:45] [INFO] Domain: ilquotidianoonline.it | Status: scaduto | Days: -38 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to ilquotidianoonline.it
+[2026-03-01 17:39:45] [INFO] Domain: prosciutteriacasamadeo.it | Status: scaduto | Days: -35 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to prosciutteriacasamadeo.it
+[2026-03-01 17:39:45] [INFO] Domain: outletchateaudax.it | Status: scaduto | Days: -34 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to outletchateaudax.it
+[2026-03-01 17:39:45] [INFO] Domain: terzeria.it | Status: scaduto | Days: -34 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to terzeria.it
+[2026-03-01 17:39:45] [INFO] Domain: terzeriaonline.it | Status: scaduto | Days: -34 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to terzeriaonline.it
+[2026-03-01 17:39:45] [INFO] Domain: curtopino.it | Status: scaduto | Days: -31 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to curtopino.it
+[2026-03-01 17:39:45] [INFO] Domain: pinocurto.it | Status: scaduto | Days: -31 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to pinocurto.it
+[2026-03-01 17:39:45] [INFO] Domain: pinocurtogioielli.it | Status: scaduto | Days: -30 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to pinocurtogioielli.it
+[2026-03-01 17:39:45] [INFO] Domain: tuttotuoshop.it | Status: scaduto | Days: -28 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to tuttotuoshop.it
+[2026-03-01 17:39:45] [INFO] Domain: acetoagricoltura.com | Status: scaduto | Days: -26 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to acetoagricoltura.com
+[2026-03-01 17:39:45] [INFO] Domain: lafull.it | Status: scaduto | Days: -25 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to lafull.it
+[2026-03-01 17:39:45] [INFO] Domain: quics.it | Status: scaduto | Days: -25 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to quics.it
+[2026-03-01 17:39:45] [INFO] Domain: quilocal.it | Status: scaduto | Days: -25 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to quilocal.it
+[2026-03-01 17:39:45] [INFO] Domain: quaconviene.it | Status: scaduto | Days: -22 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to quaconviene.it
+[2026-03-01 17:39:45] [INFO] Domain: shopfuturcasa.it | Status: scaduto | Days: -21 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to shopfuturcasa.it
+[2026-03-01 17:39:45] [INFO] Domain: studioosteopaticobenevento.it | Status: scaduto | Days: -19 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to studioosteopaticobenevento.it
+[2026-03-01 17:39:45] [INFO] Domain: accademiartistica.it -  quota spazio su serverplan | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to accademiartistica.it -  quota spazio su serverplan
+[2026-03-01 17:39:45] [INFO] Domain: accademiartistica.it mail - compreso nell'hosting | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to accademiartistica.it mail - compreso nell'hosting
+[2026-03-01 17:39:45] [INFO] Domain: biosila.it - compreso nell'hosting | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to biosila.it - compreso nell'hosting
+[2026-03-01 17:39:45] [INFO] Domain: biosila.it - quota spazio su serverplan | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to biosila.it - quota spazio su serverplan
+[2026-03-01 17:39:45] [INFO] Domain: ccrenergia.it - compreso nell'hosting | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to ccrenergia.it - compreso nell'hosting
+[2026-03-01 17:39:45] [INFO] Domain: ccrenergia.it - quota spazio su serverplan | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to ccrenergia.it - quota spazio su serverplan
+[2026-03-01 17:39:45] [INFO] Domain: cloud reseller - 50 | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to cloud reseller - 50
+[2026-03-01 17:39:45] [INFO] Domain: compreso in cloud reseller - 50 | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to compreso in cloud reseller - 50
+[2026-03-01 17:39:45] [INFO] Domain: dkasa.it compreso nell'hosting | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to dkasa.it compreso nell'hosting
+[2026-03-01 17:39:45] [INFO] Domain: dkasa.it quota spazio su serverplan | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to dkasa.it quota spazio su serverplan
+[2026-03-01 17:39:45] [INFO] Domain: email compreso nell'hosting per bravocasashop.it | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to email compreso nell'hosting per bravocasashop.it
+[2026-03-01 17:39:45] [INFO] Domain: franzese.eu compreso nell'hosting | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to franzese.eu compreso nell'hosting
+[2026-03-01 17:39:45] [INFO] Domain: franzese.eu quota spazio su serverplan | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to franzese.eu quota spazio su serverplan
+[2026-03-01 17:39:45] [INFO] Domain: fullmidia.it quota spazio su serverplan | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to fullmidia.it quota spazio su serverplan
+[2026-03-01 17:39:45] [INFO] Domain: giemmegroupsrl.com compreso nell'hosting | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to giemmegroupsrl.com compreso nell'hosting
+[2026-03-01 17:39:45] [INFO] Domain: giemmegroupsrl.com quota spazio su serverplan | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to giemmegroupsrl.com quota spazio su serverplan
+[2026-03-01 17:39:45] [INFO] Domain: iminervini.it compreso nell'hosting | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to iminervini.it compreso nell'hosting
+[2026-03-01 17:39:45] [INFO] Domain: iminervini.it quota spazio su serverplan | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to iminervini.it quota spazio su serverplan
+[2026-03-01 17:39:45] [INFO] Domain: lamarinaresidenceclub.it compreso nell'hosting | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to lamarinaresidenceclub.it compreso nell'hosting
+[2026-03-01 17:39:45] [INFO] Domain: lamarinaresidenceclub.it quota spazio su serverplan | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to lamarinaresidenceclub.it quota spazio su serverplan
+[2026-03-01 17:39:45] [INFO] Domain: lamatina.it compreso nell'hosting | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to lamatina.it compreso nell'hosting
+[2026-03-01 17:39:45] [INFO] Domain: lamatina.it quota spazio su serverplan | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to lamatina.it quota spazio su serverplan
+[2026-03-01 17:39:45] [INFO] Domain: lanticofienile.it compreso nell'hosting | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to lanticofienile.it compreso nell'hosting
+[2026-03-01 17:39:45] [INFO] Domain: lanticofienile.it quota spazio su serverplan | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to lanticofienile.it quota spazio su serverplan
+[2026-03-01 17:39:45] [INFO] Domain: magikashop.com compreso nell'hosting | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to magikashop.com compreso nell'hosting
+[2026-03-01 17:39:45] [INFO] Domain: magikashop.com quota spazio su serverplan | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to magikashop.com quota spazio su serverplan
+[2026-03-01 17:39:45] [INFO] Domain: mangiofood.it compreso nell'hosting | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to mangiofood.it compreso nell'hosting
+[2026-03-01 17:39:45] [INFO] Domain: mangiofood.it quota spazio su serverplan | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to mangiofood.it quota spazio su serverplan
+[2026-03-01 17:39:45] [INFO] Domain: marcellolamberti.it compreso nell'hosting | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to marcellolamberti.it compreso nell'hosting
+[2026-03-01 17:39:45] [INFO] Domain: marcellolamberti.it quota spazio su serverplan | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to marcellolamberti.it quota spazio su serverplan
+[2026-03-01 17:39:45] [INFO] Domain: maxpneumatici.com compreso nell'hosting | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to maxpneumatici.com compreso nell'hosting
+[2026-03-01 17:39:45] [INFO] Domain: maxpneumatici.com quota spazio su serverplan | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to maxpneumatici.com quota spazio su serverplan
+[2026-03-01 17:39:45] [INFO] Domain: quicoriglianorossano.it - mail compreso nell'hosting | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to quicoriglianorossano.it - mail compreso nell'hosting
+[2026-03-01 17:39:45] [INFO] Domain: quicoriglianorossano.it - quota spazio su serverplan | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to quicoriglianorossano.it - quota spazio su serverplan
+[2026-03-01 17:39:45] [INFO] Domain: quics.it - compreso nell'hosting | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to quics.it - compreso nell'hosting
+[2026-03-01 17:39:45] [INFO] Domain: quics.it - quota spazio su serverplan | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to quics.it - quota spazio su serverplan
+[2026-03-01 17:39:45] [INFO] Domain: quota spazio su serverplan per bravocasashop.it | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to quota spazio su serverplan per bravocasashop.it
+[2026-03-01 17:39:45] [INFO] Domain: studioosteopaticobenevento.it - cloud reseller - 50 | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to studioosteopaticobenevento.it - cloud reseller - 50
+[2026-03-01 17:39:45] [INFO] Domain: studioosteopaticobenevento.it - compreso in cloud reseller - 50 | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to studioosteopaticobenevento.it - compreso in cloud reseller - 50
+[2026-03-01 17:39:45] [INFO] Domain: tenutaferrato.it - compreso nell'hosting | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to tenutaferrato.it - compreso nell'hosting
+[2026-03-01 17:39:45] [INFO] Domain: tenutaferrato.it - quota spazio su serverplan | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to tenutaferrato.it - quota spazio su serverplan
+[2026-03-01 17:39:45] [INFO] Domain: mobiliperri.it | Status: scaduto | Days: -12 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to mobiliperri.it
+[2026-03-01 17:39:45] [INFO] Domain: consentialuxuryandfamily.it | Status: scaduto | Days: -10 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to consentialuxuryandfamily.it
+[2026-03-01 17:39:45] [INFO] Domain: quicaffe.it | Status: scaduto | Days: -8 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to quicaffe.it
+[2026-03-01 17:39:45] [INFO] Domain: bravocasashop.it | Status: scaduto | Days: -3 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send 'scaduto' to bravocasashop.it
+[2026-03-01 17:39:45] [INFO] Domain: lamatina.it | Status: scade_presto | Days: 6 | Type: 15-day | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send '15-day' to lamatina.it
+[2026-03-01 17:39:45] [INFO] Domain: lanticofienile.com | Status: scade_presto | Days: 15 | Type: 15-day | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send '15-day' to lanticofienile.com
+[2026-03-01 17:39:45] [INFO] Domain: lanticofienile.it | Status: scade_presto | Days: 21 | Type: 30-day | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send '30-day' to lanticofienile.it
+[2026-03-01 17:39:45] [INFO] Domain: qplay.it | Status: scade_presto | Days: 22 | Type: 30-day | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send '30-day' to qplay.it
+[2026-03-01 17:39:45] [INFO] Domain: quiplay.it | Status: scade_presto | Days: 22 | Type: 30-day | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send '30-day' to quiplay.it
+[2026-03-01 17:39:45] [INFO] Domain: iminervini.it | Status: scade_presto | Days: 23 | Type: 30-day | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send '30-day' to iminervini.it
+[2026-03-01 17:39:45] [INFO] Domain: muchogustofood.it | Status: scade_presto | Days: 26 | Type: 30-day | AlreadySent: no
+[2026-03-01 17:39:45] [WARN] [DRY RUN] Would send '30-day' to muchogustofood.it
+[2026-03-01 17:39:45] [INFO] Cron Job Summary [DRY RUN] - Sent: 187 | Skipped: 0 | Checked: 233 | Errors: 0 | Time: 0.08s
+[2026-03-01 17:39:45] [INFO] ===== CRON JOB END =====
+
+[2026-03-01 17:39:54] [WARN] Running in DRY RUN mode - no emails will be sent
+[2026-03-01 17:39:54] [INFO] Processing 233 websites
+[2026-03-01 17:39:54] [INFO] Domain: bravolindo.it | Status: scaduto | Days: -704 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to bravolindo.it
+[2026-03-01 17:39:54] [INFO] Domain: bravocasa.net | Status: scaduto | Days: -516 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to bravocasa.net
+[2026-03-01 17:39:54] [INFO] Domain: pubblifull.com | Status: scaduto | Days: -369 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to pubblifull.com
+[2026-03-01 17:39:54] [INFO] Domain: cosenzanight.it | Status: scaduto | Days: -305 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to cosenzanight.it
+[2026-03-01 17:39:54] [INFO] Domain: biondinosrl.com | Status: scaduto | Days: -282 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to biondinosrl.com
+[2026-03-01 17:39:54] [INFO] Domain: biondinosrl.it | Status: scaduto | Days: -282 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to biondinosrl.it
+[2026-03-01 17:39:54] [INFO] Domain: reputationline.it | Status: scaduto | Days: -280 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to reputationline.it
+[2026-03-01 17:39:54] [INFO] Domain: villavomereto.it | Status: scaduto | Days: -261 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to villavomereto.it
+[2026-03-01 17:39:54] [INFO] Domain: sacrocuorecosenza.it | Status: scaduto | Days: -257 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to sacrocuorecosenza.it
+[2026-03-01 17:39:54] [INFO] Domain: quotidianoonline.info | Status: scaduto | Days: -247 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to quotidianoonline.info
+[2026-03-01 17:39:54] [INFO] Domain: hosting cloud pro 01 | Status: scaduto | Days: -243 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to hosting cloud pro 01
+[2026-03-01 17:39:54] [INFO] Domain: spazio email dedicato - 25gb - compreso in cloud pro 01 | Status: scaduto | Days: -243 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to spazio email dedicato - 25gb - compreso in cloud pro 01
+[2026-03-01 17:39:54] [INFO] Domain: camillotripicchio.com | Status: scaduto | Days: -241 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to camillotripicchio.com
+[2026-03-01 17:39:54] [INFO] Domain: camillotripicchio.it | Status: scaduto | Days: -241 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to camillotripicchio.it
+[2026-03-01 17:39:54] [INFO] Domain: quicatanzaro.it | Status: scaduto | Days: -239 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to quicatanzaro.it
+[2026-03-01 17:39:54] [INFO] Domain: quicosenza.it | Status: scaduto | Days: -239 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to quicosenza.it
+[2026-03-01 17:39:54] [INFO] Domain: quireggiocalabria.it | Status: scaduto | Days: -239 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to quireggiocalabria.it
+[2026-03-01 17:39:54] [INFO] Domain: mazzeiarredamenti.it | Status: scaduto | Days: -238 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to mazzeiarredamenti.it
+[2026-03-01 17:39:54] [INFO] Domain: quicosenza.com | Status: scaduto | Days: -236 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to quicosenza.com
+[2026-03-01 17:39:54] [INFO] Domain: pubblifull.it | Status: scaduto | Days: -230 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to pubblifull.it
+[2026-03-01 17:39:54] [INFO] Domain: anticofienile.it | Status: scaduto | Days: -214 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to anticofienile.it
+[2026-03-01 17:39:54] [INFO] Domain: martinoagrizoo.it | Status: scaduto | Days: -212 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to martinoagrizoo.it
+[2026-03-01 17:39:54] [INFO] Domain: martinoagrizoogarden.it | Status: scaduto | Days: -212 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to martinoagrizoogarden.it
+[2026-03-01 17:39:54] [INFO] Domain: portulaca.it | Status: scaduto | Days: -203 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to portulaca.it
+[2026-03-01 17:39:54] [INFO] Domain: altocasale.com | Status: scaduto | Days: -202 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to altocasale.com
+[2026-03-01 17:39:54] [INFO] Domain: altocasale.it | Status: scaduto | Days: -202 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to altocasale.it
+[2026-03-01 17:39:54] [INFO] Domain: bravocasa.it | Status: scaduto | Days: -192 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to bravocasa.it
+[2026-03-01 17:39:54] [INFO] Domain: fullmidia.it mail server outsourcing - 25gb | Status: scaduto | Days: -187 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to fullmidia.it mail server outsourcing - 25gb
+[2026-03-01 17:39:54] [INFO] Domain: quicosenza.it mail su server dedicato fully managed | Status: scaduto | Days: -187 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to quicosenza.it mail su server dedicato fully managed
+[2026-03-01 17:39:54] [INFO] Domain: rlb.it mail server outsourcing - 25gb | Status: scaduto | Days: -187 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to rlb.it mail server outsourcing - 25gb
+[2026-03-01 17:39:54] [INFO] Domain: ideaorogioielleria.com | Status: scaduto | Days: -182 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to ideaorogioielleria.com
+[2026-03-01 17:39:54] [INFO] Domain: autoricambikmzero.it | Status: scaduto | Days: -181 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to autoricambikmzero.it
+[2026-03-01 17:39:54] [INFO] Domain: cloud wordpress - 02 per serafinomazzei.it | Status: scaduto | Days: -179 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to cloud wordpress - 02 per serafinomazzei.it
+[2026-03-01 17:39:54] [INFO] Domain: cosentinoprofessional.it cloud wordpress - 02 | Status: scaduto | Days: -179 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to cosentinoprofessional.it cloud wordpress - 02
+[2026-03-01 17:39:54] [INFO] Domain: cosentinoprofessional.it spazio email dedicato - 20gb cpanel | Status: scaduto | Days: -179 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to cosentinoprofessional.it spazio email dedicato - 20gb cpanel
+[2026-03-01 17:39:54] [INFO] Domain: spazio email dedicato - 20gb cpanel per serafinomazzei.it | Status: scaduto | Days: -179 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to spazio email dedicato - 20gb cpanel per serafinomazzei.it
+[2026-03-01 17:39:54] [INFO] Domain: cosentinoprofessional.it | Status: scaduto | Days: -174 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to cosentinoprofessional.it
+[2026-03-01 17:39:54] [INFO] Domain: dkasashop.it | Status: scaduto | Days: -174 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to dkasashop.it
+[2026-03-01 17:39:54] [INFO] Domain: fullcrm.it | Status: scaduto | Days: -171 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to fullcrm.it
+[2026-03-01 17:39:54] [INFO] Domain: pubbliora.com | Status: scaduto | Days: -169 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to pubbliora.com
+[2026-03-01 17:39:54] [INFO] Domain: quiacri.it | Status: scaduto | Days: -169 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to quiacri.it
+[2026-03-01 17:39:54] [INFO] Domain: quiamantea.it | Status: scaduto | Days: -169 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to quiamantea.it
+[2026-03-01 17:39:54] [INFO] Domain: quicastrovillari.it | Status: scaduto | Days: -169 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to quicastrovillari.it
+[2026-03-01 17:39:54] [INFO] Domain: quicorigliano.it | Status: scaduto | Days: -169 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to quicorigliano.it
+[2026-03-01 17:39:54] [INFO] Domain: quicosenza.info | Status: scaduto | Days: -169 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to quicosenza.info
+[2026-03-01 17:39:54] [INFO] Domain: quipaola.it | Status: scaduto | Days: -169 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to quipaola.it
+[2026-03-01 17:39:54] [INFO] Domain: quirende.it | Status: scaduto | Days: -169 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to quirende.it
+[2026-03-01 17:39:54] [INFO] Domain: quirossano.it | Status: scaduto | Days: -169 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to quirossano.it
+[2026-03-01 17:39:54] [INFO] Domain: quitrebisacce.it | Status: scaduto | Days: -169 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to quitrebisacce.it
+[2026-03-01 17:39:54] [INFO] Domain: consorziosalumidicalabriadop.it | Status: scaduto | Days: -168 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to consorziosalumidicalabriadop.it
+[2026-03-01 17:39:54] [INFO] Domain: cloud reseller - 50 per terrainvena.it | Status: scaduto | Days: -156 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to cloud reseller - 50 per terrainvena.it
+[2026-03-01 17:39:54] [INFO] Domain: cloud reseller - 50 per vfactor.it | Status: scaduto | Days: -156 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to cloud reseller - 50 per vfactor.it
+[2026-03-01 17:39:54] [INFO] Domain: compreso in cloud reseller - 50 per terrainvena.it | Status: scaduto | Days: -156 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to compreso in cloud reseller - 50 per terrainvena.it
+[2026-03-01 17:39:54] [INFO] Domain: compreso in cloud reseller - 50 per vfactor.it | Status: scaduto | Days: -156 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to compreso in cloud reseller - 50 per vfactor.it
+[2026-03-01 17:39:54] [INFO] Domain: accademiasaporidelsole.it | Status: scaduto | Days: -155 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to accademiasaporidelsole.it
+[2026-03-01 17:39:54] [INFO] Domain: bravocasaonline.it | Status: scaduto | Days: -151 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to bravocasaonline.it
+[2026-03-01 17:39:54] [INFO] Domain: fattoriadellapiana.com | Status: scaduto | Days: -145 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to fattoriadellapiana.com
+[2026-03-01 17:39:54] [INFO] Domain: mangiofood.it | Status: scaduto | Days: -145 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to mangiofood.it
+[2026-03-01 17:39:54] [INFO] Domain: coldirettishop.com | Status: scaduto | Days: -144 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to coldirettishop.com
+[2026-03-01 17:39:54] [INFO] Domain: coldirettishop.it | Status: scaduto | Days: -144 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to coldirettishop.it
+[2026-03-01 17:39:54] [INFO] Domain: cosentinoprofessional.com | Status: scaduto | Days: -136 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to cosentinoprofessional.com
+[2026-03-01 17:39:54] [INFO] Domain: quicosenza.it server dedicato fullymanaged business - server 3.1 - | Status: scaduto | Days: -136 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to quicosenza.it server dedicato fullymanaged business - server 3.1 -
+[2026-03-01 17:39:54] [INFO] Domain: rlb.it quota su cloud reseller - 50 | Status: scaduto | Days: -136 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to rlb.it quota su cloud reseller - 50
+[2026-03-01 17:39:54] [INFO] Domain: barinalto.it | Status: scaduto | Days: -127 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to barinalto.it
+[2026-03-01 17:39:54] [INFO] Domain: accademiasaporidelsole.it - cloud reseller - 50 | Status: scaduto | Days: -126 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to accademiasaporidelsole.it - cloud reseller - 50
+[2026-03-01 17:39:54] [INFO] Domain: accademiasaporidelsole.it - compreso in cloud reseller - 50 | Status: scaduto | Days: -126 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to accademiasaporidelsole.it - compreso in cloud reseller - 50
+[2026-03-01 17:39:54] [INFO] Domain: ascsportregionecalabria.it - cloud reseller - 50 | Status: scaduto | Days: -126 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to ascsportregionecalabria.it - cloud reseller - 50
+[2026-03-01 17:39:54] [INFO] Domain: ascsportregionecalabria.it - compreso in cloud reseller - 50 | Status: scaduto | Days: -126 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to ascsportregionecalabria.it - compreso in cloud reseller - 50
+[2026-03-01 17:39:54] [INFO] Domain: compreso in cloud reseller - 50 hm | Status: scaduto | Days: -126 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to compreso in cloud reseller - 50 hm
+[2026-03-01 17:39:54] [INFO] Domain: prosciutteriacasamadeo.it - cloud reseller - 50 | Status: scaduto | Days: -126 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to prosciutteriacasamadeo.it - cloud reseller - 50
+[2026-03-01 17:39:54] [INFO] Domain: prosciutteriacasamadeo.it - compreso in cloud reseller - 50 | Status: scaduto | Days: -126 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to prosciutteriacasamadeo.it - compreso in cloud reseller - 50
+[2026-03-01 17:39:54] [INFO] Domain: quota su cloud reseller - 50 hm | Status: scaduto | Days: -126 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to quota su cloud reseller - 50 hm
+[2026-03-01 17:39:54] [INFO] Domain: quimisposo.com | Status: scaduto | Days: -125 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to quimisposo.com
+[2026-03-01 17:39:54] [INFO] Domain: quimisposo.it | Status: scaduto | Days: -125 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to quimisposo.it
+[2026-03-01 17:39:54] [INFO] Domain: lecantineditalia.com | Status: scaduto | Days: -121 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to lecantineditalia.com
+[2026-03-01 17:39:54] [INFO] Domain: lecantineditalia.it | Status: scaduto | Days: -121 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to lecantineditalia.it
+[2026-03-01 17:39:54] [INFO] Domain: lecantineitaliane.com | Status: scaduto | Days: -121 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to lecantineitaliane.com
+[2026-03-01 17:39:54] [INFO] Domain: lecantineitaliane.it | Status: scaduto | Days: -121 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to lecantineitaliane.it
+[2026-03-01 17:39:54] [INFO] Domain: semplicefficientare.com | Status: scaduto | Days: -121 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to semplicefficientare.com
+[2026-03-01 17:39:54] [INFO] Domain: quaeventi.it | Status: scaduto | Days: -114 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to quaeventi.it
+[2026-03-01 17:39:54] [INFO] Domain: qualavoro.it | Status: scaduto | Days: -114 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to qualavoro.it
+[2026-03-01 17:39:54] [INFO] Domain: cercoeventi.it | Status: scaduto | Days: -113 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to cercoeventi.it
+[2026-03-01 17:39:54] [INFO] Domain: workalabria.it | Status: scaduto | Days: -113 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to workalabria.it
+[2026-03-01 17:39:54] [INFO] Domain: shopcoldiretti.it | Status: scaduto | Days: -110 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to shopcoldiretti.it
+[2026-03-01 17:39:54] [INFO] Domain: chindamoporte.it | Status: scaduto | Days: -104 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to chindamoporte.it
+[2026-03-01 17:39:54] [INFO] Domain: salumidisuinonerodicalabria.it | Status: scaduto | Days: -101 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to salumidisuinonerodicalabria.it
+[2026-03-01 17:39:54] [INFO] Domain: benessernaturale.it | Status: scaduto | Days: -95 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to benessernaturale.it
+[2026-03-01 17:39:54] [INFO] Domain: papijon.it | Status: scaduto | Days: -92 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to papijon.it
+[2026-03-01 17:39:54] [INFO] Domain: quimeridione.it | Status: scaduto | Days: -92 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to quimeridione.it
+[2026-03-01 17:39:54] [INFO] Domain: quicrotone.it | Status: scaduto | Days: -90 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to quicrotone.it
+[2026-03-01 17:39:54] [INFO] Domain: equomondo.it | Status: scaduto | Days: -85 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to equomondo.it
+[2026-03-01 17:39:54] [INFO] Domain: laccademiadelgusto.it | Status: scaduto | Days: -85 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to laccademiadelgusto.it
+[2026-03-01 17:39:54] [INFO] Domain: vallecrati.it | Status: scaduto | Days: -81 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to vallecrati.it
+[2026-03-01 17:39:54] [INFO] Domain: valledellesaro.it | Status: scaduto | Days: -81 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to valledellesaro.it
+[2026-03-01 17:39:54] [INFO] Domain: consorziosalumidicalabriadop.com | Status: scaduto | Days: -79 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to consorziosalumidicalabriadop.com
+[2026-03-01 17:39:54] [INFO] Domain: teamimpresasrl.it - compreso in cloud reseller | Status: scaduto | Days: -72 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to teamimpresasrl.it - compreso in cloud reseller
+[2026-03-01 17:39:54] [INFO] Domain: calabriafan.it | Status: scaduto | Days: -70 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to calabriafan.it
+[2026-03-01 17:39:54] [INFO] Domain: kigold.it | Status: scaduto | Days: -63 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to kigold.it
+[2026-03-01 17:39:54] [INFO] Domain: acetoagricoltura.it | Status: scaduto | Days: -62 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to acetoagricoltura.it
+[2026-03-01 17:39:54] [INFO] Domain: kild.it | Status: scaduto | Days: -62 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to kild.it
+[2026-03-01 17:39:54] [INFO] Domain: magikashop.com | Status: scaduto | Days: -62 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to magikashop.com
+[2026-03-01 17:39:54] [INFO] Domain: coschignanoingegneria.com compreso nell'hosting | Status: scaduto | Days: -60 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to coschignanoingegneria.com compreso nell'hosting
+[2026-03-01 17:39:54] [INFO] Domain: coschignanoingegneria.com quota spazio su serverplan | Status: scaduto | Days: -60 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to coschignanoingegneria.com quota spazio su serverplan
+[2026-03-01 17:39:54] [INFO] Domain: protettocasa.it  quota spazio su serverplan | Status: scaduto | Days: -60 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to protettocasa.it  quota spazio su serverplan
+[2026-03-01 17:39:54] [INFO] Domain: fullmidia.it | Status: scaduto | Days: -51 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to fullmidia.it
+[2026-03-01 17:39:54] [INFO] Domain: hotelmiramarecoriglianorossano.it | Status: scaduto | Days: -51 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to hotelmiramarecoriglianorossano.it
+[2026-03-01 17:39:54] [INFO] Domain: parcoreginavittoria.it | Status: scaduto | Days: -51 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to parcoreginavittoria.it
+[2026-03-01 17:39:54] [INFO] Domain: rlb.it | Status: scaduto | Days: -51 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to rlb.it
+[2026-03-01 17:39:54] [INFO] Domain: rlbradioattiva.com | Status: scaduto | Days: -51 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to rlbradioattiva.com
+[2026-03-01 17:39:54] [INFO] Domain: rlbradioattiva.it | Status: scaduto | Days: -51 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to rlbradioattiva.it
+[2026-03-01 17:39:54] [INFO] Domain: terrainvena.it | Status: scaduto | Days: -51 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to terrainvena.it
+[2026-03-01 17:39:54] [INFO] Domain: vfactor.it | Status: scaduto | Days: -51 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to vfactor.it
+[2026-03-01 17:39:54] [INFO] Domain: maxpneumatici.com | Status: scaduto | Days: -50 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to maxpneumatici.com
+[2026-03-01 17:39:54] [INFO] Domain: radiocosenzacentrale.com | Status: scaduto | Days: -47 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to radiocosenzacentrale.com
+[2026-03-01 17:39:54] [INFO] Domain: radiocosenzacentrale.it | Status: scaduto | Days: -47 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to radiocosenzacentrale.it
+[2026-03-01 17:39:54] [INFO] Domain: tartufodicalabria.it | Status: scaduto | Days: -45 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to tartufodicalabria.it
+[2026-03-01 17:39:54] [INFO] Domain: terrainvena.com | Status: scaduto | Days: -44 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to terrainvena.com
+[2026-03-01 17:39:54] [INFO] Domain: quisila.com | Status: scaduto | Days: -39 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to quisila.com
+[2026-03-01 17:39:54] [INFO] Domain: ilquotidianonline.it | Status: scaduto | Days: -38 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to ilquotidianonline.it
+[2026-03-01 17:39:54] [INFO] Domain: ilquotidianoonline.it | Status: scaduto | Days: -38 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to ilquotidianoonline.it
+[2026-03-01 17:39:54] [INFO] Domain: prosciutteriacasamadeo.it | Status: scaduto | Days: -35 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to prosciutteriacasamadeo.it
+[2026-03-01 17:39:54] [INFO] Domain: outletchateaudax.it | Status: scaduto | Days: -34 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to outletchateaudax.it
+[2026-03-01 17:39:54] [INFO] Domain: terzeria.it | Status: scaduto | Days: -34 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to terzeria.it
+[2026-03-01 17:39:54] [INFO] Domain: terzeriaonline.it | Status: scaduto | Days: -34 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to terzeriaonline.it
+[2026-03-01 17:39:54] [INFO] Domain: curtopino.it | Status: scaduto | Days: -31 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to curtopino.it
+[2026-03-01 17:39:54] [INFO] Domain: pinocurto.it | Status: scaduto | Days: -31 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to pinocurto.it
+[2026-03-01 17:39:54] [INFO] Domain: pinocurtogioielli.it | Status: scaduto | Days: -30 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to pinocurtogioielli.it
+[2026-03-01 17:39:54] [INFO] Domain: tuttotuoshop.it | Status: scaduto | Days: -28 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to tuttotuoshop.it
+[2026-03-01 17:39:54] [INFO] Domain: acetoagricoltura.com | Status: scaduto | Days: -26 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to acetoagricoltura.com
+[2026-03-01 17:39:54] [INFO] Domain: lafull.it | Status: scaduto | Days: -25 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to lafull.it
+[2026-03-01 17:39:54] [INFO] Domain: quics.it | Status: scaduto | Days: -25 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to quics.it
+[2026-03-01 17:39:54] [INFO] Domain: quilocal.it | Status: scaduto | Days: -25 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to quilocal.it
+[2026-03-01 17:39:54] [INFO] Domain: quaconviene.it | Status: scaduto | Days: -22 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to quaconviene.it
+[2026-03-01 17:39:54] [INFO] Domain: shopfuturcasa.it | Status: scaduto | Days: -21 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to shopfuturcasa.it
+[2026-03-01 17:39:54] [INFO] Domain: studioosteopaticobenevento.it | Status: scaduto | Days: -19 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to studioosteopaticobenevento.it
+[2026-03-01 17:39:54] [INFO] Domain: accademiartistica.it -  quota spazio su serverplan | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to accademiartistica.it -  quota spazio su serverplan
+[2026-03-01 17:39:54] [INFO] Domain: accademiartistica.it mail - compreso nell'hosting | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to accademiartistica.it mail - compreso nell'hosting
+[2026-03-01 17:39:54] [INFO] Domain: biosila.it - compreso nell'hosting | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to biosila.it - compreso nell'hosting
+[2026-03-01 17:39:54] [INFO] Domain: biosila.it - quota spazio su serverplan | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to biosila.it - quota spazio su serverplan
+[2026-03-01 17:39:54] [INFO] Domain: ccrenergia.it - compreso nell'hosting | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to ccrenergia.it - compreso nell'hosting
+[2026-03-01 17:39:54] [INFO] Domain: ccrenergia.it - quota spazio su serverplan | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to ccrenergia.it - quota spazio su serverplan
+[2026-03-01 17:39:54] [INFO] Domain: cloud reseller - 50 | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to cloud reseller - 50
+[2026-03-01 17:39:54] [INFO] Domain: compreso in cloud reseller - 50 | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to compreso in cloud reseller - 50
+[2026-03-01 17:39:54] [INFO] Domain: dkasa.it compreso nell'hosting | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to dkasa.it compreso nell'hosting
+[2026-03-01 17:39:54] [INFO] Domain: dkasa.it quota spazio su serverplan | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to dkasa.it quota spazio su serverplan
+[2026-03-01 17:39:54] [INFO] Domain: email compreso nell'hosting per bravocasashop.it | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to email compreso nell'hosting per bravocasashop.it
+[2026-03-01 17:39:54] [INFO] Domain: franzese.eu compreso nell'hosting | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to franzese.eu compreso nell'hosting
+[2026-03-01 17:39:54] [INFO] Domain: franzese.eu quota spazio su serverplan | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to franzese.eu quota spazio su serverplan
+[2026-03-01 17:39:54] [INFO] Domain: fullmidia.it quota spazio su serverplan | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to fullmidia.it quota spazio su serverplan
+[2026-03-01 17:39:54] [INFO] Domain: giemmegroupsrl.com compreso nell'hosting | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to giemmegroupsrl.com compreso nell'hosting
+[2026-03-01 17:39:54] [INFO] Domain: giemmegroupsrl.com quota spazio su serverplan | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to giemmegroupsrl.com quota spazio su serverplan
+[2026-03-01 17:39:54] [INFO] Domain: iminervini.it compreso nell'hosting | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to iminervini.it compreso nell'hosting
+[2026-03-01 17:39:54] [INFO] Domain: iminervini.it quota spazio su serverplan | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to iminervini.it quota spazio su serverplan
+[2026-03-01 17:39:54] [INFO] Domain: lamarinaresidenceclub.it compreso nell'hosting | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to lamarinaresidenceclub.it compreso nell'hosting
+[2026-03-01 17:39:54] [INFO] Domain: lamarinaresidenceclub.it quota spazio su serverplan | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to lamarinaresidenceclub.it quota spazio su serverplan
+[2026-03-01 17:39:54] [INFO] Domain: lamatina.it compreso nell'hosting | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to lamatina.it compreso nell'hosting
+[2026-03-01 17:39:54] [INFO] Domain: lamatina.it quota spazio su serverplan | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to lamatina.it quota spazio su serverplan
+[2026-03-01 17:39:54] [INFO] Domain: lanticofienile.it compreso nell'hosting | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to lanticofienile.it compreso nell'hosting
+[2026-03-01 17:39:54] [INFO] Domain: lanticofienile.it quota spazio su serverplan | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to lanticofienile.it quota spazio su serverplan
+[2026-03-01 17:39:54] [INFO] Domain: magikashop.com compreso nell'hosting | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to magikashop.com compreso nell'hosting
+[2026-03-01 17:39:54] [INFO] Domain: magikashop.com quota spazio su serverplan | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to magikashop.com quota spazio su serverplan
+[2026-03-01 17:39:54] [INFO] Domain: mangiofood.it compreso nell'hosting | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to mangiofood.it compreso nell'hosting
+[2026-03-01 17:39:54] [INFO] Domain: mangiofood.it quota spazio su serverplan | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to mangiofood.it quota spazio su serverplan
+[2026-03-01 17:39:54] [INFO] Domain: marcellolamberti.it compreso nell'hosting | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to marcellolamberti.it compreso nell'hosting
+[2026-03-01 17:39:54] [INFO] Domain: marcellolamberti.it quota spazio su serverplan | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to marcellolamberti.it quota spazio su serverplan
+[2026-03-01 17:39:54] [INFO] Domain: maxpneumatici.com compreso nell'hosting | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to maxpneumatici.com compreso nell'hosting
+[2026-03-01 17:39:54] [INFO] Domain: maxpneumatici.com quota spazio su serverplan | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to maxpneumatici.com quota spazio su serverplan
+[2026-03-01 17:39:54] [INFO] Domain: quicoriglianorossano.it - mail compreso nell'hosting | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to quicoriglianorossano.it - mail compreso nell'hosting
+[2026-03-01 17:39:54] [INFO] Domain: quicoriglianorossano.it - quota spazio su serverplan | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to quicoriglianorossano.it - quota spazio su serverplan
+[2026-03-01 17:39:54] [INFO] Domain: quics.it - compreso nell'hosting | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to quics.it - compreso nell'hosting
+[2026-03-01 17:39:54] [INFO] Domain: quics.it - quota spazio su serverplan | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to quics.it - quota spazio su serverplan
+[2026-03-01 17:39:54] [INFO] Domain: quota spazio su serverplan per bravocasashop.it | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to quota spazio su serverplan per bravocasashop.it
+[2026-03-01 17:39:54] [INFO] Domain: studioosteopaticobenevento.it - cloud reseller - 50 | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to studioosteopaticobenevento.it - cloud reseller - 50
+[2026-03-01 17:39:54] [INFO] Domain: studioosteopaticobenevento.it - compreso in cloud reseller - 50 | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to studioosteopaticobenevento.it - compreso in cloud reseller - 50
+[2026-03-01 17:39:54] [INFO] Domain: tenutaferrato.it - compreso nell'hosting | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to tenutaferrato.it - compreso nell'hosting
+[2026-03-01 17:39:54] [INFO] Domain: tenutaferrato.it - quota spazio su serverplan | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to tenutaferrato.it - quota spazio su serverplan
+[2026-03-01 17:39:54] [INFO] Domain: mobiliperri.it | Status: scaduto | Days: -12 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to mobiliperri.it
+[2026-03-01 17:39:54] [INFO] Domain: consentialuxuryandfamily.it | Status: scaduto | Days: -10 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to consentialuxuryandfamily.it
+[2026-03-01 17:39:54] [INFO] Domain: quicaffe.it | Status: scaduto | Days: -8 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to quicaffe.it
+[2026-03-01 17:39:54] [INFO] Domain: bravocasashop.it | Status: scaduto | Days: -3 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send 'scaduto' to bravocasashop.it
+[2026-03-01 17:39:54] [INFO] Domain: lamatina.it | Status: scade_presto | Days: 6 | Type: 15-day | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send '15-day' to lamatina.it
+[2026-03-01 17:39:54] [INFO] Domain: lanticofienile.com | Status: scade_presto | Days: 15 | Type: 15-day | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send '15-day' to lanticofienile.com
+[2026-03-01 17:39:54] [INFO] Domain: lanticofienile.it | Status: scade_presto | Days: 21 | Type: 30-day | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send '30-day' to lanticofienile.it
+[2026-03-01 17:39:54] [INFO] Domain: qplay.it | Status: scade_presto | Days: 22 | Type: 30-day | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send '30-day' to qplay.it
+[2026-03-01 17:39:54] [INFO] Domain: quiplay.it | Status: scade_presto | Days: 22 | Type: 30-day | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send '30-day' to quiplay.it
+[2026-03-01 17:39:54] [INFO] Domain: iminervini.it | Status: scade_presto | Days: 23 | Type: 30-day | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send '30-day' to iminervini.it
+[2026-03-01 17:39:54] [INFO] Domain: muchogustofood.it | Status: scade_presto | Days: 26 | Type: 30-day | AlreadySent: no
+[2026-03-01 17:39:54] [WARN] [DRY RUN] Would send '30-day' to muchogustofood.it
+[2026-03-01 17:39:54] [INFO] Cron Job Summary [DRY RUN] - Sent: 187 | Skipped: 0 | Checked: 233 | Errors: 0 | Time: 0.04s
+[2026-03-01 17:39:54] [INFO] ===== CRON JOB END =====
+
+[2026-03-01 17:40:43] [WARN] Running in DRY RUN mode - no emails will be sent
+[2026-03-01 17:40:43] [INFO] Processing 233 websites
+[2026-03-01 17:40:43] [INFO] Domain: bravolindo.it | Status: scaduto | Days: -704 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to bravolindo.it
+[2026-03-01 17:40:43] [INFO] Domain: bravocasa.net | Status: scaduto | Days: -516 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to bravocasa.net
+[2026-03-01 17:40:43] [INFO] Domain: pubblifull.com | Status: scaduto | Days: -369 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to pubblifull.com
+[2026-03-01 17:40:43] [INFO] Domain: cosenzanight.it | Status: scaduto | Days: -305 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to cosenzanight.it
+[2026-03-01 17:40:43] [INFO] Domain: biondinosrl.com | Status: scaduto | Days: -282 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to biondinosrl.com
+[2026-03-01 17:40:43] [INFO] Domain: biondinosrl.it | Status: scaduto | Days: -282 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to biondinosrl.it
+[2026-03-01 17:40:43] [INFO] Domain: reputationline.it | Status: scaduto | Days: -280 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to reputationline.it
+[2026-03-01 17:40:43] [INFO] Domain: villavomereto.it | Status: scaduto | Days: -261 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to villavomereto.it
+[2026-03-01 17:40:43] [INFO] Domain: sacrocuorecosenza.it | Status: scaduto | Days: -257 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to sacrocuorecosenza.it
+[2026-03-01 17:40:43] [INFO] Domain: quotidianoonline.info | Status: scaduto | Days: -247 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to quotidianoonline.info
+[2026-03-01 17:40:43] [INFO] Domain: hosting cloud pro 01 | Status: scaduto | Days: -243 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to hosting cloud pro 01
+[2026-03-01 17:40:43] [INFO] Domain: spazio email dedicato - 25gb - compreso in cloud pro 01 | Status: scaduto | Days: -243 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to spazio email dedicato - 25gb - compreso in cloud pro 01
+[2026-03-01 17:40:43] [INFO] Domain: camillotripicchio.com | Status: scaduto | Days: -241 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to camillotripicchio.com
+[2026-03-01 17:40:43] [INFO] Domain: camillotripicchio.it | Status: scaduto | Days: -241 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to camillotripicchio.it
+[2026-03-01 17:40:43] [INFO] Domain: quicatanzaro.it | Status: scaduto | Days: -239 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to quicatanzaro.it
+[2026-03-01 17:40:43] [INFO] Domain: quicosenza.it | Status: scaduto | Days: -239 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to quicosenza.it
+[2026-03-01 17:40:43] [INFO] Domain: quireggiocalabria.it | Status: scaduto | Days: -239 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to quireggiocalabria.it
+[2026-03-01 17:40:43] [INFO] Domain: mazzeiarredamenti.it | Status: scaduto | Days: -238 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to mazzeiarredamenti.it
+[2026-03-01 17:40:43] [INFO] Domain: quicosenza.com | Status: scaduto | Days: -236 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to quicosenza.com
+[2026-03-01 17:40:43] [INFO] Domain: pubblifull.it | Status: scaduto | Days: -230 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to pubblifull.it
+[2026-03-01 17:40:43] [INFO] Domain: anticofienile.it | Status: scaduto | Days: -214 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to anticofienile.it
+[2026-03-01 17:40:43] [INFO] Domain: martinoagrizoo.it | Status: scaduto | Days: -212 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to martinoagrizoo.it
+[2026-03-01 17:40:43] [INFO] Domain: martinoagrizoogarden.it | Status: scaduto | Days: -212 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to martinoagrizoogarden.it
+[2026-03-01 17:40:43] [INFO] Domain: portulaca.it | Status: scaduto | Days: -203 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to portulaca.it
+[2026-03-01 17:40:43] [INFO] Domain: altocasale.com | Status: scaduto | Days: -202 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to altocasale.com
+[2026-03-01 17:40:43] [INFO] Domain: altocasale.it | Status: scaduto | Days: -202 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to altocasale.it
+[2026-03-01 17:40:43] [INFO] Domain: bravocasa.it | Status: scaduto | Days: -192 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to bravocasa.it
+[2026-03-01 17:40:43] [INFO] Domain: fullmidia.it mail server outsourcing - 25gb | Status: scaduto | Days: -187 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to fullmidia.it mail server outsourcing - 25gb
+[2026-03-01 17:40:43] [INFO] Domain: quicosenza.it mail su server dedicato fully managed | Status: scaduto | Days: -187 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to quicosenza.it mail su server dedicato fully managed
+[2026-03-01 17:40:43] [INFO] Domain: rlb.it mail server outsourcing - 25gb | Status: scaduto | Days: -187 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to rlb.it mail server outsourcing - 25gb
+[2026-03-01 17:40:43] [INFO] Domain: ideaorogioielleria.com | Status: scaduto | Days: -182 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to ideaorogioielleria.com
+[2026-03-01 17:40:43] [INFO] Domain: autoricambikmzero.it | Status: scaduto | Days: -181 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to autoricambikmzero.it
+[2026-03-01 17:40:43] [INFO] Domain: cloud wordpress - 02 per serafinomazzei.it | Status: scaduto | Days: -179 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to cloud wordpress - 02 per serafinomazzei.it
+[2026-03-01 17:40:43] [INFO] Domain: cosentinoprofessional.it cloud wordpress - 02 | Status: scaduto | Days: -179 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to cosentinoprofessional.it cloud wordpress - 02
+[2026-03-01 17:40:43] [INFO] Domain: cosentinoprofessional.it spazio email dedicato - 20gb cpanel | Status: scaduto | Days: -179 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to cosentinoprofessional.it spazio email dedicato - 20gb cpanel
+[2026-03-01 17:40:43] [INFO] Domain: spazio email dedicato - 20gb cpanel per serafinomazzei.it | Status: scaduto | Days: -179 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to spazio email dedicato - 20gb cpanel per serafinomazzei.it
+[2026-03-01 17:40:43] [INFO] Domain: cosentinoprofessional.it | Status: scaduto | Days: -174 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to cosentinoprofessional.it
+[2026-03-01 17:40:43] [INFO] Domain: dkasashop.it | Status: scaduto | Days: -174 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to dkasashop.it
+[2026-03-01 17:40:43] [INFO] Domain: fullcrm.it | Status: scaduto | Days: -171 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to fullcrm.it
+[2026-03-01 17:40:43] [INFO] Domain: pubbliora.com | Status: scaduto | Days: -169 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to pubbliora.com
+[2026-03-01 17:40:43] [INFO] Domain: quiacri.it | Status: scaduto | Days: -169 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to quiacri.it
+[2026-03-01 17:40:43] [INFO] Domain: quiamantea.it | Status: scaduto | Days: -169 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to quiamantea.it
+[2026-03-01 17:40:43] [INFO] Domain: quicastrovillari.it | Status: scaduto | Days: -169 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to quicastrovillari.it
+[2026-03-01 17:40:43] [INFO] Domain: quicorigliano.it | Status: scaduto | Days: -169 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to quicorigliano.it
+[2026-03-01 17:40:43] [INFO] Domain: quicosenza.info | Status: scaduto | Days: -169 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to quicosenza.info
+[2026-03-01 17:40:43] [INFO] Domain: quipaola.it | Status: scaduto | Days: -169 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to quipaola.it
+[2026-03-01 17:40:43] [INFO] Domain: quirende.it | Status: scaduto | Days: -169 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to quirende.it
+[2026-03-01 17:40:43] [INFO] Domain: quirossano.it | Status: scaduto | Days: -169 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to quirossano.it
+[2026-03-01 17:40:43] [INFO] Domain: quitrebisacce.it | Status: scaduto | Days: -169 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to quitrebisacce.it
+[2026-03-01 17:40:43] [INFO] Domain: consorziosalumidicalabriadop.it | Status: scaduto | Days: -168 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to consorziosalumidicalabriadop.it
+[2026-03-01 17:40:43] [INFO] Domain: cloud reseller - 50 per terrainvena.it | Status: scaduto | Days: -156 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to cloud reseller - 50 per terrainvena.it
+[2026-03-01 17:40:43] [INFO] Domain: cloud reseller - 50 per vfactor.it | Status: scaduto | Days: -156 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to cloud reseller - 50 per vfactor.it
+[2026-03-01 17:40:43] [INFO] Domain: compreso in cloud reseller - 50 per terrainvena.it | Status: scaduto | Days: -156 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to compreso in cloud reseller - 50 per terrainvena.it
+[2026-03-01 17:40:43] [INFO] Domain: compreso in cloud reseller - 50 per vfactor.it | Status: scaduto | Days: -156 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to compreso in cloud reseller - 50 per vfactor.it
+[2026-03-01 17:40:43] [INFO] Domain: accademiasaporidelsole.it | Status: scaduto | Days: -155 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to accademiasaporidelsole.it
+[2026-03-01 17:40:43] [INFO] Domain: bravocasaonline.it | Status: scaduto | Days: -151 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to bravocasaonline.it
+[2026-03-01 17:40:43] [INFO] Domain: fattoriadellapiana.com | Status: scaduto | Days: -145 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to fattoriadellapiana.com
+[2026-03-01 17:40:43] [INFO] Domain: mangiofood.it | Status: scaduto | Days: -145 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to mangiofood.it
+[2026-03-01 17:40:43] [INFO] Domain: coldirettishop.com | Status: scaduto | Days: -144 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to coldirettishop.com
+[2026-03-01 17:40:43] [INFO] Domain: coldirettishop.it | Status: scaduto | Days: -144 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to coldirettishop.it
+[2026-03-01 17:40:43] [INFO] Domain: cosentinoprofessional.com | Status: scaduto | Days: -136 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to cosentinoprofessional.com
+[2026-03-01 17:40:43] [INFO] Domain: quicosenza.it server dedicato fullymanaged business - server 3.1 - | Status: scaduto | Days: -136 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to quicosenza.it server dedicato fullymanaged business - server 3.1 -
+[2026-03-01 17:40:43] [INFO] Domain: rlb.it quota su cloud reseller - 50 | Status: scaduto | Days: -136 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to rlb.it quota su cloud reseller - 50
+[2026-03-01 17:40:43] [INFO] Domain: barinalto.it | Status: scaduto | Days: -127 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to barinalto.it
+[2026-03-01 17:40:43] [INFO] Domain: accademiasaporidelsole.it - cloud reseller - 50 | Status: scaduto | Days: -126 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to accademiasaporidelsole.it - cloud reseller - 50
+[2026-03-01 17:40:43] [INFO] Domain: accademiasaporidelsole.it - compreso in cloud reseller - 50 | Status: scaduto | Days: -126 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to accademiasaporidelsole.it - compreso in cloud reseller - 50
+[2026-03-01 17:40:43] [INFO] Domain: ascsportregionecalabria.it - cloud reseller - 50 | Status: scaduto | Days: -126 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to ascsportregionecalabria.it - cloud reseller - 50
+[2026-03-01 17:40:43] [INFO] Domain: ascsportregionecalabria.it - compreso in cloud reseller - 50 | Status: scaduto | Days: -126 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to ascsportregionecalabria.it - compreso in cloud reseller - 50
+[2026-03-01 17:40:43] [INFO] Domain: compreso in cloud reseller - 50 hm | Status: scaduto | Days: -126 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to compreso in cloud reseller - 50 hm
+[2026-03-01 17:40:43] [INFO] Domain: prosciutteriacasamadeo.it - cloud reseller - 50 | Status: scaduto | Days: -126 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to prosciutteriacasamadeo.it - cloud reseller - 50
+[2026-03-01 17:40:43] [INFO] Domain: prosciutteriacasamadeo.it - compreso in cloud reseller - 50 | Status: scaduto | Days: -126 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to prosciutteriacasamadeo.it - compreso in cloud reseller - 50
+[2026-03-01 17:40:43] [INFO] Domain: quota su cloud reseller - 50 hm | Status: scaduto | Days: -126 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to quota su cloud reseller - 50 hm
+[2026-03-01 17:40:43] [INFO] Domain: quimisposo.com | Status: scaduto | Days: -125 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to quimisposo.com
+[2026-03-01 17:40:43] [INFO] Domain: quimisposo.it | Status: scaduto | Days: -125 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to quimisposo.it
+[2026-03-01 17:40:43] [INFO] Domain: lecantineditalia.com | Status: scaduto | Days: -121 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to lecantineditalia.com
+[2026-03-01 17:40:43] [INFO] Domain: lecantineditalia.it | Status: scaduto | Days: -121 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to lecantineditalia.it
+[2026-03-01 17:40:43] [INFO] Domain: lecantineitaliane.com | Status: scaduto | Days: -121 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to lecantineitaliane.com
+[2026-03-01 17:40:43] [INFO] Domain: lecantineitaliane.it | Status: scaduto | Days: -121 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to lecantineitaliane.it
+[2026-03-01 17:40:43] [INFO] Domain: semplicefficientare.com | Status: scaduto | Days: -121 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to semplicefficientare.com
+[2026-03-01 17:40:43] [INFO] Domain: quaeventi.it | Status: scaduto | Days: -114 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to quaeventi.it
+[2026-03-01 17:40:43] [INFO] Domain: qualavoro.it | Status: scaduto | Days: -114 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to qualavoro.it
+[2026-03-01 17:40:43] [INFO] Domain: cercoeventi.it | Status: scaduto | Days: -113 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to cercoeventi.it
+[2026-03-01 17:40:43] [INFO] Domain: workalabria.it | Status: scaduto | Days: -113 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to workalabria.it
+[2026-03-01 17:40:43] [INFO] Domain: shopcoldiretti.it | Status: scaduto | Days: -110 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to shopcoldiretti.it
+[2026-03-01 17:40:43] [INFO] Domain: chindamoporte.it | Status: scaduto | Days: -104 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to chindamoporte.it
+[2026-03-01 17:40:43] [INFO] Domain: salumidisuinonerodicalabria.it | Status: scaduto | Days: -101 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to salumidisuinonerodicalabria.it
+[2026-03-01 17:40:43] [INFO] Domain: benessernaturale.it | Status: scaduto | Days: -95 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to benessernaturale.it
+[2026-03-01 17:40:43] [INFO] Domain: papijon.it | Status: scaduto | Days: -92 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to papijon.it
+[2026-03-01 17:40:43] [INFO] Domain: quimeridione.it | Status: scaduto | Days: -92 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to quimeridione.it
+[2026-03-01 17:40:43] [INFO] Domain: quicrotone.it | Status: scaduto | Days: -90 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to quicrotone.it
+[2026-03-01 17:40:43] [INFO] Domain: equomondo.it | Status: scaduto | Days: -85 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to equomondo.it
+[2026-03-01 17:40:43] [INFO] Domain: laccademiadelgusto.it | Status: scaduto | Days: -85 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to laccademiadelgusto.it
+[2026-03-01 17:40:43] [INFO] Domain: vallecrati.it | Status: scaduto | Days: -81 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to vallecrati.it
+[2026-03-01 17:40:43] [INFO] Domain: valledellesaro.it | Status: scaduto | Days: -81 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to valledellesaro.it
+[2026-03-01 17:40:43] [INFO] Domain: consorziosalumidicalabriadop.com | Status: scaduto | Days: -79 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to consorziosalumidicalabriadop.com
+[2026-03-01 17:40:43] [INFO] Domain: teamimpresasrl.it - compreso in cloud reseller | Status: scaduto | Days: -72 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to teamimpresasrl.it - compreso in cloud reseller
+[2026-03-01 17:40:43] [INFO] Domain: calabriafan.it | Status: scaduto | Days: -70 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to calabriafan.it
+[2026-03-01 17:40:43] [INFO] Domain: kigold.it | Status: scaduto | Days: -63 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to kigold.it
+[2026-03-01 17:40:43] [INFO] Domain: acetoagricoltura.it | Status: scaduto | Days: -62 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to acetoagricoltura.it
+[2026-03-01 17:40:43] [INFO] Domain: kild.it | Status: scaduto | Days: -62 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to kild.it
+[2026-03-01 17:40:43] [INFO] Domain: magikashop.com | Status: scaduto | Days: -62 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to magikashop.com
+[2026-03-01 17:40:43] [INFO] Domain: coschignanoingegneria.com compreso nell'hosting | Status: scaduto | Days: -60 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to coschignanoingegneria.com compreso nell'hosting
+[2026-03-01 17:40:43] [INFO] Domain: coschignanoingegneria.com quota spazio su serverplan | Status: scaduto | Days: -60 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to coschignanoingegneria.com quota spazio su serverplan
+[2026-03-01 17:40:43] [INFO] Domain: protettocasa.it  quota spazio su serverplan | Status: scaduto | Days: -60 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to protettocasa.it  quota spazio su serverplan
+[2026-03-01 17:40:43] [INFO] Domain: fullmidia.it | Status: scaduto | Days: -51 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to fullmidia.it
+[2026-03-01 17:40:43] [INFO] Domain: hotelmiramarecoriglianorossano.it | Status: scaduto | Days: -51 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to hotelmiramarecoriglianorossano.it
+[2026-03-01 17:40:43] [INFO] Domain: parcoreginavittoria.it | Status: scaduto | Days: -51 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to parcoreginavittoria.it
+[2026-03-01 17:40:43] [INFO] Domain: rlb.it | Status: scaduto | Days: -51 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to rlb.it
+[2026-03-01 17:40:43] [INFO] Domain: rlbradioattiva.com | Status: scaduto | Days: -51 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to rlbradioattiva.com
+[2026-03-01 17:40:43] [INFO] Domain: rlbradioattiva.it | Status: scaduto | Days: -51 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to rlbradioattiva.it
+[2026-03-01 17:40:43] [INFO] Domain: terrainvena.it | Status: scaduto | Days: -51 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to terrainvena.it
+[2026-03-01 17:40:43] [INFO] Domain: vfactor.it | Status: scaduto | Days: -51 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to vfactor.it
+[2026-03-01 17:40:43] [INFO] Domain: maxpneumatici.com | Status: scaduto | Days: -50 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to maxpneumatici.com
+[2026-03-01 17:40:43] [INFO] Domain: radiocosenzacentrale.com | Status: scaduto | Days: -47 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to radiocosenzacentrale.com
+[2026-03-01 17:40:43] [INFO] Domain: radiocosenzacentrale.it | Status: scaduto | Days: -47 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to radiocosenzacentrale.it
+[2026-03-01 17:40:43] [INFO] Domain: tartufodicalabria.it | Status: scaduto | Days: -45 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to tartufodicalabria.it
+[2026-03-01 17:40:43] [INFO] Domain: terrainvena.com | Status: scaduto | Days: -44 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to terrainvena.com
+[2026-03-01 17:40:43] [INFO] Domain: quisila.com | Status: scaduto | Days: -39 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to quisila.com
+[2026-03-01 17:40:43] [INFO] Domain: ilquotidianonline.it | Status: scaduto | Days: -38 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to ilquotidianonline.it
+[2026-03-01 17:40:43] [INFO] Domain: ilquotidianoonline.it | Status: scaduto | Days: -38 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to ilquotidianoonline.it
+[2026-03-01 17:40:43] [INFO] Domain: prosciutteriacasamadeo.it | Status: scaduto | Days: -35 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to prosciutteriacasamadeo.it
+[2026-03-01 17:40:43] [INFO] Domain: outletchateaudax.it | Status: scaduto | Days: -34 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to outletchateaudax.it
+[2026-03-01 17:40:43] [INFO] Domain: terzeria.it | Status: scaduto | Days: -34 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to terzeria.it
+[2026-03-01 17:40:43] [INFO] Domain: terzeriaonline.it | Status: scaduto | Days: -34 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to terzeriaonline.it
+[2026-03-01 17:40:43] [INFO] Domain: curtopino.it | Status: scaduto | Days: -31 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to curtopino.it
+[2026-03-01 17:40:43] [INFO] Domain: pinocurto.it | Status: scaduto | Days: -31 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to pinocurto.it
+[2026-03-01 17:40:43] [INFO] Domain: pinocurtogioielli.it | Status: scaduto | Days: -30 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to pinocurtogioielli.it
+[2026-03-01 17:40:43] [INFO] Domain: tuttotuoshop.it | Status: scaduto | Days: -28 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to tuttotuoshop.it
+[2026-03-01 17:40:43] [INFO] Domain: acetoagricoltura.com | Status: scaduto | Days: -26 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to acetoagricoltura.com
+[2026-03-01 17:40:43] [INFO] Domain: lafull.it | Status: scaduto | Days: -25 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to lafull.it
+[2026-03-01 17:40:43] [INFO] Domain: quics.it | Status: scaduto | Days: -25 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to quics.it
+[2026-03-01 17:40:43] [INFO] Domain: quilocal.it | Status: scaduto | Days: -25 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to quilocal.it
+[2026-03-01 17:40:43] [INFO] Domain: quaconviene.it | Status: scaduto | Days: -22 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to quaconviene.it
+[2026-03-01 17:40:43] [INFO] Domain: shopfuturcasa.it | Status: scaduto | Days: -21 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to shopfuturcasa.it
+[2026-03-01 17:40:43] [INFO] Domain: studioosteopaticobenevento.it | Status: scaduto | Days: -19 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to studioosteopaticobenevento.it
+[2026-03-01 17:40:43] [INFO] Domain: accademiartistica.it -  quota spazio su serverplan | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to accademiartistica.it -  quota spazio su serverplan
+[2026-03-01 17:40:43] [INFO] Domain: accademiartistica.it mail - compreso nell'hosting | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to accademiartistica.it mail - compreso nell'hosting
+[2026-03-01 17:40:43] [INFO] Domain: biosila.it - compreso nell'hosting | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to biosila.it - compreso nell'hosting
+[2026-03-01 17:40:43] [INFO] Domain: biosila.it - quota spazio su serverplan | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to biosila.it - quota spazio su serverplan
+[2026-03-01 17:40:43] [INFO] Domain: ccrenergia.it - compreso nell'hosting | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to ccrenergia.it - compreso nell'hosting
+[2026-03-01 17:40:43] [INFO] Domain: ccrenergia.it - quota spazio su serverplan | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to ccrenergia.it - quota spazio su serverplan
+[2026-03-01 17:40:43] [INFO] Domain: cloud reseller - 50 | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to cloud reseller - 50
+[2026-03-01 17:40:43] [INFO] Domain: compreso in cloud reseller - 50 | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to compreso in cloud reseller - 50
+[2026-03-01 17:40:43] [INFO] Domain: dkasa.it compreso nell'hosting | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to dkasa.it compreso nell'hosting
+[2026-03-01 17:40:43] [INFO] Domain: dkasa.it quota spazio su serverplan | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to dkasa.it quota spazio su serverplan
+[2026-03-01 17:40:43] [INFO] Domain: email compreso nell'hosting per bravocasashop.it | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to email compreso nell'hosting per bravocasashop.it
+[2026-03-01 17:40:43] [INFO] Domain: franzese.eu compreso nell'hosting | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to franzese.eu compreso nell'hosting
+[2026-03-01 17:40:43] [INFO] Domain: franzese.eu quota spazio su serverplan | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to franzese.eu quota spazio su serverplan
+[2026-03-01 17:40:43] [INFO] Domain: fullmidia.it quota spazio su serverplan | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to fullmidia.it quota spazio su serverplan
+[2026-03-01 17:40:43] [INFO] Domain: giemmegroupsrl.com compreso nell'hosting | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to giemmegroupsrl.com compreso nell'hosting
+[2026-03-01 17:40:43] [INFO] Domain: giemmegroupsrl.com quota spazio su serverplan | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to giemmegroupsrl.com quota spazio su serverplan
+[2026-03-01 17:40:43] [INFO] Domain: iminervini.it compreso nell'hosting | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to iminervini.it compreso nell'hosting
+[2026-03-01 17:40:43] [INFO] Domain: iminervini.it quota spazio su serverplan | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to iminervini.it quota spazio su serverplan
+[2026-03-01 17:40:43] [INFO] Domain: lamarinaresidenceclub.it compreso nell'hosting | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to lamarinaresidenceclub.it compreso nell'hosting
+[2026-03-01 17:40:43] [INFO] Domain: lamarinaresidenceclub.it quota spazio su serverplan | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to lamarinaresidenceclub.it quota spazio su serverplan
+[2026-03-01 17:40:43] [INFO] Domain: lamatina.it compreso nell'hosting | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to lamatina.it compreso nell'hosting
+[2026-03-01 17:40:43] [INFO] Domain: lamatina.it quota spazio su serverplan | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to lamatina.it quota spazio su serverplan
+[2026-03-01 17:40:43] [INFO] Domain: lanticofienile.it compreso nell'hosting | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to lanticofienile.it compreso nell'hosting
+[2026-03-01 17:40:43] [INFO] Domain: lanticofienile.it quota spazio su serverplan | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to lanticofienile.it quota spazio su serverplan
+[2026-03-01 17:40:43] [INFO] Domain: magikashop.com compreso nell'hosting | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to magikashop.com compreso nell'hosting
+[2026-03-01 17:40:43] [INFO] Domain: magikashop.com quota spazio su serverplan | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to magikashop.com quota spazio su serverplan
+[2026-03-01 17:40:43] [INFO] Domain: mangiofood.it compreso nell'hosting | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to mangiofood.it compreso nell'hosting
+[2026-03-01 17:40:43] [INFO] Domain: mangiofood.it quota spazio su serverplan | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to mangiofood.it quota spazio su serverplan
+[2026-03-01 17:40:43] [INFO] Domain: marcellolamberti.it compreso nell'hosting | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to marcellolamberti.it compreso nell'hosting
+[2026-03-01 17:40:43] [INFO] Domain: marcellolamberti.it quota spazio su serverplan | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to marcellolamberti.it quota spazio su serverplan
+[2026-03-01 17:40:43] [INFO] Domain: maxpneumatici.com compreso nell'hosting | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to maxpneumatici.com compreso nell'hosting
+[2026-03-01 17:40:43] [INFO] Domain: maxpneumatici.com quota spazio su serverplan | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to maxpneumatici.com quota spazio su serverplan
+[2026-03-01 17:40:43] [INFO] Domain: quicoriglianorossano.it - mail compreso nell'hosting | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to quicoriglianorossano.it - mail compreso nell'hosting
+[2026-03-01 17:40:43] [INFO] Domain: quicoriglianorossano.it - quota spazio su serverplan | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to quicoriglianorossano.it - quota spazio su serverplan
+[2026-03-01 17:40:43] [INFO] Domain: quics.it - compreso nell'hosting | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to quics.it - compreso nell'hosting
+[2026-03-01 17:40:43] [INFO] Domain: quics.it - quota spazio su serverplan | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to quics.it - quota spazio su serverplan
+[2026-03-01 17:40:43] [INFO] Domain: quota spazio su serverplan per bravocasashop.it | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to quota spazio su serverplan per bravocasashop.it
+[2026-03-01 17:40:43] [INFO] Domain: studioosteopaticobenevento.it - cloud reseller - 50 | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to studioosteopaticobenevento.it - cloud reseller - 50
+[2026-03-01 17:40:43] [INFO] Domain: studioosteopaticobenevento.it - compreso in cloud reseller - 50 | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to studioosteopaticobenevento.it - compreso in cloud reseller - 50
+[2026-03-01 17:40:43] [INFO] Domain: tenutaferrato.it - compreso nell'hosting | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to tenutaferrato.it - compreso nell'hosting
+[2026-03-01 17:40:43] [INFO] Domain: tenutaferrato.it - quota spazio su serverplan | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to tenutaferrato.it - quota spazio su serverplan
+[2026-03-01 17:40:43] [INFO] Domain: mobiliperri.it | Status: scaduto | Days: -12 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to mobiliperri.it
+[2026-03-01 17:40:43] [INFO] Domain: consentialuxuryandfamily.it | Status: scaduto | Days: -10 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to consentialuxuryandfamily.it
+[2026-03-01 17:40:43] [INFO] Domain: quicaffe.it | Status: scaduto | Days: -8 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to quicaffe.it
+[2026-03-01 17:40:43] [INFO] Domain: bravocasashop.it | Status: scaduto | Days: -3 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send 'scaduto' to bravocasashop.it
+[2026-03-01 17:40:43] [INFO] Domain: lamatina.it | Status: scade_presto | Days: 6 | Type: 15-day | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send '15-day' to lamatina.it
+[2026-03-01 17:40:43] [INFO] Domain: lanticofienile.com | Status: scade_presto | Days: 15 | Type: 15-day | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send '15-day' to lanticofienile.com
+[2026-03-01 17:40:43] [INFO] Domain: lanticofienile.it | Status: scade_presto | Days: 21 | Type: 30-day | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send '30-day' to lanticofienile.it
+[2026-03-01 17:40:43] [INFO] Domain: qplay.it | Status: scade_presto | Days: 22 | Type: 30-day | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send '30-day' to qplay.it
+[2026-03-01 17:40:43] [INFO] Domain: quiplay.it | Status: scade_presto | Days: 22 | Type: 30-day | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send '30-day' to quiplay.it
+[2026-03-01 17:40:43] [INFO] Domain: iminervini.it | Status: scade_presto | Days: 23 | Type: 30-day | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send '30-day' to iminervini.it
+[2026-03-01 17:40:43] [INFO] Domain: muchogustofood.it | Status: scade_presto | Days: 26 | Type: 30-day | AlreadySent: no
+[2026-03-01 17:40:43] [WARN] [DRY RUN] Would send '30-day' to muchogustofood.it
+[2026-03-01 17:40:43] [INFO] Cron Job Summary [DRY RUN] - Sent: 187 | Skipped: 0 | Checked: 233 | Errors: 0 | Time: 0.04s
+[2026-03-01 17:40:43] [INFO] ===== CRON JOB END =====
+
+[2026-03-01 17:40:43] [INFO] Processing 233 websites
+[2026-03-01 17:40:43] [INFO] Domain: bravolindo.it | Status: scaduto | Days: -704 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:46] [INFO] ✓ Sent and recorded 'scaduto' for bravolindo.it
+[2026-03-01 17:40:46] [INFO] Domain: bravocasa.net | Status: scaduto | Days: -516 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:48] [INFO] ✓ Sent and recorded 'scaduto' for bravocasa.net
+[2026-03-01 17:40:48] [INFO] Domain: pubblifull.com | Status: scaduto | Days: -369 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:51] [INFO] ✓ Sent and recorded 'scaduto' for pubblifull.com
+[2026-03-01 17:40:51] [INFO] Domain: cosenzanight.it | Status: scaduto | Days: -305 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:54] [INFO] ✓ Sent and recorded 'scaduto' for cosenzanight.it
+[2026-03-01 17:40:54] [INFO] Domain: biondinosrl.com | Status: scaduto | Days: -282 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:56] [INFO] ✓ Sent and recorded 'scaduto' for biondinosrl.com
+[2026-03-01 17:40:56] [INFO] Domain: biondinosrl.it | Status: scaduto | Days: -282 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:40:59] [INFO] ✓ Sent and recorded 'scaduto' for biondinosrl.it
+[2026-03-01 17:40:59] [INFO] Domain: reputationline.it | Status: scaduto | Days: -280 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:01] [INFO] ✓ Sent and recorded 'scaduto' for reputationline.it
+[2026-03-01 17:41:01] [INFO] Domain: villavomereto.it | Status: scaduto | Days: -261 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:04] [INFO] ✓ Sent and recorded 'scaduto' for villavomereto.it
+[2026-03-01 17:41:04] [INFO] Domain: sacrocuorecosenza.it | Status: scaduto | Days: -257 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:06] [INFO] ✓ Sent and recorded 'scaduto' for sacrocuorecosenza.it
+[2026-03-01 17:41:06] [INFO] Domain: quotidianoonline.info | Status: scaduto | Days: -247 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:09] [INFO] ✓ Sent and recorded 'scaduto' for quotidianoonline.info
+[2026-03-01 17:41:09] [INFO] Domain: hosting cloud pro 01 | Status: scaduto | Days: -243 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:09] [ERROR] Failed to send 'scaduto' for hosting cloud pro 01
+[2026-03-01 17:41:09] [INFO] Domain: spazio email dedicato - 25gb - compreso in cloud pro 01 | Status: scaduto | Days: -243 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:09] [ERROR] Failed to send 'scaduto' for spazio email dedicato - 25gb - compreso in cloud pro 01
+[2026-03-01 17:41:09] [INFO] Domain: camillotripicchio.com | Status: scaduto | Days: -241 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:11] [INFO] ✓ Sent and recorded 'scaduto' for camillotripicchio.com
+[2026-03-01 17:41:11] [INFO] Domain: camillotripicchio.it | Status: scaduto | Days: -241 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:15] [INFO] ✓ Sent and recorded 'scaduto' for camillotripicchio.it
+[2026-03-01 17:41:15] [INFO] Domain: quicatanzaro.it | Status: scaduto | Days: -239 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:17] [INFO] ✓ Sent and recorded 'scaduto' for quicatanzaro.it
+[2026-03-01 17:41:17] [INFO] Domain: quicosenza.it | Status: scaduto | Days: -239 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:20] [INFO] ✓ Sent and recorded 'scaduto' for quicosenza.it
+[2026-03-01 17:41:20] [INFO] Domain: quireggiocalabria.it | Status: scaduto | Days: -239 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:22] [INFO] ✓ Sent and recorded 'scaduto' for quireggiocalabria.it
+[2026-03-01 17:41:22] [INFO] Domain: mazzeiarredamenti.it | Status: scaduto | Days: -238 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:24] [INFO] ✓ Sent and recorded 'scaduto' for mazzeiarredamenti.it
+[2026-03-01 17:41:24] [INFO] Domain: quicosenza.com | Status: scaduto | Days: -236 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] Running in DRY RUN mode - no emails will be sent
+[2026-03-01 17:41:25] [INFO] Processing 233 websites
+[2026-03-01 17:41:25] [INFO] Domain: bravolindo.it | Status: scaduto | Days: -704 | Type: scaduto | AlreadySent: yes
+[2026-03-01 17:41:25] [INFO] ⊘ Skipping 'scaduto' for bravolindo.it - already sent
+[2026-03-01 17:41:25] [INFO] Domain: bravocasa.net | Status: scaduto | Days: -516 | Type: scaduto | AlreadySent: yes
+[2026-03-01 17:41:25] [INFO] ⊘ Skipping 'scaduto' for bravocasa.net - already sent
+[2026-03-01 17:41:25] [INFO] Domain: pubblifull.com | Status: scaduto | Days: -369 | Type: scaduto | AlreadySent: yes
+[2026-03-01 17:41:25] [INFO] ⊘ Skipping 'scaduto' for pubblifull.com - already sent
+[2026-03-01 17:41:25] [INFO] Domain: cosenzanight.it | Status: scaduto | Days: -305 | Type: scaduto | AlreadySent: yes
+[2026-03-01 17:41:25] [INFO] ⊘ Skipping 'scaduto' for cosenzanight.it - already sent
+[2026-03-01 17:41:25] [INFO] Domain: biondinosrl.com | Status: scaduto | Days: -282 | Type: scaduto | AlreadySent: yes
+[2026-03-01 17:41:25] [INFO] ⊘ Skipping 'scaduto' for biondinosrl.com - already sent
+[2026-03-01 17:41:25] [INFO] Domain: biondinosrl.it | Status: scaduto | Days: -282 | Type: scaduto | AlreadySent: yes
+[2026-03-01 17:41:25] [INFO] ⊘ Skipping 'scaduto' for biondinosrl.it - already sent
+[2026-03-01 17:41:25] [INFO] Domain: reputationline.it | Status: scaduto | Days: -280 | Type: scaduto | AlreadySent: yes
+[2026-03-01 17:41:25] [INFO] ⊘ Skipping 'scaduto' for reputationline.it - already sent
+[2026-03-01 17:41:25] [INFO] Domain: villavomereto.it | Status: scaduto | Days: -261 | Type: scaduto | AlreadySent: yes
+[2026-03-01 17:41:25] [INFO] ⊘ Skipping 'scaduto' for villavomereto.it - already sent
+[2026-03-01 17:41:25] [INFO] Domain: sacrocuorecosenza.it | Status: scaduto | Days: -257 | Type: scaduto | AlreadySent: yes
+[2026-03-01 17:41:25] [INFO] ⊘ Skipping 'scaduto' for sacrocuorecosenza.it - already sent
+[2026-03-01 17:41:25] [INFO] Domain: quotidianoonline.info | Status: scaduto | Days: -247 | Type: scaduto | AlreadySent: yes
+[2026-03-01 17:41:25] [INFO] ⊘ Skipping 'scaduto' for quotidianoonline.info - already sent
+[2026-03-01 17:41:25] [INFO] Domain: hosting cloud pro 01 | Status: scaduto | Days: -243 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to hosting cloud pro 01
+[2026-03-01 17:41:25] [INFO] Domain: spazio email dedicato - 25gb - compreso in cloud pro 01 | Status: scaduto | Days: -243 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to spazio email dedicato - 25gb - compreso in cloud pro 01
+[2026-03-01 17:41:25] [INFO] Domain: camillotripicchio.com | Status: scaduto | Days: -241 | Type: scaduto | AlreadySent: yes
+[2026-03-01 17:41:25] [INFO] ⊘ Skipping 'scaduto' for camillotripicchio.com - already sent
+[2026-03-01 17:41:25] [INFO] Domain: camillotripicchio.it | Status: scaduto | Days: -241 | Type: scaduto | AlreadySent: yes
+[2026-03-01 17:41:25] [INFO] ⊘ Skipping 'scaduto' for camillotripicchio.it - already sent
+[2026-03-01 17:41:25] [INFO] Domain: quicatanzaro.it | Status: scaduto | Days: -239 | Type: scaduto | AlreadySent: yes
+[2026-03-01 17:41:25] [INFO] ⊘ Skipping 'scaduto' for quicatanzaro.it - already sent
+[2026-03-01 17:41:25] [INFO] Domain: quicosenza.it | Status: scaduto | Days: -239 | Type: scaduto | AlreadySent: yes
+[2026-03-01 17:41:25] [INFO] ⊘ Skipping 'scaduto' for quicosenza.it - already sent
+[2026-03-01 17:41:25] [INFO] Domain: quireggiocalabria.it | Status: scaduto | Days: -239 | Type: scaduto | AlreadySent: yes
+[2026-03-01 17:41:25] [INFO] ⊘ Skipping 'scaduto' for quireggiocalabria.it - already sent
+[2026-03-01 17:41:25] [INFO] Domain: mazzeiarredamenti.it | Status: scaduto | Days: -238 | Type: scaduto | AlreadySent: yes
+[2026-03-01 17:41:25] [INFO] ⊘ Skipping 'scaduto' for mazzeiarredamenti.it - already sent
+[2026-03-01 17:41:25] [INFO] Domain: quicosenza.com | Status: scaduto | Days: -236 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to quicosenza.com
+[2026-03-01 17:41:25] [INFO] Domain: pubblifull.it | Status: scaduto | Days: -230 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to pubblifull.it
+[2026-03-01 17:41:25] [INFO] Domain: anticofienile.it | Status: scaduto | Days: -214 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to anticofienile.it
+[2026-03-01 17:41:25] [INFO] Domain: martinoagrizoo.it | Status: scaduto | Days: -212 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to martinoagrizoo.it
+[2026-03-01 17:41:25] [INFO] Domain: martinoagrizoogarden.it | Status: scaduto | Days: -212 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to martinoagrizoogarden.it
+[2026-03-01 17:41:25] [INFO] Domain: portulaca.it | Status: scaduto | Days: -203 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to portulaca.it
+[2026-03-01 17:41:25] [INFO] Domain: altocasale.com | Status: scaduto | Days: -202 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to altocasale.com
+[2026-03-01 17:41:25] [INFO] Domain: altocasale.it | Status: scaduto | Days: -202 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to altocasale.it
+[2026-03-01 17:41:25] [INFO] Domain: bravocasa.it | Status: scaduto | Days: -192 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to bravocasa.it
+[2026-03-01 17:41:25] [INFO] Domain: fullmidia.it mail server outsourcing - 25gb | Status: scaduto | Days: -187 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to fullmidia.it mail server outsourcing - 25gb
+[2026-03-01 17:41:25] [INFO] Domain: quicosenza.it mail su server dedicato fully managed | Status: scaduto | Days: -187 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to quicosenza.it mail su server dedicato fully managed
+[2026-03-01 17:41:25] [INFO] Domain: rlb.it mail server outsourcing - 25gb | Status: scaduto | Days: -187 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to rlb.it mail server outsourcing - 25gb
+[2026-03-01 17:41:25] [INFO] Domain: ideaorogioielleria.com | Status: scaduto | Days: -182 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to ideaorogioielleria.com
+[2026-03-01 17:41:25] [INFO] Domain: autoricambikmzero.it | Status: scaduto | Days: -181 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to autoricambikmzero.it
+[2026-03-01 17:41:25] [INFO] Domain: cloud wordpress - 02 per serafinomazzei.it | Status: scaduto | Days: -179 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to cloud wordpress - 02 per serafinomazzei.it
+[2026-03-01 17:41:25] [INFO] Domain: cosentinoprofessional.it cloud wordpress - 02 | Status: scaduto | Days: -179 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to cosentinoprofessional.it cloud wordpress - 02
+[2026-03-01 17:41:25] [INFO] Domain: cosentinoprofessional.it spazio email dedicato - 20gb cpanel | Status: scaduto | Days: -179 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to cosentinoprofessional.it spazio email dedicato - 20gb cpanel
+[2026-03-01 17:41:25] [INFO] Domain: spazio email dedicato - 20gb cpanel per serafinomazzei.it | Status: scaduto | Days: -179 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to spazio email dedicato - 20gb cpanel per serafinomazzei.it
+[2026-03-01 17:41:25] [INFO] Domain: cosentinoprofessional.it | Status: scaduto | Days: -174 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to cosentinoprofessional.it
+[2026-03-01 17:41:25] [INFO] Domain: dkasashop.it | Status: scaduto | Days: -174 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to dkasashop.it
+[2026-03-01 17:41:25] [INFO] Domain: fullcrm.it | Status: scaduto | Days: -171 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to fullcrm.it
+[2026-03-01 17:41:25] [INFO] Domain: pubbliora.com | Status: scaduto | Days: -169 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to pubbliora.com
+[2026-03-01 17:41:25] [INFO] Domain: quiacri.it | Status: scaduto | Days: -169 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to quiacri.it
+[2026-03-01 17:41:25] [INFO] Domain: quiamantea.it | Status: scaduto | Days: -169 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to quiamantea.it
+[2026-03-01 17:41:25] [INFO] Domain: quicastrovillari.it | Status: scaduto | Days: -169 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to quicastrovillari.it
+[2026-03-01 17:41:25] [INFO] Domain: quicorigliano.it | Status: scaduto | Days: -169 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to quicorigliano.it
+[2026-03-01 17:41:25] [INFO] Domain: quicosenza.info | Status: scaduto | Days: -169 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to quicosenza.info
+[2026-03-01 17:41:25] [INFO] Domain: quipaola.it | Status: scaduto | Days: -169 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to quipaola.it
+[2026-03-01 17:41:25] [INFO] Domain: quirende.it | Status: scaduto | Days: -169 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to quirende.it
+[2026-03-01 17:41:25] [INFO] Domain: quirossano.it | Status: scaduto | Days: -169 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to quirossano.it
+[2026-03-01 17:41:25] [INFO] Domain: quitrebisacce.it | Status: scaduto | Days: -169 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to quitrebisacce.it
+[2026-03-01 17:41:25] [INFO] Domain: consorziosalumidicalabriadop.it | Status: scaduto | Days: -168 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to consorziosalumidicalabriadop.it
+[2026-03-01 17:41:25] [INFO] Domain: cloud reseller - 50 per terrainvena.it | Status: scaduto | Days: -156 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to cloud reseller - 50 per terrainvena.it
+[2026-03-01 17:41:25] [INFO] Domain: cloud reseller - 50 per vfactor.it | Status: scaduto | Days: -156 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to cloud reseller - 50 per vfactor.it
+[2026-03-01 17:41:25] [INFO] Domain: compreso in cloud reseller - 50 per terrainvena.it | Status: scaduto | Days: -156 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to compreso in cloud reseller - 50 per terrainvena.it
+[2026-03-01 17:41:25] [INFO] Domain: compreso in cloud reseller - 50 per vfactor.it | Status: scaduto | Days: -156 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to compreso in cloud reseller - 50 per vfactor.it
+[2026-03-01 17:41:25] [INFO] Domain: accademiasaporidelsole.it | Status: scaduto | Days: -155 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to accademiasaporidelsole.it
+[2026-03-01 17:41:25] [INFO] Domain: bravocasaonline.it | Status: scaduto | Days: -151 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to bravocasaonline.it
+[2026-03-01 17:41:25] [INFO] Domain: fattoriadellapiana.com | Status: scaduto | Days: -145 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to fattoriadellapiana.com
+[2026-03-01 17:41:25] [INFO] Domain: mangiofood.it | Status: scaduto | Days: -145 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to mangiofood.it
+[2026-03-01 17:41:25] [INFO] Domain: coldirettishop.com | Status: scaduto | Days: -144 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to coldirettishop.com
+[2026-03-01 17:41:25] [INFO] Domain: coldirettishop.it | Status: scaduto | Days: -144 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to coldirettishop.it
+[2026-03-01 17:41:25] [INFO] Domain: cosentinoprofessional.com | Status: scaduto | Days: -136 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to cosentinoprofessional.com
+[2026-03-01 17:41:25] [INFO] Domain: quicosenza.it server dedicato fullymanaged business - server 3.1 - | Status: scaduto | Days: -136 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to quicosenza.it server dedicato fullymanaged business - server 3.1 -
+[2026-03-01 17:41:25] [INFO] Domain: rlb.it quota su cloud reseller - 50 | Status: scaduto | Days: -136 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to rlb.it quota su cloud reseller - 50
+[2026-03-01 17:41:25] [INFO] Domain: barinalto.it | Status: scaduto | Days: -127 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to barinalto.it
+[2026-03-01 17:41:25] [INFO] Domain: accademiasaporidelsole.it - cloud reseller - 50 | Status: scaduto | Days: -126 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to accademiasaporidelsole.it - cloud reseller - 50
+[2026-03-01 17:41:25] [INFO] Domain: accademiasaporidelsole.it - compreso in cloud reseller - 50 | Status: scaduto | Days: -126 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to accademiasaporidelsole.it - compreso in cloud reseller - 50
+[2026-03-01 17:41:25] [INFO] Domain: ascsportregionecalabria.it - cloud reseller - 50 | Status: scaduto | Days: -126 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to ascsportregionecalabria.it - cloud reseller - 50
+[2026-03-01 17:41:25] [INFO] Domain: ascsportregionecalabria.it - compreso in cloud reseller - 50 | Status: scaduto | Days: -126 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to ascsportregionecalabria.it - compreso in cloud reseller - 50
+[2026-03-01 17:41:25] [INFO] Domain: compreso in cloud reseller - 50 hm | Status: scaduto | Days: -126 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to compreso in cloud reseller - 50 hm
+[2026-03-01 17:41:25] [INFO] Domain: prosciutteriacasamadeo.it - cloud reseller - 50 | Status: scaduto | Days: -126 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to prosciutteriacasamadeo.it - cloud reseller - 50
+[2026-03-01 17:41:25] [INFO] Domain: prosciutteriacasamadeo.it - compreso in cloud reseller - 50 | Status: scaduto | Days: -126 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to prosciutteriacasamadeo.it - compreso in cloud reseller - 50
+[2026-03-01 17:41:25] [INFO] Domain: quota su cloud reseller - 50 hm | Status: scaduto | Days: -126 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to quota su cloud reseller - 50 hm
+[2026-03-01 17:41:25] [INFO] Domain: quimisposo.com | Status: scaduto | Days: -125 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to quimisposo.com
+[2026-03-01 17:41:25] [INFO] Domain: quimisposo.it | Status: scaduto | Days: -125 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to quimisposo.it
+[2026-03-01 17:41:25] [INFO] Domain: lecantineditalia.com | Status: scaduto | Days: -121 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to lecantineditalia.com
+[2026-03-01 17:41:25] [INFO] Domain: lecantineditalia.it | Status: scaduto | Days: -121 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to lecantineditalia.it
+[2026-03-01 17:41:25] [INFO] Domain: lecantineitaliane.com | Status: scaduto | Days: -121 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to lecantineitaliane.com
+[2026-03-01 17:41:25] [INFO] Domain: lecantineitaliane.it | Status: scaduto | Days: -121 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to lecantineitaliane.it
+[2026-03-01 17:41:25] [INFO] Domain: semplicefficientare.com | Status: scaduto | Days: -121 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to semplicefficientare.com
+[2026-03-01 17:41:25] [INFO] Domain: quaeventi.it | Status: scaduto | Days: -114 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to quaeventi.it
+[2026-03-01 17:41:25] [INFO] Domain: qualavoro.it | Status: scaduto | Days: -114 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to qualavoro.it
+[2026-03-01 17:41:25] [INFO] Domain: cercoeventi.it | Status: scaduto | Days: -113 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to cercoeventi.it
+[2026-03-01 17:41:25] [INFO] Domain: workalabria.it | Status: scaduto | Days: -113 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to workalabria.it
+[2026-03-01 17:41:25] [INFO] Domain: shopcoldiretti.it | Status: scaduto | Days: -110 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to shopcoldiretti.it
+[2026-03-01 17:41:25] [INFO] Domain: chindamoporte.it | Status: scaduto | Days: -104 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to chindamoporte.it
+[2026-03-01 17:41:25] [INFO] Domain: salumidisuinonerodicalabria.it | Status: scaduto | Days: -101 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to salumidisuinonerodicalabria.it
+[2026-03-01 17:41:25] [INFO] Domain: benessernaturale.it | Status: scaduto | Days: -95 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to benessernaturale.it
+[2026-03-01 17:41:25] [INFO] Domain: papijon.it | Status: scaduto | Days: -92 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to papijon.it
+[2026-03-01 17:41:25] [INFO] Domain: quimeridione.it | Status: scaduto | Days: -92 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to quimeridione.it
+[2026-03-01 17:41:25] [INFO] Domain: quicrotone.it | Status: scaduto | Days: -90 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to quicrotone.it
+[2026-03-01 17:41:25] [INFO] Domain: equomondo.it | Status: scaduto | Days: -85 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to equomondo.it
+[2026-03-01 17:41:25] [INFO] Domain: laccademiadelgusto.it | Status: scaduto | Days: -85 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to laccademiadelgusto.it
+[2026-03-01 17:41:25] [INFO] Domain: vallecrati.it | Status: scaduto | Days: -81 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to vallecrati.it
+[2026-03-01 17:41:25] [INFO] Domain: valledellesaro.it | Status: scaduto | Days: -81 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to valledellesaro.it
+[2026-03-01 17:41:25] [INFO] Domain: consorziosalumidicalabriadop.com | Status: scaduto | Days: -79 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to consorziosalumidicalabriadop.com
+[2026-03-01 17:41:25] [INFO] Domain: teamimpresasrl.it - compreso in cloud reseller | Status: scaduto | Days: -72 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to teamimpresasrl.it - compreso in cloud reseller
+[2026-03-01 17:41:25] [INFO] Domain: calabriafan.it | Status: scaduto | Days: -70 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to calabriafan.it
+[2026-03-01 17:41:25] [INFO] Domain: kigold.it | Status: scaduto | Days: -63 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to kigold.it
+[2026-03-01 17:41:25] [INFO] Domain: acetoagricoltura.it | Status: scaduto | Days: -62 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to acetoagricoltura.it
+[2026-03-01 17:41:25] [INFO] Domain: kild.it | Status: scaduto | Days: -62 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to kild.it
+[2026-03-01 17:41:25] [INFO] Domain: magikashop.com | Status: scaduto | Days: -62 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to magikashop.com
+[2026-03-01 17:41:25] [INFO] Domain: coschignanoingegneria.com compreso nell'hosting | Status: scaduto | Days: -60 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to coschignanoingegneria.com compreso nell'hosting
+[2026-03-01 17:41:25] [INFO] Domain: coschignanoingegneria.com quota spazio su serverplan | Status: scaduto | Days: -60 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to coschignanoingegneria.com quota spazio su serverplan
+[2026-03-01 17:41:25] [INFO] Domain: protettocasa.it  quota spazio su serverplan | Status: scaduto | Days: -60 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to protettocasa.it  quota spazio su serverplan
+[2026-03-01 17:41:25] [INFO] Domain: fullmidia.it | Status: scaduto | Days: -51 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to fullmidia.it
+[2026-03-01 17:41:25] [INFO] Domain: hotelmiramarecoriglianorossano.it | Status: scaduto | Days: -51 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to hotelmiramarecoriglianorossano.it
+[2026-03-01 17:41:25] [INFO] Domain: parcoreginavittoria.it | Status: scaduto | Days: -51 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to parcoreginavittoria.it
+[2026-03-01 17:41:25] [INFO] Domain: rlb.it | Status: scaduto | Days: -51 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to rlb.it
+[2026-03-01 17:41:25] [INFO] Domain: rlbradioattiva.com | Status: scaduto | Days: -51 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to rlbradioattiva.com
+[2026-03-01 17:41:25] [INFO] Domain: rlbradioattiva.it | Status: scaduto | Days: -51 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to rlbradioattiva.it
+[2026-03-01 17:41:25] [INFO] Domain: terrainvena.it | Status: scaduto | Days: -51 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to terrainvena.it
+[2026-03-01 17:41:25] [INFO] Domain: vfactor.it | Status: scaduto | Days: -51 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to vfactor.it
+[2026-03-01 17:41:25] [INFO] Domain: maxpneumatici.com | Status: scaduto | Days: -50 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to maxpneumatici.com
+[2026-03-01 17:41:25] [INFO] Domain: radiocosenzacentrale.com | Status: scaduto | Days: -47 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to radiocosenzacentrale.com
+[2026-03-01 17:41:25] [INFO] Domain: radiocosenzacentrale.it | Status: scaduto | Days: -47 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to radiocosenzacentrale.it
+[2026-03-01 17:41:25] [INFO] Domain: tartufodicalabria.it | Status: scaduto | Days: -45 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to tartufodicalabria.it
+[2026-03-01 17:41:25] [INFO] Domain: terrainvena.com | Status: scaduto | Days: -44 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to terrainvena.com
+[2026-03-01 17:41:25] [INFO] Domain: quisila.com | Status: scaduto | Days: -39 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to quisila.com
+[2026-03-01 17:41:25] [INFO] Domain: ilquotidianonline.it | Status: scaduto | Days: -38 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to ilquotidianonline.it
+[2026-03-01 17:41:25] [INFO] Domain: ilquotidianoonline.it | Status: scaduto | Days: -38 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to ilquotidianoonline.it
+[2026-03-01 17:41:25] [INFO] Domain: prosciutteriacasamadeo.it | Status: scaduto | Days: -35 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to prosciutteriacasamadeo.it
+[2026-03-01 17:41:25] [INFO] Domain: outletchateaudax.it | Status: scaduto | Days: -34 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to outletchateaudax.it
+[2026-03-01 17:41:25] [INFO] Domain: terzeria.it | Status: scaduto | Days: -34 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to terzeria.it
+[2026-03-01 17:41:25] [INFO] Domain: terzeriaonline.it | Status: scaduto | Days: -34 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to terzeriaonline.it
+[2026-03-01 17:41:25] [INFO] Domain: curtopino.it | Status: scaduto | Days: -31 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to curtopino.it
+[2026-03-01 17:41:25] [INFO] Domain: pinocurto.it | Status: scaduto | Days: -31 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to pinocurto.it
+[2026-03-01 17:41:25] [INFO] Domain: pinocurtogioielli.it | Status: scaduto | Days: -30 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to pinocurtogioielli.it
+[2026-03-01 17:41:25] [INFO] Domain: tuttotuoshop.it | Status: scaduto | Days: -28 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to tuttotuoshop.it
+[2026-03-01 17:41:25] [INFO] Domain: acetoagricoltura.com | Status: scaduto | Days: -26 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to acetoagricoltura.com
+[2026-03-01 17:41:25] [INFO] Domain: lafull.it | Status: scaduto | Days: -25 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to lafull.it
+[2026-03-01 17:41:25] [INFO] Domain: quics.it | Status: scaduto | Days: -25 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to quics.it
+[2026-03-01 17:41:25] [INFO] Domain: quilocal.it | Status: scaduto | Days: -25 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to quilocal.it
+[2026-03-01 17:41:25] [INFO] Domain: quaconviene.it | Status: scaduto | Days: -22 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to quaconviene.it
+[2026-03-01 17:41:25] [INFO] Domain: shopfuturcasa.it | Status: scaduto | Days: -21 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to shopfuturcasa.it
+[2026-03-01 17:41:25] [INFO] Domain: studioosteopaticobenevento.it | Status: scaduto | Days: -19 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to studioosteopaticobenevento.it
+[2026-03-01 17:41:25] [INFO] Domain: accademiartistica.it -  quota spazio su serverplan | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to accademiartistica.it -  quota spazio su serverplan
+[2026-03-01 17:41:25] [INFO] Domain: accademiartistica.it mail - compreso nell'hosting | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to accademiartistica.it mail - compreso nell'hosting
+[2026-03-01 17:41:25] [INFO] Domain: biosila.it - compreso nell'hosting | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to biosila.it - compreso nell'hosting
+[2026-03-01 17:41:25] [INFO] Domain: biosila.it - quota spazio su serverplan | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to biosila.it - quota spazio su serverplan
+[2026-03-01 17:41:25] [INFO] Domain: ccrenergia.it - compreso nell'hosting | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to ccrenergia.it - compreso nell'hosting
+[2026-03-01 17:41:25] [INFO] Domain: ccrenergia.it - quota spazio su serverplan | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to ccrenergia.it - quota spazio su serverplan
+[2026-03-01 17:41:25] [INFO] Domain: cloud reseller - 50 | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to cloud reseller - 50
+[2026-03-01 17:41:25] [INFO] Domain: compreso in cloud reseller - 50 | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to compreso in cloud reseller - 50
+[2026-03-01 17:41:25] [INFO] Domain: dkasa.it compreso nell'hosting | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to dkasa.it compreso nell'hosting
+[2026-03-01 17:41:25] [INFO] Domain: dkasa.it quota spazio su serverplan | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to dkasa.it quota spazio su serverplan
+[2026-03-01 17:41:25] [INFO] Domain: email compreso nell'hosting per bravocasashop.it | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to email compreso nell'hosting per bravocasashop.it
+[2026-03-01 17:41:25] [INFO] Domain: franzese.eu compreso nell'hosting | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to franzese.eu compreso nell'hosting
+[2026-03-01 17:41:25] [INFO] Domain: franzese.eu quota spazio su serverplan | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to franzese.eu quota spazio su serverplan
+[2026-03-01 17:41:25] [INFO] Domain: fullmidia.it quota spazio su serverplan | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to fullmidia.it quota spazio su serverplan
+[2026-03-01 17:41:25] [INFO] Domain: giemmegroupsrl.com compreso nell'hosting | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to giemmegroupsrl.com compreso nell'hosting
+[2026-03-01 17:41:25] [INFO] Domain: giemmegroupsrl.com quota spazio su serverplan | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to giemmegroupsrl.com quota spazio su serverplan
+[2026-03-01 17:41:25] [INFO] Domain: iminervini.it compreso nell'hosting | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to iminervini.it compreso nell'hosting
+[2026-03-01 17:41:25] [INFO] Domain: iminervini.it quota spazio su serverplan | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to iminervini.it quota spazio su serverplan
+[2026-03-01 17:41:25] [INFO] Domain: lamarinaresidenceclub.it compreso nell'hosting | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to lamarinaresidenceclub.it compreso nell'hosting
+[2026-03-01 17:41:25] [INFO] Domain: lamarinaresidenceclub.it quota spazio su serverplan | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to lamarinaresidenceclub.it quota spazio su serverplan
+[2026-03-01 17:41:25] [INFO] Domain: lamatina.it compreso nell'hosting | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to lamatina.it compreso nell'hosting
+[2026-03-01 17:41:25] [INFO] Domain: lamatina.it quota spazio su serverplan | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to lamatina.it quota spazio su serverplan
+[2026-03-01 17:41:25] [INFO] Domain: lanticofienile.it compreso nell'hosting | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to lanticofienile.it compreso nell'hosting
+[2026-03-01 17:41:25] [INFO] Domain: lanticofienile.it quota spazio su serverplan | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to lanticofienile.it quota spazio su serverplan
+[2026-03-01 17:41:25] [INFO] Domain: magikashop.com compreso nell'hosting | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to magikashop.com compreso nell'hosting
+[2026-03-01 17:41:25] [INFO] Domain: magikashop.com quota spazio su serverplan | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to magikashop.com quota spazio su serverplan
+[2026-03-01 17:41:25] [INFO] Domain: mangiofood.it compreso nell'hosting | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to mangiofood.it compreso nell'hosting
+[2026-03-01 17:41:25] [INFO] Domain: mangiofood.it quota spazio su serverplan | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to mangiofood.it quota spazio su serverplan
+[2026-03-01 17:41:25] [INFO] Domain: marcellolamberti.it compreso nell'hosting | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to marcellolamberti.it compreso nell'hosting
+[2026-03-01 17:41:25] [INFO] Domain: marcellolamberti.it quota spazio su serverplan | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to marcellolamberti.it quota spazio su serverplan
+[2026-03-01 17:41:25] [INFO] Domain: maxpneumatici.com compreso nell'hosting | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to maxpneumatici.com compreso nell'hosting
+[2026-03-01 17:41:25] [INFO] Domain: maxpneumatici.com quota spazio su serverplan | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to maxpneumatici.com quota spazio su serverplan
+[2026-03-01 17:41:25] [INFO] Domain: quicoriglianorossano.it - mail compreso nell'hosting | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to quicoriglianorossano.it - mail compreso nell'hosting
+[2026-03-01 17:41:25] [INFO] Domain: quicoriglianorossano.it - quota spazio su serverplan | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to quicoriglianorossano.it - quota spazio su serverplan
+[2026-03-01 17:41:25] [INFO] Domain: quics.it - compreso nell'hosting | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to quics.it - compreso nell'hosting
+[2026-03-01 17:41:25] [INFO] Domain: quics.it - quota spazio su serverplan | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to quics.it - quota spazio su serverplan
+[2026-03-01 17:41:25] [INFO] Domain: quota spazio su serverplan per bravocasashop.it | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to quota spazio su serverplan per bravocasashop.it
+[2026-03-01 17:41:25] [INFO] Domain: studioosteopaticobenevento.it - cloud reseller - 50 | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to studioosteopaticobenevento.it - cloud reseller - 50
+[2026-03-01 17:41:25] [INFO] Domain: studioosteopaticobenevento.it - compreso in cloud reseller - 50 | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to studioosteopaticobenevento.it - compreso in cloud reseller - 50
+[2026-03-01 17:41:25] [INFO] Domain: tenutaferrato.it - compreso nell'hosting | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to tenutaferrato.it - compreso nell'hosting
+[2026-03-01 17:41:25] [INFO] Domain: tenutaferrato.it - quota spazio su serverplan | Status: scaduto | Days: -15 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to tenutaferrato.it - quota spazio su serverplan
+[2026-03-01 17:41:25] [INFO] Domain: mobiliperri.it | Status: scaduto | Days: -12 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to mobiliperri.it
+[2026-03-01 17:41:25] [INFO] Domain: consentialuxuryandfamily.it | Status: scaduto | Days: -10 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to consentialuxuryandfamily.it
+[2026-03-01 17:41:25] [INFO] Domain: quicaffe.it | Status: scaduto | Days: -8 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to quicaffe.it
+[2026-03-01 17:41:25] [INFO] Domain: bravocasashop.it | Status: scaduto | Days: -3 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send 'scaduto' to bravocasashop.it
+[2026-03-01 17:41:25] [INFO] Domain: lamatina.it | Status: scade_presto | Days: 6 | Type: 15-day | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send '15-day' to lamatina.it
+[2026-03-01 17:41:25] [INFO] Domain: lanticofienile.com | Status: scade_presto | Days: 15 | Type: 15-day | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send '15-day' to lanticofienile.com
+[2026-03-01 17:41:25] [INFO] Domain: lanticofienile.it | Status: scade_presto | Days: 21 | Type: 30-day | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send '30-day' to lanticofienile.it
+[2026-03-01 17:41:25] [INFO] Domain: qplay.it | Status: scade_presto | Days: 22 | Type: 30-day | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send '30-day' to qplay.it
+[2026-03-01 17:41:25] [INFO] Domain: quiplay.it | Status: scade_presto | Days: 22 | Type: 30-day | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send '30-day' to quiplay.it
+[2026-03-01 17:41:25] [INFO] Domain: iminervini.it | Status: scade_presto | Days: 23 | Type: 30-day | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send '30-day' to iminervini.it
+[2026-03-01 17:41:25] [INFO] Domain: muchogustofood.it | Status: scade_presto | Days: 26 | Type: 30-day | AlreadySent: no
+[2026-03-01 17:41:25] [WARN] [DRY RUN] Would send '30-day' to muchogustofood.it
+[2026-03-01 17:41:25] [INFO] Cron Job Summary [DRY RUN] - Sent: 171 | Skipped: 16 | Checked: 233 | Errors: 0 | Time: 0.04s
+[2026-03-01 17:41:25] [INFO] ===== CRON JOB END =====
+
+[2026-03-01 17:41:25] [INFO] Processing 233 websites
+[2026-03-01 17:41:25] [INFO] Domain: bravolindo.it | Status: scaduto | Days: -704 | Type: scaduto | AlreadySent: yes
+[2026-03-01 17:41:25] [INFO] ⊘ Skipping 'scaduto' for bravolindo.it - already sent
+[2026-03-01 17:41:25] [INFO] Domain: bravocasa.net | Status: scaduto | Days: -516 | Type: scaduto | AlreadySent: yes
+[2026-03-01 17:41:25] [INFO] ⊘ Skipping 'scaduto' for bravocasa.net - already sent
+[2026-03-01 17:41:25] [INFO] Domain: pubblifull.com | Status: scaduto | Days: -369 | Type: scaduto | AlreadySent: yes
+[2026-03-01 17:41:25] [INFO] ⊘ Skipping 'scaduto' for pubblifull.com - already sent
+[2026-03-01 17:41:25] [INFO] Domain: cosenzanight.it | Status: scaduto | Days: -305 | Type: scaduto | AlreadySent: yes
+[2026-03-01 17:41:25] [INFO] ⊘ Skipping 'scaduto' for cosenzanight.it - already sent
+[2026-03-01 17:41:25] [INFO] Domain: biondinosrl.com | Status: scaduto | Days: -282 | Type: scaduto | AlreadySent: yes
+[2026-03-01 17:41:25] [INFO] ⊘ Skipping 'scaduto' for biondinosrl.com - already sent
+[2026-03-01 17:41:25] [INFO] Domain: biondinosrl.it | Status: scaduto | Days: -282 | Type: scaduto | AlreadySent: yes
+[2026-03-01 17:41:25] [INFO] ⊘ Skipping 'scaduto' for biondinosrl.it - already sent
+[2026-03-01 17:41:25] [INFO] Domain: reputationline.it | Status: scaduto | Days: -280 | Type: scaduto | AlreadySent: yes
+[2026-03-01 17:41:25] [INFO] ⊘ Skipping 'scaduto' for reputationline.it - already sent
+[2026-03-01 17:41:25] [INFO] Domain: villavomereto.it | Status: scaduto | Days: -261 | Type: scaduto | AlreadySent: yes
+[2026-03-01 17:41:25] [INFO] ⊘ Skipping 'scaduto' for villavomereto.it - already sent
+[2026-03-01 17:41:25] [INFO] Domain: sacrocuorecosenza.it | Status: scaduto | Days: -257 | Type: scaduto | AlreadySent: yes
+[2026-03-01 17:41:25] [INFO] ⊘ Skipping 'scaduto' for sacrocuorecosenza.it - already sent
+[2026-03-01 17:41:25] [INFO] Domain: quotidianoonline.info | Status: scaduto | Days: -247 | Type: scaduto | AlreadySent: yes
+[2026-03-01 17:41:25] [INFO] ⊘ Skipping 'scaduto' for quotidianoonline.info - already sent
+[2026-03-01 17:41:25] [INFO] Domain: hosting cloud pro 01 | Status: scaduto | Days: -243 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [ERROR] Failed to send 'scaduto' for hosting cloud pro 01
+[2026-03-01 17:41:25] [INFO] Domain: spazio email dedicato - 25gb - compreso in cloud pro 01 | Status: scaduto | Days: -243 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:25] [ERROR] Failed to send 'scaduto' for spazio email dedicato - 25gb - compreso in cloud pro 01
+[2026-03-01 17:41:25] [INFO] Domain: camillotripicchio.com | Status: scaduto | Days: -241 | Type: scaduto | AlreadySent: yes
+[2026-03-01 17:41:25] [INFO] ⊘ Skipping 'scaduto' for camillotripicchio.com - already sent
+[2026-03-01 17:41:25] [INFO] Domain: camillotripicchio.it | Status: scaduto | Days: -241 | Type: scaduto | AlreadySent: yes
+[2026-03-01 17:41:25] [INFO] ⊘ Skipping 'scaduto' for camillotripicchio.it - already sent
+[2026-03-01 17:41:25] [INFO] Domain: quicatanzaro.it | Status: scaduto | Days: -239 | Type: scaduto | AlreadySent: yes
+[2026-03-01 17:41:25] [INFO] ⊘ Skipping 'scaduto' for quicatanzaro.it - already sent
+[2026-03-01 17:41:25] [INFO] Domain: quicosenza.it | Status: scaduto | Days: -239 | Type: scaduto | AlreadySent: yes
+[2026-03-01 17:41:25] [INFO] ⊘ Skipping 'scaduto' for quicosenza.it - already sent
+[2026-03-01 17:41:25] [INFO] Domain: quireggiocalabria.it | Status: scaduto | Days: -239 | Type: scaduto | AlreadySent: yes
+[2026-03-01 17:41:25] [INFO] ⊘ Skipping 'scaduto' for quireggiocalabria.it - already sent
+[2026-03-01 17:41:25] [INFO] Domain: mazzeiarredamenti.it | Status: scaduto | Days: -238 | Type: scaduto | AlreadySent: yes
+[2026-03-01 17:41:25] [INFO] ⊘ Skipping 'scaduto' for mazzeiarredamenti.it - already sent
+[2026-03-01 17:41:25] [INFO] Domain: quicosenza.com | Status: scaduto | Days: -236 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:28] [INFO] ✓ Sent and recorded 'scaduto' for quicosenza.com
+[2026-03-01 17:41:28] [INFO] Domain: pubblifull.it | Status: scaduto | Days: -230 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:30] [INFO] ✓ Sent and recorded 'scaduto' for pubblifull.it
+[2026-03-01 17:41:30] [INFO] Domain: anticofienile.it | Status: scaduto | Days: -214 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:32] [INFO] ✓ Sent and recorded 'scaduto' for anticofienile.it
+[2026-03-01 17:41:32] [INFO] Domain: martinoagrizoo.it | Status: scaduto | Days: -212 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:34] [INFO] ✓ Sent and recorded 'scaduto' for martinoagrizoo.it
+[2026-03-01 17:41:34] [INFO] Domain: martinoagrizoogarden.it | Status: scaduto | Days: -212 | Type: scaduto | AlreadySent: no
+[2026-03-01 17:41:38] [INFO] ✓ Sent and recorded 'scaduto' for martinoagrizoogarden.it
+[2026-03-01 17:41:38] [INFO] Domain: portulaca.it | Status: scaduto | Days: -203 | Type: scaduto | AlreadySent: no

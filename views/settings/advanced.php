@@ -15,17 +15,23 @@
     <section class="content">
         <div class="container-fluid">
             <?php if (isset($_SESSION['message'])): ?>
-                <div class="alert alert-success"><?= htmlspecialchars($_SESSION['message']) ?></div>
+                <div class="alert alert-success alert-dismissible fade show" style="white-space: pre-wrap; margin-bottom: 1rem;">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                    <?= htmlspecialchars($_SESSION['message']) ?>
+                </div>
                 <?php unset($_SESSION['message']); ?>
             <?php endif; ?>
 
             <?php if (isset($_SESSION['error'])): ?>
-                <div class="alert alert-danger"><?= htmlspecialchars($_SESSION['error']) ?></div>
+                <div class="alert alert-danger alert-dismissible fade show" style="margin-bottom: 1rem;">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                    <?= htmlspecialchars($_SESSION['error']) ?>
+                </div>
                 <?php unset($_SESSION['error']); ?>
             <?php endif; ?>
 
             <?php if (isset($_SESSION['google_sync_result'])): ?>
-                <div class="mt-4 p-3 border rounded alert-primary">
+                <div class="mt-4 p-3 border rounded <?= !empty($_SESSION['google_sync_result']['errors']) ? 'alert-danger' : 'alert-primary' ?>">
                     <h5><?= __('settings.google_sync_results') ?></h5>
                     <ul>
                         <li><?= __('settings.exported') ?>: <?= $_SESSION['google_sync_result']['exported'] ?? 0 ?></li>
@@ -33,7 +39,7 @@
                         <li><?= __('settings.updated') ?>: <?= $_SESSION['google_sync_result']['updated'] ?? 0 ?></li>
                         <li><?= __('settings.conflicts_resolved') ?>: <?= $_SESSION['google_sync_result']['conflicts'] ?? 0 ?></li>
                         <?php if (!empty($_SESSION['google_sync_result']['errors']) && is_array($_SESSION['google_sync_result']['errors'])): ?>
-                            <li><?= __('common.error') ?>:
+                            <li class="text-danger"><strong><?= __('common.error') ?>:</strong>
                                 <ul>
                                     <?php foreach ($_SESSION['google_sync_result']['errors'] as $error): ?>
                                         <li><?= htmlspecialchars($error) ?></li>
@@ -155,7 +161,7 @@
                                                 $totalRows++;
                                                 ?>
                                                 <tr class="table-info">
-                                                    <td><strong><?= htmlspecialchars($item['service_type'] ?? 'N/A') ?></strong></td>
+                                                    <td><strong><?= htmlspecialchars($item['domain'] ?? 'N/A') ?></strong></td>
                                                     <td><span class="badge badge-success"><?= __('settings.only_in_google') ?></span></td>
                                                     <td><em class="text-danger"><?= __('settings.not_in_database') ?></em></td>
                                                     <td><em><?= __('settings.exists_in_google_sheets') ?></em></td>
@@ -297,6 +303,9 @@
                                 class="btn btn-info ml-2"><?= __('settings.import_from_google') ?></button>
                             <button type="button" id="compareBtn"
                                 class="btn btn-warning ml-2"><i class="fas fa-balance-scale"></i> <?= __('settings.compare_data') ?></button>
+                            <a href="index.php?action=settings&do=diagnostic_google_sheets" class="btn btn-secondary ml-2">
+                                <i class="fas fa-stethoscope"></i> <?= __('settings.diagnostic_button') ?>
+                            </a>
                         </div>
                     </form>
 
@@ -356,6 +365,8 @@
                             value="<?= htmlspecialchars($googleSheetSettings['sheet_name'] ?? '') ?>">
                         <input type="hidden" name="google_credentials"
                             value="<?= htmlspecialchars($googleSheetSettings['credentials'] ?? '') ?>">
+                        <input type="hidden" name="google_sync_enabled" value="<?= ($googleSheetSettings['enabled'] ?? false) ? '1' : '0' ?>">
+                        <input type="hidden" name="save_google_settings" value="0">
                     </form>
 
                     <form id="importForm" method="post" action="index.php?action=settings&do=google_sheets"
@@ -367,6 +378,8 @@
                             value="<?= htmlspecialchars($googleSheetSettings['sheet_name'] ?? '') ?>">
                         <input type="hidden" name="google_credentials"
                             value="<?= htmlspecialchars($googleSheetSettings['credentials'] ?? '') ?>">
+                        <input type="hidden" name="google_sync_enabled" value="<?= ($googleSheetSettings['enabled'] ?? false) ? '1' : '0' ?>">
+                        <input type="hidden" name="save_google_settings" value="0">
                     </form>
                 </div>
             </div>
@@ -381,33 +394,58 @@
         const compareBtn = document.getElementById('compareBtn');
         const googleSyncToggle = document.getElementById('google_sync_enabled');
 
-        function updateButtonState() {
-            const syncOn = googleSyncToggle.checked;
-            exportBtn.disabled = !syncOn;
-            importBtn.disabled = !syncOn;
-            compareBtn.disabled = !syncOn;
-        }
-
-        updateButtonState();
-
-        googleSyncToggle.addEventListener('change', updateButtonState);
-
         exportBtn.addEventListener('click', function() {
+            // Validate that sheet name and ID are filled
+            const sheetName = document.getElementById('google_sheet_name').value.trim();
+            const sheetId = document.getElementById('google_sheet_id').value.trim();
+            
+            if (!sheetId) {
+                alert('Sheet ID is required');
+                return;
+            }
+            if (!sheetName) {
+                alert('Sheet Name is required');
+                return;
+            }
+            
             document.getElementById('confirmationMessage').innerHTML =
                 '<?= __('settings.confirm_export_google') ?>';
             $('#confirmationModal').modal('show');
             document.getElementById('confirmActionBtn').onclick = function() {
                 $('#confirmationModal').modal('hide');
+                // Update hidden form with current values
+                document.getElementById('exportForm').querySelector('input[name="google_sheet_id"]').value = sheetId;
+                document.getElementById('exportForm').querySelector('input[name="google_sheet_name"]').value = sheetName;
+                document.getElementById('exportForm').querySelector('input[name="google_credentials"]').value = document.getElementById('google_credentials').value;
+                document.getElementById('exportForm').querySelector('input[name="google_sync_enabled"]').value = googleSyncToggle.checked ? '1' : '0';
                 document.getElementById('exportForm').submit();
             };
         });
 
         importBtn.addEventListener('click', function() {
+            // Validate that sheet name and ID are filled
+            const sheetName = document.getElementById('google_sheet_name').value.trim();
+            const sheetId = document.getElementById('google_sheet_id').value.trim();
+            
+            if (!sheetId) {
+                alert('Sheet ID is required');
+                return;
+            }
+            if (!sheetName) {
+                alert('Sheet Name is required');
+                return;
+            }
+            
             document.getElementById('confirmationMessage').innerHTML =
                 '<?= __('settings.confirm_import_google') ?>';
             $('#confirmationModal').modal('show');
             document.getElementById('confirmActionBtn').onclick = function() {
                 $('#confirmationModal').modal('hide');
+                // Update hidden form with current values
+                document.getElementById('importForm').querySelector('input[name="google_sheet_id"]').value = sheetId;
+                document.getElementById('importForm').querySelector('input[name="google_sheet_name"]').value = sheetName;
+                document.getElementById('importForm').querySelector('input[name="google_credentials"]').value = document.getElementById('google_credentials').value;
+                document.getElementById('importForm').querySelector('input[name="google_sync_enabled"]').value = googleSyncToggle.checked ? '1' : '0';
                 document.getElementById('importForm').submit();
             };
         });

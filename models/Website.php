@@ -91,14 +91,14 @@ class Website
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ");
         return $stmt->execute([
-            $data['name'],
-            $data['domain'],
-            $data['hosting_id'] ?: null,
-            $data['email_server'],
-            $data['expiry_date'],
-            $data['status'],
-            $data['vendita'],
-            $data['assigned_email'],
+            $data['name'] ?? '',
+            $data['domain'] ?? '',
+            $data['hosting_id'] ?? null,
+            $data['email_server'] ?? '',
+            $data['expiry_date'] ?? null,
+            $data['status'] ?? '',
+            $data['vendita'] ?? '',
+            $data['assigned_email'] ?? '',
             $data['proprietario'] ?? null,
             $data['dns'] ?? null,
             $data['cpanel'] ?? null,
@@ -129,14 +129,14 @@ class Website
         WHERE id = ?
     ");
         return $stmt->execute([
-            $data['name'],
-            $data['domain'],
-            $data['hosting_id'] ?: null,
-            $data['email_server'],
-            $data['expiry_date'],
-            $data['status'],
-            $data['vendita'],
-            $data['assigned_email'],
+            $data['name'] ?? '',
+            $data['domain'] ?? '',
+            $data['hosting_id'] ?? null,
+            $data['email_server'] ?? '',
+            $data['expiry_date'] ?? null,
+            $data['status'] ?? '',
+            $data['vendita'] ?? '',
+            $data['assigned_email'] ?? '',
             $data['proprietario'] ?? null,
             $data['dns'] ?? null,
             $data['cpanel'] ?? null,
@@ -862,7 +862,7 @@ class Website
     {
         // Get all websites with their hosting information
         $stmt = $this->pdo->query("
-        SELECT w.*, h.server_name, h.ip_address, h.email_address, h.provider, h.id as hosting_id
+        SELECT w.*, h.id as hosting_plan_id, h.server_name, h.ip_address, h.email_address, h.provider
         FROM websites w
         LEFT JOIN hosting_plans h ON w.hosting_id = h.id
         ORDER BY COALESCE(h.server_name, 'zzzzzzzz'), w.domain
@@ -870,22 +870,29 @@ class Website
 
         $websites = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+        error_log("DEBUG prepareForGoogleSheets: Fetched " . count($websites) . " websites");
+        if (count($websites) === 0) {
+            error_log("WARNING: No websites found in database");
+        } else {
+            error_log("DEBUG: First website: " . print_r($websites[0], true));
+        }
+
         // Prepare the data array
         $data = [];
-        $currentHostingId = null;
+        $currentHostingPlanId = null;
         $clientRows = []; // Track row indices for each client
 
         foreach ($websites as $index => $website) {
-            $isNewClient = ($currentHostingId !== $website['hosting_id']);
-            $currentHostingId = $website['hosting_id'];
+            $isNewClient = ($currentHostingPlanId !== $website['hosting_plan_id']);
+            $currentHostingPlanId = $website['hosting_plan_id'];
 
             if ($isNewClient) {
                 // Start a new client group
-                $clientRows[$currentHostingId] = [];
+                $clientRows[$currentHostingPlanId] = [];
             }
 
             $rowData = [
-                // Client info (only show for first service)
+                // Client info (only show for first service of each client)
                 $isNewClient ? ($website['server_name'] ?? '') : '',
                 $isNewClient ? ($website['ip_address'] ?? '') : '',
                 $isNewClient ? ($website['email_address'] ?? '') : '',
@@ -907,8 +914,10 @@ class Website
             ];
 
             $data[] = $rowData;
-            $clientRows[$currentHostingId][] = count($data) - 1; // Store row index (0-based)
+            $clientRows[$currentHostingPlanId][] = count($data) - 1; // Store row index (0-based)
         }
+
+        error_log("DEBUG prepareForGoogleSheets: Prepared " . count($data) . " rows for export");
 
         return [
             'data' => $data,

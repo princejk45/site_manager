@@ -1,4 +1,13 @@
 <?php
+// Configure temporary directory for PHP and Google API client
+// This ensures that running as Apache daemon user can create temp files
+if (!ini_get('upload_tmp_dir') || !is_writable(ini_get('upload_tmp_dir'))) {
+    @ini_set('upload_tmp_dir', '/Applications/XAMPP/xamppfiles/temp');
+}
+if (!ini_get('sys_temp_dir') || !is_writable(ini_get('sys_temp_dir'))) {
+    @ini_set('sys_temp_dir', '/Applications/XAMPP/xamppfiles/temp');
+}
+
 // Define base path FIRST
 define('BASE_PATH', realpath(dirname(__DIR__)));
 define('APP_PATH', BASE_PATH);
@@ -122,7 +131,13 @@ spl_autoload_register(function ($class) {
 
 // Database connection with improved error handling
 try {
-    $dsn = "mysql:host={$dbConfig['host']};dbname={$dbConfig['database']};charset={$dbConfig['charset']}";
+    // Try socket connection first (for CLI), then fallback to host (for web)
+    if (!empty($dbConfig['socket']) && file_exists($dbConfig['socket'])) {
+        $dsn = "mysql:unix_socket={$dbConfig['socket']};dbname={$dbConfig['database']};charset={$dbConfig['charset']}";
+    } else {
+        $dsn = "mysql:host={$dbConfig['host']};dbname={$dbConfig['database']};charset={$dbConfig['charset']}";
+    }
+    
     $options = [
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,

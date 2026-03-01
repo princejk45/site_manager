@@ -1,3 +1,7 @@
+# Configure PHP temporary directory for Google API
+php_value upload_tmp_dir /Applications/XAMPP/xamppfiles/temp
+php_value sys_temp_dir /Applications/XAMPP/xamppfiles/temp
+
 <IfModule mod_rewrite.c>
     RewriteEngine On
     

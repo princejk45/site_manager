@@ -47,6 +47,12 @@ class MessagingController
 
     public function viewThread($threadId)
     {
+        // Ensure user is a participant of this thread (important for receiving messages)
+        $this->threadModel->ensureUserIsParticipant($threadId, $_SESSION['user_id']);
+        
+        // Make threadId available to the view
+        $threadId = (int)$threadId;
+        
         $messages = $this->threadModel->getThreadMessages($threadId, $_SESSION['user_id']);
         $firstMessage = $this->threadModel->getFirstMessage($threadId);
 
@@ -126,6 +132,9 @@ class MessagingController
 
         // Add reply message
         try {
+            // Ensure current user is a participant
+            $this->threadModel->ensureUserIsParticipant($threadId, $_SESSION['user_id']);
+            
             $messageId = $this->threadModel->addMessage($threadId, $_SESSION['user_id'], $content, false);
 
             // Send notification emails to all thread participants except sender
@@ -628,22 +637,33 @@ HTML;
                 return;
             }
 
+            // Get thread summary to get service details
+            $threadSummary = $this->threadModel->getThreadSummary($threadId);
+            $serviceName = null;
+            if (!empty($threadSummary['service_id'])) {
+                require_once APP_PATH . '/models/Website.php';
+                $websiteModel = new Website($GLOBALS['pdo']);
+                $service = $websiteModel->getWebsiteById($threadSummary['service_id']);
+                $serviceName = $service['domain'] ?? $service['name'] ?? null;
+            }
+
             error_log("Sending reply notification for thread $threadId to " . count($recipients) . " recipients");
 
             foreach ($recipients as $recipient) {
                 try {
-                    $senderName = $_SESSION['username'] ?? 'System';
-                    $subject = "Re: {$thread['subject']}";
-                    $content = "
-                        <h1>New Reply to Message</h1>
-                        <p>$senderName replied:</p>
-                        <div class='card' style='padding: 10px; background: #f9f9f9;'>
-                            " . nl2br(htmlspecialchars($replyMessage['content'])) . "
-                        </div>
-                        <p>View the full conversation: <a href='" . BASE_PATH . "?action=messaging&do=view&id=$threadId'>Click here</a></p>
-                    ";
+                    // Check if recipient is unsubscribed
+                    if ($this->isEmailUnsubscribed($recipient['email'])) {
+                        error_log("Skipping email to {$recipient['email']} - user is unsubscribed");
+                        continue;
+                    }
 
-                    $emailBody = $this->emailModel->getEmailTemplate($subject, $content);
+                    $senderName = $_SESSION['username'] ?? 'System';
+                    $messageContent = nl2br(htmlspecialchars($replyMessage['content']));
+                    $threadLink = BASE_PATH . "?action=messaging&do=view&id=$threadId";
+                    $subject = "Re: {$thread['subject']}";
+                    
+                    // Build email body with header and footer from site settings (same as first message)
+                    $emailBody = $this->buildMessageEmailWithHeaderFooter($subject, $senderName, $messageContent, $threadLink, $serviceName, $recipient['email']);
 
                     require_once APP_PATH . '/vendor/autoload.php';
                     $mail = new PHPMailer\PHPMailer\PHPMailer(true);
@@ -653,7 +673,13 @@ HTML;
                     $mail->addAddress($recipient['email'], $recipient['username'] ?? '');
                     $mail->Subject = $subject;
                     $mail->Body = $emailBody;
-                    $mail->AltBody = strip_tags($content);
+                    $mail->AltBody = strip_tags($emailBody);
+                    $mail->isHTML(true);
+                    
+                    // Add List-Unsubscribe header for better spam filter compliance
+                    $unsubscribeUrl = BASE_PATH . "?action=messaging&do=unsubscribe&email=" . urlencode($recipient['email']);
+                    $mail->addCustomHeader('List-Unsubscribe', '<' . $unsubscribeUrl . '>');
+                    $mail->addCustomHeader('List-Unsubscribe-Post', 'List-Unsubscribe=One-Click');
 
                     $success = $mail->send();
 
@@ -663,7 +689,7 @@ HTML;
                         'email_type' => 'message_reply',
                         'sent_to' => $recipient['email'],
                         'subject' => $subject,
-                        'body' => $content,
+                        'body' => $emailBody,
                         'status' => $success ? 'sent' : 'failed',
                         'error_message' => $success ? null : $mail->ErrorInfo
                     ]);
@@ -673,7 +699,7 @@ HTML;
                         'email_type' => 'message_reply',
                         'sent_to' => $recipient['email'] ?? 'Unknown',
                         'subject' => $subject ?? 'New Reply to Message',
-                        'body' => $content ?? '',
+                        'body' => $emailBody ?? '',
                         'status' => 'failed',
                         'error_message' => $e->getMessage()
                     ]);
@@ -784,6 +810,8 @@ HTML;
     // Bulk operations
     public function bulkMarkRead()
     {
+        header('Content-Type: application/json');
+        
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             http_response_code(400);
             echo json_encode(['success' => false, 'error' => 'Invalid request method']);
@@ -792,6 +820,16 @@ HTML;
 
         $threadIds = $_POST['thread_ids'] ?? [];
         $isRead = $_POST['is_read'] ?? true;
+
+        error_log("bulkMarkRead called with thread_ids: " . json_encode($threadIds) . " isRead: " . $isRead . " user: " . $_SESSION['user_id']);
+
+        // Ensure threadIds is an array and filter out empty values
+        if (!is_array($threadIds)) {
+            $threadIds = [$threadIds];
+        }
+        $threadIds = array_filter(array_map('intval', $threadIds));
+
+        error_log("After processing: thread_ids: " . json_encode($threadIds));
 
         if (empty($threadIds)) {
             http_response_code(400);
@@ -806,8 +844,7 @@ HTML;
                 $this->threadModel->bulkMarkAsUnread($threadIds, $_SESSION['user_id']);
             }
 
-            header('Content-Type: application/json');
-            echo json_encode(['success' => true, 'count' => count($threadIds)]);
+            echo json_encode(['success' => true, 'count' => count($threadIds), 'processed_ids' => $threadIds]);
         } catch (Exception $e) {
             error_log("Failed to bulk mark: " . $e->getMessage());
             http_response_code(500);

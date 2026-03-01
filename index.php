@@ -59,6 +59,10 @@ switch ($action) {
                 $authController->checkPermission('manager');
                 $websiteController->delete($id);
                 break;
+            case 'bulk_delete':
+                $authController->checkPermission('manager');
+                $websiteController->bulk_delete();
+                break;
             case 'renew':
                 $authController->checkPermission('manager');
                 $websiteController->renew($id);
@@ -92,6 +96,10 @@ switch ($action) {
             case 'delete':
                 $authController->checkPermission('manager');
                 $hostingController->delete($id);
+                break;
+            case 'bulk_delete':
+                $authController->checkPermission('manager');
+                $hostingController->bulk_delete();
                 break;
             case 'view':
                 $hostingController->view($id);
@@ -183,6 +191,9 @@ switch ($action) {
                 break;
             case 'merge_google':
                 $settingsController->mergeWithGoogle();
+                break;
+            case 'diagnostic_google_sheets':
+                $settingsController->diagnosticGoogleSheets();
                 break;
             default:
                 header('Location: index.php?action=settings&do=smtp');

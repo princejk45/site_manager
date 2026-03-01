@@ -143,7 +143,43 @@ class HostingController
         }
 
         $this->hostingModel->deleteHostingPlan($id);
-        $_SESSION['message'] = "Client eliminato con successo";
+        $_SESSION['message'] = __('hosting.deleted_success');
+        header('Location: index.php?action=hosting');
+        exit;
+    }
+
+    public function bulk_delete()
+    {
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: index.php?action=login');
+            exit;
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['ids'])) {
+            header('Location: index.php?action=hosting');
+            exit;
+        }
+
+        // Get and validate IDs
+        $ids = array_filter(array_map('intval', explode(',', $_POST['ids'])));
+        
+        if (empty($ids)) {
+            $_SESSION['error'] = "No items selected";
+            header('Location: index.php?action=hosting');
+            exit;
+        }
+
+        try {
+            $deleted = 0;
+            foreach ($ids as $id) {
+                $this->hostingModel->deleteHostingPlan($id);
+                $deleted++;
+            }
+            $_SESSION['message'] = "$deleted " . __('hosting.bulk_deleted_success');
+        } catch (Exception $e) {
+            $_SESSION['error'] = "Errore durante l'eliminazione: " . $e->getMessage();
+        }
+
         header('Location: index.php?action=hosting');
         exit;
     }

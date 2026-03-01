@@ -285,6 +285,7 @@ function toggleStar(threadId, button) {
 
 function bulkMarkRead(isRead) {
     const threadIds = getSelectedThreadIds();
+    console.log('Selected thread IDs:', threadIds);
     if (threadIds.length === 0) {
         alert('<?= __('messaging.no_messages') ?>');
         return;
@@ -294,17 +295,36 @@ function bulkMarkRead(isRead) {
     threadIds.forEach(id => formData.append('thread_ids[]', id));
     formData.append('is_read', isRead ? '1' : '0');
 
+    console.log('Sending bulk mark request with:', {
+        thread_ids: threadIds,
+        is_read: isRead ? '1' : '0'
+    });
+
     fetch('?action=messaging&do=bulk_mark', {
         method: 'POST',
         body: formData
     })
-    .then(r => r.json())
+    .then(r => {
+        console.log('Response status:', r.status, 'Content-Type:', r.headers.get('content-type'));
+        if (!r.ok) {
+            throw new Error(`HTTP error! status: ${r.status}`);
+        }
+        return r.json();
+    })
     .then(data => {
+        console.log('Response data:', data);
         if (data.success) {
+            // Refresh the page to show updated unread badges
             location.reload();
+        } else {
+            console.error('Operation failed:', data.error);
+            alert('<?= __('messaging.operation_failed') ?>' + ': ' + (data.error || 'Unknown error'));
         }
     })
-    .catch(e => console.error('Error:', e));
+    .catch(e => {
+        console.error('Error:', e);
+        alert('<?= __('messaging.operation_failed') ?>' + ': ' + e.message);
+    });
 }
 
 function bulkStar(starred) {

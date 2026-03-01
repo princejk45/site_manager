@@ -45,9 +45,9 @@ class SettingsController
             $success = $this->emailModel->updateSmtpSettings($data);
 
             if ($success) {
-                $_SESSION['message'] = "Impostazioni SMTP aggiornate correttamente";
+                $_SESSION['message'] = __('settings.smtp_settings_updated');
             } else {
-                $error = "Errore durante l'aggiornamento delle impostazioni SMTP";
+                $error = __('settings.cron_settings_error');
             }
         }
 
@@ -185,9 +185,9 @@ class SettingsController
             $success = $this->cronModel->updateCronStatus($isActive);
 
             if ($success) {
-                $_SESSION['message'] = "Impostazioni cron aggiornate correttamente";
+                $_SESSION['message'] = __('settings.cron_settings_updated');
             } else {
-                $_SESSION['error'] = "Errore durante l'aggiornamento delle impostazioni cron";
+                $_SESSION['error'] = __('settings.cron_settings_error');
             }
         }
 
@@ -231,41 +231,98 @@ class SettingsController
 
     private function handleGoogleSheetsPost()
     {
+        // Log the incoming POST data
+        error_log("=== FORM SUBMISSION ===");
+        error_log("POST data received: " . print_r($_POST, true));
+        
+        // Always ensure sheet_name is not empty
+        $sheetName = trim($_POST['google_sheet_name'] ?? '');
+        error_log("Sheet Name from POST: '" . $sheetName . "'");
+        
+        if (empty($sheetName)) {
+            $sheetName = 'Sheet1';
+            error_log("Sheet Name was empty, set to default: Sheet1");
+        }
+
         $settings = [
             'sheet_id' => trim($_POST['google_sheet_id'] ?? ''),
-            'sheet_name' => trim($_POST['google_sheet_name'] ?? 'Sheet1'),
+            'sheet_name' => $sheetName,
             'credentials' => trim($_POST['google_credentials'] ?? ''),
             'enabled' => isset($_POST['google_sync_enabled']) ? 1 : 0
         ];
 
-        // Validate required fields
-        if (empty($settings['sheet_id']) || empty($settings['credentials'])) {
-            throw new Exception("Sheet ID and credentials are required");
+        error_log("Settings array created: " . print_r($settings, true));
+
+        // Validate required fields for any action beyond just saving settings
+        if (isset($_POST['export_to_google']) || isset($_POST['import_from_google']) || isset($_POST['sync_with_google'])) {
+            if (empty($settings['sheet_id']) || empty($settings['credentials']) || empty($settings['sheet_name'])) {
+                throw new Exception("Sheet ID, Sheet Name, and credentials are required");
+            }
         }
 
         // Save settings
         $this->settingsModel->saveGoogleSheetsSettings($settings);
+        error_log("Settings saved to database");
 
-        // Handle specific actions
+        // Handle specific actions - IMPORTANT: Use POST values directly, not retrieved settings
         if (isset($_POST['export_to_google'])) {
-            $result = $this->exportToGoogleSheets();
+            error_log("Export action triggered");
+            $result = $this->exportToGoogleSheets($settings);
             $_SESSION['google_sync_result'] = $result;
-            $_SESSION['message'] = "Esportazione completata con successo";
+            // Only set success message if there were no errors
+            if (empty($result['errors'])) {
+                $_SESSION['message'] = __('settings.export_success');
+            }
         } elseif (isset($_POST['import_from_google'])) {
-            $result = $this->importFromGoogleSheets();
+            error_log("Import action triggered");
+            $result = $this->importFromGoogleSheets($settings);
             $_SESSION['google_sync_result'] = $result;
-            $_SESSION['message'] = "Importazione completata con successo";
+            // Only set success message if there were no errors
+            if (empty($result['errors'])) {
+                $_SESSION['message'] = __('settings.import_success');
+            }
         } elseif (isset($_POST['sync_with_google'])) {
-            $result = $this->syncWithGoogleSheets();
+            error_log("Sync action triggered");
+            $result = $this->syncWithGoogleSheets($settings);
             $_SESSION['google_sync_result'] = $result;
-            $_SESSION['message'] = "Sincronizzazione completata con successo";
+            // Only set success message if there were no errors
+            if (empty($result['errors'])) {
+                $_SESSION['message'] = __('settings.sync_success');
+            }
         }
+        error_log("=== END FORM SUBMISSION ===");
     }
 
-    private function exportToGoogleSheets(): array
+    private function exportToGoogleSheets($settings = null): array
     {
         require_once APP_PATH . '/vendor/autoload.php';
-        $settings = $this->settingsModel->getGoogleSheetsSettings();
+        
+        // If no settings provided, retrieve from database
+        if ($settings === null) {
+            $settings = $this->settingsModel->getGoogleSheetsSettings();
+        }
+        
+        // Debug: Log the settings being used
+        error_log("=== DEBUG EXPORT START ===");
+        error_log("DEBUG Export - Settings received:");
+        error_log("  Sheet Name: '" . $settings['sheet_name'] . "'");
+        error_log("  Sheet ID: '" . $settings['sheet_id'] . "'");
+        error_log("  Enabled: " . $settings['enabled']);
+        error_log("  Credentials Length: " . strlen($settings['credentials']));
+        error_log("  Credentials Present: " . (!empty($settings['credentials']) ? 'YES' : 'NO'));
+        
+        // Validate credentials are valid JSON
+        $creds = json_decode($settings['credentials'], true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            error_log("  Credentials JSON Error: " . json_last_error_msg());
+            return [
+                'exported' => 0,
+                'updated' => 0,
+                'errors' => ['Invalid credentials format: ' . json_last_error_msg()]
+            ];
+        }
+        error_log("  Credentials Valid JSON: YES");
+        error_log("=== DEBUG EXPORT END ===");
 
         // Column width definitions (in pixels)
         $columnWidths = [
@@ -320,27 +377,83 @@ class SettingsController
         };
 
         try {
-            $client = $this->getGoogleClient();
+            $client = $this->getGoogleClient($settings);
             $service = new \Google\Service\Sheets($client);
 
-            $spreadsheet = $service->spreadsheets->get($settings['sheet_id'], ['includeGridData' => true]);
+            error_log("DEBUG: Fetching spreadsheet with ID: '" . $settings['sheet_id'] . "'");
+            try {
+                $spreadsheet = $service->spreadsheets->get($settings['sheet_id'], ['includeGridData' => false]);
+            } catch (\Exception $e) {
+                error_log("ERROR: Failed to fetch spreadsheet: " . $e->getMessage());
+                throw $e;
+            }
+            
+            error_log("DEBUG: Spreadsheet Title: " . $spreadsheet->getProperties()->getTitle());
+            error_log("DEBUG: Spreadsheet ID: " . $spreadsheet->getSpreadsheetId());
+            
+            $sheetsCollection = $spreadsheet->getSheets();
+            error_log("DEBUG: Sheets collection type: " . gettype($sheetsCollection));
+            error_log("DEBUG: Sheets collection count: " . (is_array($sheetsCollection) ? count($sheetsCollection) : 'not array'));
+            
+            // Debug: List all available sheets
+            error_log("DEBUG: Available sheets in spreadsheet:");
             $sheet = null;
-            foreach ($spreadsheet->getSheets() as $s) {
-                if ($s->getProperties()->getTitle() === $settings['sheet_name']) {
-                    $sheet = $s;
-                    break;
+            $availableSheets = [];
+            $sheetCount = 0;
+            
+            if ($sheetsCollection) {
+                foreach ($sheetsCollection as $s) {
+                    $sheetTitle = $s->getProperties()->getTitle();
+                    $sheetCount++;
+                    $availableSheets[] = $sheetTitle;
+                    error_log("  Sheet $sheetCount: '" . $sheetTitle . "'");
+                    error_log("    Comparing with: '" . $settings['sheet_name'] . "'");
+                    error_log("    Match: " . ($sheetTitle === $settings['sheet_name'] ? 'YES' : 'NO'));
+                    
+                    if ($sheetTitle === $settings['sheet_name']) {
+                        $sheet = $s;
+                        break;
+                    }
                 }
+            } else {
+                error_log("ERROR: Sheets collection is null or empty!");
             }
 
             if ($sheet === null) {
-                throw new Exception("Sheet '{$settings['sheet_name']}' not found");
+                $errorMsg = "Sheet '{$settings['sheet_name']}' not found.";
+                if (!empty($availableSheets)) {
+                    $errorMsg .= " Available sheets: " . implode(", ", array_map(function($s) { return "'" . $s . "'"; }, $availableSheets));
+                }
+                // Add debug info to error message
+                $errorMsg .= " [DEBUG: sheet_name='" . $settings['sheet_name'] . "', length=" . strlen($settings['sheet_name']) . "]";
+                error_log("ERROR: " . $errorMsg);
+                throw new Exception($errorMsg);
             }
 
             $sheetId = $sheet->getProperties()->getSheetId();
 
-            // Prepare headers
+            // Prepare headers - Row 1 with category headers (17 columns total)
+            // Row 1 spans: A1 (Clienti), B1-E1 (Informazioni per il cliente), E1-Q1 (Informazioni sul servizio)
             $headers = [
-                ['Clienti', 'Informazioni per il cliente', '', '', 'Informazioni sul servizio'],
+                [
+                    'Clienti',                           // A1
+                    'Informazioni per il cliente',       // B1 (will merge B1:E1)
+                    '',                                  // C1 (part of merge)
+                    '',                                  // D1 (part of merge)
+                    'Informazioni sul servizio',         // E1 (will merge E1:Q1)
+                    '',                                  // F1 (part of merge)
+                    '',                                  // G1 (part of merge)
+                    '',                                  // H1 (part of merge)
+                    '',                                  // I1 (part of merge)
+                    '',                                  // J1 (part of merge)
+                    '',                                  // K1 (part of merge)
+                    '',                                  // L1 (part of merge)
+                    '',                                  // M1 (part of merge)
+                    '',                                  // N1 (part of merge)
+                    '',                                  // O1 (part of merge)
+                    '',                                  // P1 (part of merge)
+                    ''                                   // Q1 (part of merge)
+                ],
                 [
                     'Nome',
                     'Indirizzo',
@@ -353,7 +466,7 @@ class SettingsController
                     'Registrante',
                     'Scadenza',
                     'Costo Server (iva inclusa)',
-                    'Prezzo di vendita  (iva inclusa)',
+                    'Prezzo di vendita (iva inclusa)',
                     'Direct DNS A',
                     'User Name cpanel',
                     'Email panel',
@@ -367,8 +480,12 @@ class SettingsController
             $websiteData = $preparedData['data'];
             $clientRowGroups = $preparedData['clientRows'];
 
+            error_log("DEBUG: Website data count: " . count($websiteData));
+            error_log("DEBUG: First website row (if exists): " . print_r($websiteData[0] ?? 'NO DATA', true));
+
             $allData = array_merge($headers, $websiteData);
             $lastRow = count($allData);
+            error_log("DEBUG: Total rows to export (including headers): " . $lastRow);
 
             // Clear existing values
             $service->spreadsheets_values->clear(
@@ -385,332 +502,9 @@ class SettingsController
                 ['valueInputOption' => 'USER_ENTERED']
             );
 
-            // Start building formatting requests
-            $requests = [
-                // Unmerge any existing cells first
-                new \Google\Service\Sheets\Request([
-                    'unmergeCells' => [
-                        'range' => [
-                            'sheetId' => $sheetId,
-                            'startRowIndex' => 0,
-                            'endRowIndex' => 2,
-                            'startColumnIndex' => 0,
-                            'endColumnIndex' => 17
-                        ]
-                    ]
-                ]),
-                // Merge B1-D1
-                new \Google\Service\Sheets\Request([
-                    'mergeCells' => [
-                        'range' => [
-                            'sheetId' => $sheetId,
-                            'startRowIndex' => 0,
-                            'endRowIndex' => 1,
-                            'startColumnIndex' => 1,
-                            'endColumnIndex' => 4
-                        ],
-                        'mergeType' => 'MERGE_ALL'
-                    ]
-                ]),
-                // Merge E1-P1
-                new \Google\Service\Sheets\Request([
-                    'mergeCells' => [
-                        'range' => [
-                            'sheetId' => $sheetId,
-                            'startRowIndex' => 0,
-                            'endRowIndex' => 1,
-                            'startColumnIndex' => 4,
-                            'endColumnIndex' => 17
-                        ],
-                        'mergeType' => 'MERGE_ALL'
-                    ]
-                ]),
 
-                // ===== HEADER ROW 1 FORMATTING =====
-                // A1 - Dark blue
-                new \Google\Service\Sheets\Request([
-                    'repeatCell' => [
-                        'range' => [
-                            'sheetId' => $sheetId,
-                            'startRowIndex' => 0,
-                            'endRowIndex' => 1,
-                            'startColumnIndex' => 0,
-                            'endColumnIndex' => 1
-                        ],
-                        'cell' => [
-                            'userEnteredFormat' => [
-                                'backgroundColor' => $hexToRgb($colors['blueHeaderDark']['rgb']),
-                                'textFormat' => [
-                                    'bold' => true,
-                                    'foregroundColor' => $hexToRgb($colors['textLight']['rgb']),
-                                    'fontSize' => 13
-                                ],
-                                'horizontalAlignment' => 'CENTER',
-                                'verticalAlignment' => 'MIDDLE',
-                                'padding' => ['top' => 10, 'right' => 10, 'bottom' => 10, 'left' => 10]
-                            ]
-                        ],
-                        'fields' => 'userEnteredFormat(backgroundColor,textFormat,horizontalAlignment,verticalAlignment,padding)'
-                    ]
-                ]),
-                // B1-D1 - Dark red (merged cells)
-                new \Google\Service\Sheets\Request([
-                    'repeatCell' => [
-                        'range' => [
-                            'sheetId' => $sheetId,
-                            'startRowIndex' => 0,
-                            'endRowIndex' => 1,
-                            'startColumnIndex' => 1,
-                            'endColumnIndex' => 4
-                        ],
-                        'cell' => [
-                            'userEnteredFormat' => [
-                                'backgroundColor' => $hexToRgb($colors['redHeaderDark']['rgb']),
-                                'textFormat' => [
-                                    'bold' => true,
-                                    'foregroundColor' => $hexToRgb($colors['textLight']['rgb']),
-                                    'fontSize' => 15
-                                ],
-                                'horizontalAlignment' => 'CENTER',
-                                'verticalAlignment' => 'MIDDLE',
-                                'padding' => ['top' => 10, 'right' => 10, 'bottom' => 10, 'left' => 10]
-                            ]
-                        ],
-                        'fields' => 'userEnteredFormat(backgroundColor,textFormat,horizontalAlignment,verticalAlignment,padding)'
-                    ]
-                ]),
-                // E1-P1 - Dark green (merged cells)
-                new \Google\Service\Sheets\Request([
-                    'repeatCell' => [
-                        'range' => [
-                            'sheetId' => $sheetId,
-                            'startRowIndex' => 0,
-                            'endRowIndex' => 1,
-                            'startColumnIndex' => 4,
-                            'endColumnIndex' => 17
-                        ],
-                        'cell' => [
-                            'userEnteredFormat' => [
-                                'backgroundColor' => $hexToRgb($colors['greenHeaderDark']['rgb']),
-                                'textFormat' => [
-                                    'bold' => true,
-                                    'foregroundColor' => $hexToRgb($colors['textLight']['rgb']),
-                                    'fontSize' => 15
-                                ],
-                                'horizontalAlignment' => 'CENTER',
-                                'verticalAlignment' => 'MIDDLE',
-                                'padding' => ['top' => 10, 'right' => 10, 'bottom' => 10, 'left' => 10]
-                            ]
-                        ],
-                        'fields' => 'userEnteredFormat(backgroundColor,textFormat,horizontalAlignment,verticalAlignment,padding)'
-                    ]
-                ]),
-
-                // ===== HEADER ROW 2 FORMATTING =====
-                // A2 - Light blue
-                new \Google\Service\Sheets\Request([
-                    'repeatCell' => [
-                        'range' => [
-                            'sheetId' => $sheetId,
-                            'startRowIndex' => 1,
-                            'endRowIndex' => 2,
-                            'startColumnIndex' => 0,
-                            'endColumnIndex' => 1
-                        ],
-                        'cell' => [
-                            'userEnteredFormat' => [
-                                'backgroundColor' => $hexToRgb($colors['blueHeaderLight']['rgb']),
-                                'textFormat' => [
-                                    'bold' => true,
-                                    'foregroundColor' => $hexToRgb($colors['textLight']['rgb']),
-                                    'fontSize' => 10
-                                ],
-                                'horizontalAlignment' => 'CENTER',
-                                'verticalAlignment' => 'MIDDLE',
-                                'padding' => ['top' => 10, 'right' => 10, 'bottom' => 10, 'left' => 10]
-                            ]
-                        ],
-                        'fields' => 'userEnteredFormat(backgroundColor,textFormat,horizontalAlignment,verticalAlignment,padding)'
-                    ]
-                ]),
-                // B2-D2 - Light red
-                new \Google\Service\Sheets\Request([
-                    'repeatCell' => [
-                        'range' => [
-                            'sheetId' => $sheetId,
-                            'startRowIndex' => 1,
-                            'endRowIndex' => 2,
-                            'startColumnIndex' => 1,
-                            'endColumnIndex' => 4
-                        ],
-                        'cell' => [
-                            'userEnteredFormat' => [
-                                'backgroundColor' => $hexToRgb($colors['redHeaderLight']['rgb']),
-                                'textFormat' => [
-                                    'bold' => true,
-                                    'foregroundColor' => $hexToRgb($colors['textLight']['rgb']),
-                                    'fontSize' => 10
-                                ],
-                                'horizontalAlignment' => 'CENTER',
-                                'verticalAlignment' => 'MIDDLE',
-                                'padding' => ['top' => 10, 'right' => 10, 'bottom' => 10, 'left' => 10]
-                            ]
-                        ],
-                        'fields' => 'userEnteredFormat(backgroundColor,textFormat,horizontalAlignment,verticalAlignment,padding)'
-                    ]
-                ]),
-                // E2-P2 - Light green
-                new \Google\Service\Sheets\Request([
-                    'repeatCell' => [
-                        'range' => [
-                            'sheetId' => $sheetId,
-                            'startRowIndex' => 1,
-                            'endRowIndex' => 2,
-                            'startColumnIndex' => 4,
-                            'endColumnIndex' => 17
-                        ],
-                        'cell' => [
-                            'userEnteredFormat' => [
-                                'backgroundColor' => $hexToRgb($colors['greenHeaderLight']['rgb']),
-                                'textFormat' => [
-                                    'bold' => true,
-                                    'foregroundColor' => $hexToRgb($colors['textLight']['rgb']),
-                                    'fontSize' => 10
-                                ],
-                                'horizontalAlignment' => 'CENTER',
-                                'verticalAlignment' => 'MIDDLE',
-                                'wrapStrategy' => 'WRAP',
-                                'padding' => [
-                                    'top' => 10,
-                                    'right' => 10,
-                                    'bottom' => 10,
-                                    'left' => 10
-                                ]
-                            ]
-                        ],
-                        'fields' => 'userEnteredFormat(backgroundColor,textFormat,horizontalAlignment,verticalAlignment,wrapStrategy,padding)'
-                    ]
-                ]),
-
-                // Basic cell formatting for all data cells - Centered with padding
-                new \Google\Service\Sheets\Request([
-                    'repeatCell' => [
-                        'range' => [
-                            'sheetId' => $sheetId,
-                            'startRowIndex' => 2,
-                            'endRowIndex' => $lastRow,
-                            'startColumnIndex' => 0,
-                            'endColumnIndex' => 17
-                        ],
-                        'cell' => [
-                            'userEnteredFormat' => [
-                                'wrapStrategy' => 'WRAP',
-                                'horizontalAlignment' => 'CENTER',
-                                'verticalAlignment' => 'MIDDLE',
-                                'textFormat' => [
-                                    'foregroundColor' => $hexToRgb($colors['textDark']['rgb']),
-                                    'fontSize' => 11
-                                ],
-                                'padding' => [
-                                    'top' => 5,
-                                    'right' => 8,
-                                    'bottom' => 8,
-                                    'left' => 5
-                                ]
-                            ]
-                        ],
-                        'fields' => 'userEnteredFormat(wrapStrategy,horizontalAlignment,verticalAlignment,textFormat,padding)'
-                    ]
-                ]),
-                // Special formatting for column A (Name) - Larger and bolder text
-                new \Google\Service\Sheets\Request([
-                    'repeatCell' => [
-                        'range' => [
-                            'sheetId' => $sheetId,
-                            'startRowIndex' => 2,
-                            'endRowIndex' => $lastRow,
-                            'startColumnIndex' => 0,
-                            'endColumnIndex' => 1
-                        ],
-                        'cell' => [
-                            'userEnteredFormat' => [
-                                'textFormat' => [
-                                    'bold' => true,
-                                    'fontSize' => 13,  // Slightly larger than other cells
-                                    'foregroundColor' => $hexToRgb($colors['textDark']['rgb'])
-                                ],
-                                'padding' => [
-                                    'top' => 8,
-                                    'right' => 8,
-                                    'bottom' => 8,
-                                    'left' => 8
-                                ]
-                            ]
-                        ],
-                        'fields' => 'userEnteredFormat(textFormat,padding)'
-                    ]
-                ]),
-                // Freeze first column and two header rows
-                new \Google\Service\Sheets\Request([
-                    'updateSheetProperties' => [
-                        'properties' => [
-                            'sheetId' => $sheetId,
-                            'gridProperties' => [
-                                'frozenRowCount' => 2,
-                                'frozenColumnCount' => 1
-                            ]
-                        ],
-                        'fields' => 'gridProperties.frozenRowCount,gridProperties.frozenColumnCount'
-                    ]
-                ])
-            ];
-
-            // Add client-specific borders (only under last row of each client group)
-            foreach ($clientRowGroups as $hostingId => $rows) {
-                if (!empty($rows)) {
-                    $lastRowIndex = max($rows) + 2; // +2 to account for header rows (1-based)
-
-                    $requests[] = new \Google\Service\Sheets\Request([
-                        'updateBorders' => [
-                            'range' => [
-                                'sheetId' => $sheetId,
-                                'startRowIndex' => $lastRowIndex,
-                                'endRowIndex' => $lastRowIndex + 1,
-                                'startColumnIndex' => 0,
-                                'endColumnIndex' => 17
-                            ],
-                            'bottom' => [
-                                'style' => 'SOLID_MEDIUM',
-                                'width' => 2,
-                                'color' => ['red' => 0.3, 'green' => 0.3, 'blue' => 0.3]
-                            ]
-                        ]
-                    ]);
-                }
-            }
-
-            // Add column width requests
-            foreach ($columnWidths as $col => $width) {
-                $colIndex = ord(strtoupper($col)) - ord('A');
-                $requests[] = new \Google\Service\Sheets\Request([
-                    'updateDimensionProperties' => [
-                        'range' => [
-                            'sheetId' => $sheetId,
-                            'dimension' => 'COLUMNS',
-                            'startIndex' => $colIndex,
-                            'endIndex' => $colIndex + 1
-                        ],
-                        'properties' => ['pixelSize' => $width],
-                        'fields' => 'pixelSize'
-                    ]
-                ]);
-            }
-
-            // Apply formatting
-            $service->spreadsheets->batchUpdate(
-                $settings['sheet_id'],
-                new \Google\Service\Sheets\BatchUpdateSpreadsheetRequest(['requests' => $requests])
-            );
+            // Apply consistent formatting using helper function
+            $this->applySheetFormatting($service, $settings, $sheetId, $lastRow);
 
             return [
                 'exported' => count($websiteData),
@@ -731,38 +525,55 @@ class SettingsController
 
 
 
-    private function importFromGoogleSheets()
+    private function importFromGoogleSheets($settings = null)
     {
         require_once APP_PATH . '/vendor/autoload.php';
-        $settings = $this->settingsModel->getGoogleSheetsSettings();
-
-        // Initialize Google Client
-        $client = $this->getGoogleClient();
-        $service = new Google\Service\Sheets($client);
-
-        // Read data from Google Sheets
-        $range = $settings['sheet_name'] . '!A2:Z';
-        $response = $service->spreadsheets_values->get($settings['sheet_id'], $range);
-        $values = $response->getValues();
-
-        if (empty($values)) {
-            throw new Exception("No data found in Google Sheet");
+        
+        // If no settings provided, retrieve from database
+        if ($settings === null) {
+            $settings = $this->settingsModel->getGoogleSheetsSettings();
         }
 
-        // Process and import data
-        $result = $this->websiteModel->importFromSheets($values);
+        try {
+            // Initialize Google Client
+            $client = $this->getGoogleClient($settings);
+            $service = new Google\Service\Sheets($client);
 
-        return $result;
+            // Read data from Google Sheets
+            $range = $settings['sheet_name'] . '!A2:Z';
+            $response = $service->spreadsheets_values->get($settings['sheet_id'], $range);
+            $values = $response->getValues();
+
+            if (empty($values)) {
+                throw new Exception("No data found in Google Sheet");
+            }
+
+            // Process and import data
+            $result = $this->websiteModel->importFromSheets($values);
+
+            return $result;
+        } catch (Exception $e) {
+            error_log("Google Sheets import error: " . $e->getMessage());
+            return [
+                'imported' => 0,
+                'updated' => 0,
+                'errors' => [$e->getMessage()]
+            ];
+        }
     }
 
-    public function syncWithGoogleSheets()
+    public function syncWithGoogleSheets($settings = null)
     {
         require_once APP_PATH . '/vendor/autoload.php';
-        $settings = $this->settingsModel->getGoogleSheetsSettings();
+        
+        // If no settings provided, retrieve from database
+        if ($settings === null) {
+            $settings = $this->settingsModel->getGoogleSheetsSettings();
+        }
 
         // 1. Get data from both sources
         $dbData = $this->websiteModel->getAllWebsites();
-        $client = $this->getGoogleClient();
+        $client = $this->getGoogleClient($settings);
         $service = new Google\Service\Sheets($client);
         $range = $settings['sheet_name'] . '!A2:Z';
         $response = $service->spreadsheets_values->get($settings['sheet_id'], $range);
@@ -785,26 +596,43 @@ class SettingsController
         return $result;
     }
 
-    private function getGoogleClient()
+    private function getGoogleClient($settings = null)
     {
-        $settings = $this->settingsModel->getGoogleSheetsSettings();
+        if ($settings === null) {
+            $settings = $this->settingsModel->getGoogleSheetsSettings();
+        }
 
         if (empty($settings['credentials'])) {
             throw new Exception("Google Sheets credentials not configured");
         }
 
         $client = new Google\Client();
-        $client->setApplicationName('Your Application Name');
+        $client->setApplicationName('Site Manager');
         $client->setScopes([Google\Service\Sheets::SPREADSHEETS]);
+        
+        // Add offline access to ensure token refresh
+        $client->setAccessType('offline');
 
         try {
+            // Log credential details for debugging
+            error_log("DEBUG: Credentials string length: " . strlen($settings['credentials']));
+            error_log("DEBUG: Credentials first 100 chars: " . substr($settings['credentials'], 0, 100));
+            
             $credentials = json_decode($settings['credentials'], true);
             if (json_last_error() !== JSON_ERROR_NONE) {
-                throw new Exception("Credenziali Google non valide JSON");
+                error_log("ERROR: Invalid JSON credentials - " . json_last_error_msg());
+                error_log("ERROR: Credentials content: " . $settings['credentials']);
+                throw new Exception("Credenziali Google non valide JSON: " . json_last_error_msg());
             }
 
+            error_log("DEBUG: Credentials decoded successfully");
+            error_log("DEBUG: Credential type: " . ($credentials['type'] ?? 'unknown'));
+            error_log("DEBUG: Credential client_email: " . ($credentials['client_email'] ?? 'unknown'));
+            error_log("DEBUG: Setting auth config with credentials");
             $client->setAuthConfig($credentials);
+            error_log("DEBUG: Auth config set successfully");
         } catch (Exception $e) {
+            error_log("ERROR: Failed to initialize Google Client: " . $e->getMessage());
             throw new Exception("Impossibile inizializzare Google Client: " . $e->getMessage());
         }
 
@@ -850,9 +678,9 @@ class SettingsController
                         }
                         
                         $this->siteSettings->updateSetting('logo_path', 'assets/images/' . $filename);
-                        $_SESSION['message'] = "Logo updated successfully";
+                        $_SESSION['message'] = __('settings.logo_updated');
                     } else {
-                        $error = "Failed to upload logo file";
+                        $error = __('settings.logo_upload_error');
                     }
                 }
             }
@@ -865,7 +693,7 @@ class SettingsController
             }
             
             if (!isset($error)) {
-                $_SESSION['message'] = $_SESSION['message'] ?? "Settings updated successfully";
+                $_SESSION['message'] = $_SESSION['message'] ?? __('settings.general_settings_updated');
             }
             
             SiteSettings::clearCache();
@@ -910,7 +738,7 @@ class SettingsController
             $this->siteSettings->updateSetting('email_global_header', $header);
             $this->siteSettings->updateSetting('email_global_footer', $footer);
             
-            $_SESSION['message'] = "Email header and footer updated successfully";
+            $_SESSION['message'] = __('settings.header_footer_updated');
             SiteSettings::clearCache();
         }
 
@@ -978,7 +806,7 @@ class SettingsController
             }
 
             if ($this->emailTemplate->update($templateId, $data)) {
-                $_SESSION['message'] = "Template aggiornato correttamente";
+                $_SESSION['message'] = __('settings.template_updated');
                 header('Location: index.php?action=settings&do=email_templates');
                 exit;
             } else {
@@ -1026,6 +854,62 @@ class SettingsController
         }
     }
 
+    // Format merge results for display
+    private function formatMergeResultsForDisplay($result)
+    {
+        $output = [];
+        
+        // Website/Service records
+        if (isset($result['added']) && $result['added'] > 0) {
+            $output[] = "Services Added: " . $result['added'];
+        }
+        if (isset($result['updated']) && $result['updated'] > 0) {
+            $output[] = "Services Updated: " . $result['updated'];
+        }
+        
+        // Hosting/Client records
+        if (isset($result['hosting_created']) && $result['hosting_created'] > 0) {
+            $output[] = "Clients Created: " . $result['hosting_created'];
+        }
+        if (isset($result['hosting_updated']) && $result['hosting_updated'] > 0) {
+            $output[] = "Clients Updated: " . $result['hosting_updated'];
+        }
+        
+        // Database operations
+        if (isset($result['added_to_db']) && $result['added_to_db'] > 0) {
+            $output[] = "Records Added to Database: " . $result['added_to_db'];
+        }
+        if (isset($result['updated_in_db']) && $result['updated_in_db'] > 0) {
+            $output[] = "Records Updated in Database: " . $result['updated_in_db'];
+        }
+        
+        // Google Sheets operations
+        if (isset($result['added_to_google']) && $result['added_to_google'] > 0) {
+            $output[] = "Records Added to Google Sheets: " . $result['added_to_google'];
+        }
+        
+        // Conflicts
+        if (isset($result['conflicts_resolved']) && $result['conflicts_resolved'] > 0) {
+            $output[] = "Conflicts Resolved: " . $result['conflicts_resolved'];
+        }
+        
+        // Errors
+        if (!empty($result['errors']) && is_array($result['errors'])) {
+            if (count($result['errors']) > 0) {
+                $output[] = "Errors Encountered: " . count($result['errors']);
+                foreach ($result['errors'] as $error) {
+                    $output[] = "  • " . $error;
+                }
+            }
+        }
+        
+        if (empty($output)) {
+            $output[] = "Merge completed with no changes";
+        }
+        
+        return implode("\n", $output);
+    }
+
     // Merge data from Google Sheets or Database
     public function mergeWithGoogle()
     {
@@ -1064,7 +948,8 @@ class SettingsController
                     break;
             }
             
-            $_SESSION['message'] = "Merge completed: " . json_encode($result);
+            $_SESSION['message'] = __('settings.merge_completed') . ":\n" . $this->formatMergeResultsForDisplay($result);
+            $_SESSION['merge_result'] = $result;
             header('Location: index.php?action=settings&do=advanced');
             exit;
         } catch (Exception $e) {
@@ -1081,7 +966,7 @@ class SettingsController
         $settings = $this->settingsModel->getGoogleSheetsSettings();
 
         try {
-            $client = $this->getGoogleClient();
+            $client = $this->getGoogleClient($settings);
             $service = new \Google\Service\Sheets($client);
 
             // Fetch data from sheet - read all data including headers
@@ -1230,13 +1115,53 @@ class SettingsController
         return $comparison;
     }
 
-    // Merge Google Sheets to Database (forward) - optimized for robustness
+    // Merge Google Sheets to Database (forward) - with hosting assignment
     private function mergeGoogleToDatabase($googleData)
     {
-        $result = ['added' => 0, 'updated' => 0, 'errors' => []];
+        $result = ['added' => 0, 'updated' => 0, 'hosting_created' => 0, 'hosting_updated' => 0, 'errors' => []];
+        $currentHostingId = null;
+        $hostingMap = []; // Cache for hosting lookups
 
-        foreach ($googleData as $item) {
+        foreach ($googleData as $index => $item) {
             try {
+                // Extract client data from Google Sheets structure
+                // Field mapping: server_name, ip_address, email_address, provider
+                $clientName = trim($item['server_name'] ?? '');
+                $clientAddress = trim($item['ip_address'] ?? '');
+                $clientEmail = trim($item['email_address'] ?? '');
+                $clientPiva = trim($item['provider'] ?? '');
+
+                // Process hosting plan if client name exists and different from previous
+                if (!empty($clientName) && $clientName !== ($hostingMap['last_client'] ?? null)) {
+                    // Check if hosting plan already exists
+                    $stmt = $this->db->prepare("SELECT id FROM hosting_plans WHERE server_name = ?");
+                    $stmt->execute([$clientName]);
+                    $currentHostingId = $stmt->fetchColumn();
+
+                    if ($currentHostingId) {
+                        // Update existing hosting plan
+                        $updateStmt = $this->db->prepare("
+                        UPDATE hosting_plans 
+                        SET email_address = ?, ip_address = ?, provider = ?
+                        WHERE id = ?
+                    ");
+                        $updateStmt->execute([$clientEmail, $clientAddress, $clientPiva, $currentHostingId]);
+                        $result['hosting_updated']++;
+                    } else {
+                        // Create new hosting plan
+                        $stmt = $this->db->prepare("
+                        INSERT INTO hosting_plans 
+                        (server_name, ip_address, email_address, provider) 
+                        VALUES (?, ?, ?, ?)
+                    ");
+                        $stmt->execute([$clientName, $clientAddress, $clientEmail, $clientPiva]);
+                        $currentHostingId = $this->db->lastInsertId();
+                        $result['hosting_created']++;
+                    }
+                    $hostingMap['last_client'] = $clientName;
+                }
+
+                // Extract domain
                 $domain = trim($item['domain'] ?? '');
                 if (empty($domain)) {
                     continue;
@@ -1258,7 +1183,8 @@ class SettingsController
                     'notes' => trim($item['notes'] ?? ''),
                     'remark' => trim($item['remark'] ?? ''),
                     'dns' => trim($item['dns'] ?? ''),
-                    'email_server' => trim($item['email_server'] ?? '')
+                    'email_server' => trim($item['email_server'] ?? ''),
+                    'hosting_id' => $currentHostingId
                 ];
 
                 if ($website) {
@@ -1291,73 +1217,743 @@ class SettingsController
         $result = ['updated' => 0, 'errors' => []];
 
         try {
-            $client = $this->getGoogleClient();
+            $client = $this->getGoogleClient($settings);
             $service = new \Google\Service\Sheets($client);
 
-            // Prepare data for Google Sheets
-            $values = [];
-            foreach ($dbData as $website) {
-                $values[] = [
-                    $website['proprietario'] ?? '',
-                    '', // address
-                    $website['assigned_email'] ?? '',
-                    '', // piva
-                    $website['domain'] ?? '',
-                    $website['name'] ?? '',
-                    $website['assigned_email'] ?? '',
-                    $website['proprietario'] ?? '',
-                    '', // registrant
-                    $website['expiry_date'] ?? '',
-                    $website['server_cost'] ?? '0',
-                    $website['vendita'] ?? '0',
-                    $website['dns'] ?? '',
-                    $website['cpanel'] ?? '',
-                    $website['epanel'] ?? '',
-                    $website['notes'] ?? '',
-                    $website['remark'] ?? ''
-                ];
+            $spreadsheet = $service->spreadsheets->get($settings['sheet_id'], ['includeGridData' => false]);
+            
+            // Find the target sheet
+            $sheet = null;
+            foreach ($spreadsheet->getSheets() as $s) {
+                if ($s->getProperties()->getTitle() === $settings['sheet_name']) {
+                    $sheet = $s;
+                    break;
+                }
+            }
+            
+            if ($sheet === null) {
+                throw new Exception("Sheet '{$settings['sheet_name']}' not found");
             }
 
-            $body = new \Google\Service\Sheets\ValueRange([
-                'values' => $values
-            ]);
+            $sheetId = $sheet->getProperties()->getSheetId();
 
-            $range = $settings['sheet_name'] . '!A2:Q' . (count($values) + 1);
-            $service->spreadsheets_values->update(
+            // Use the same data format as export
+            $preparedData = $this->websiteModel->prepareForGoogleSheets();
+            $websiteData = $preparedData['data'];
+
+            // Prepare headers (same as export)
+            $headers = [
+                [
+                    'Clienti',
+                    'Informazioni per il cliente',
+                    '',
+                    '',
+                    'Informazioni sul servizio',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    ''
+                ],
+                [
+                    'Nome',
+                    'Indirizzo',
+                    'Email',
+                    'P.IVA',
+                    'Tipologia di Servizi',
+                    'Dettaglio Servizi',
+                    'Email Assegnata',
+                    'Propietario',
+                    'Registrante',
+                    'Scadenza',
+                    'Costo Server (iva inclusa)',
+                    'Prezzo di vendita (iva inclusa)',
+                    'Direct DNS A',
+                    'User Name cpanel',
+                    'Email panel',
+                    'Bug report',
+                    'Notes'
+                ]
+            ];
+
+            $allData = array_merge($headers, $websiteData);
+
+            // Clear existing values
+            $service->spreadsheets_values->clear(
                 $settings['sheet_id'],
-                $range,
-                $body,
-                ['valueInputOption' => 'RAW']
+                $settings['sheet_name'] . '!A:Z',
+                new \Google\Service\Sheets\ClearValuesRequest()
             );
 
-            $result['updated'] = count($values);
+            // Insert new values
+            $service->spreadsheets_values->update(
+                $settings['sheet_id'],
+                $settings['sheet_name'] . '!A1',
+                new \Google\Service\Sheets\ValueRange(['values' => $allData]),
+                ['valueInputOption' => 'USER_ENTERED']
+            );
+
+            // Apply formatting (same as export - for seamless merge)
+            $this->applySheetFormatting($service, $settings, $sheetId, count($allData));
+
+            $result['updated'] = count($websiteData);
         } catch (Exception $e) {
-            $result['errors'][] = "Error updating Google Sheets: " . $e->getMessage();
+            $result['errors'][] = "Error during merge: " . $e->getMessage();
         }
 
         return $result;
     }
 
-    // Bidirectional merge
+    /**
+     * Apply consistent formatting to Google Sheet
+     * Used by both export and merge operations
+     */
+    private function applySheetFormatting($service, $settings, $sheetId, $totalRows)
+    {
+        $lastRow = $totalRows;
+
+        // Helper function to convert hex color to RGB
+        $hexToRgb = function ($hex) {
+            $hex = ltrim($hex, '#');
+            return [
+                'red' => hexdec(substr($hex, 0, 2)) / 255,
+                'green' => hexdec(substr($hex, 2, 2)) / 255,
+                'blue' => hexdec(substr($hex, 4, 2)) / 255
+            ];
+        };
+
+        // Professional color scheme
+        $colors = [
+            'blueHeaderDark' => ['rgb' => '#003D7A'],
+            'redHeaderDark' => ['rgb' => '#C1402B'],
+            'greenHeaderLight' => ['rgb' => '#70AD47'],
+            'greenHeaderDark' => ['rgb' => '#54873B'],
+            'textLight' => ['rgb' => '#FFFFFF'],
+            'textDark' => ['rgb' => '#2E2E2E']
+        ];
+
+        // Column width specifications (in pixels)
+        // Wide columns for text data: A (Nome), B (Indirizzo), C (Email), D (P.IVA), 
+        // F (Dettaglio Servizi), G (Email Assegnata), O (Email panel), P (Bug report), Q (Notes)
+        // Narrow columns: E (Tipologia), H (Proprietario), I (Registrante), J (Scadenza), K (Costo), L (Prezzo), M (DNS), N (Cpanel)
+        $columnWidths = [
+            'A' => 200,  // Nome - WIDE
+            'B' => 220,  // Indirizzo - WIDE
+            'C' => 220,  // Email - WIDE
+            'D' => 150,  // P.IVA - WIDE
+            'E' => 140,  // Tipologia - NARROW
+            'F' => 200,  // Dettaglio Servizi - WIDE
+            'G' => 220,  // Email Assegnata - WIDE
+            'H' => 140,  // Proprietario - NARROW
+            'I' => 140,  // Registrante - NARROW
+            'J' => 130,  // Scadenza - NARROW
+            'K' => 140,  // Costo Server - NARROW
+            'L' => 150,  // Prezzo di Vendita - NARROW
+            'M' => 130,  // Direct DNS - NARROW
+            'N' => 150,  // User Name cpanel - NARROW
+            'O' => 220,  // Email panel - WIDE
+            'P' => 200,  // Bug report - WIDE
+            'Q' => 200   // Notes - WIDE
+        ];
+
+        // Build formatting requests
+        $requests = [
+            // Set column widths
+            new \Google\Service\Sheets\Request([
+                'updateDimensionProperties' => [
+                    'range' => [
+                        'sheetId' => $sheetId,
+                        'dimension' => 'COLUMNS',
+                        'startIndex' => 0,
+                        'endIndex' => 1
+                    ],
+                    'properties' => [
+                        'pixelSize' => $columnWidths['A']
+                    ],
+                    'fields' => 'pixelSize'
+                ]
+            ]),
+            new \Google\Service\Sheets\Request([
+                'updateDimensionProperties' => [
+                    'range' => [
+                        'sheetId' => $sheetId,
+                        'dimension' => 'COLUMNS',
+                        'startIndex' => 1,
+                        'endIndex' => 2
+                    ],
+                    'properties' => [
+                        'pixelSize' => $columnWidths['B']
+                    ],
+                    'fields' => 'pixelSize'
+                ]
+            ]),
+            new \Google\Service\Sheets\Request([
+                'updateDimensionProperties' => [
+                    'range' => [
+                        'sheetId' => $sheetId,
+                        'dimension' => 'COLUMNS',
+                        'startIndex' => 2,
+                        'endIndex' => 3
+                    ],
+                    'properties' => [
+                        'pixelSize' => $columnWidths['C']
+                    ],
+                    'fields' => 'pixelSize'
+                ]
+            ]),
+            new \Google\Service\Sheets\Request([
+                'updateDimensionProperties' => [
+                    'range' => [
+                        'sheetId' => $sheetId,
+                        'dimension' => 'COLUMNS',
+                        'startIndex' => 3,
+                        'endIndex' => 4
+                    ],
+                    'properties' => [
+                        'pixelSize' => $columnWidths['D']
+                    ],
+                    'fields' => 'pixelSize'
+                ]
+            ]),
+            new \Google\Service\Sheets\Request([
+                'updateDimensionProperties' => [
+                    'range' => [
+                        'sheetId' => $sheetId,
+                        'dimension' => 'COLUMNS',
+                        'startIndex' => 4,
+                        'endIndex' => 5
+                    ],
+                    'properties' => [
+                        'pixelSize' => $columnWidths['E']
+                    ],
+                    'fields' => 'pixelSize'
+                ]
+            ]),
+            new \Google\Service\Sheets\Request([
+                'updateDimensionProperties' => [
+                    'range' => [
+                        'sheetId' => $sheetId,
+                        'dimension' => 'COLUMNS',
+                        'startIndex' => 5,
+                        'endIndex' => 6
+                    ],
+                    'properties' => [
+                        'pixelSize' => $columnWidths['F']
+                    ],
+                    'fields' => 'pixelSize'
+                ]
+            ]),
+            new \Google\Service\Sheets\Request([
+                'updateDimensionProperties' => [
+                    'range' => [
+                        'sheetId' => $sheetId,
+                        'dimension' => 'COLUMNS',
+                        'startIndex' => 6,
+                        'endIndex' => 7
+                    ],
+                    'properties' => [
+                        'pixelSize' => $columnWidths['G']
+                    ],
+                    'fields' => 'pixelSize'
+                ]
+            ]),
+            new \Google\Service\Sheets\Request([
+                'updateDimensionProperties' => [
+                    'range' => [
+                        'sheetId' => $sheetId,
+                        'dimension' => 'COLUMNS',
+                        'startIndex' => 7,
+                        'endIndex' => 8
+                    ],
+                    'properties' => [
+                        'pixelSize' => $columnWidths['H']
+                    ],
+                    'fields' => 'pixelSize'
+                ]
+            ]),
+            new \Google\Service\Sheets\Request([
+                'updateDimensionProperties' => [
+                    'range' => [
+                        'sheetId' => $sheetId,
+                        'dimension' => 'COLUMNS',
+                        'startIndex' => 8,
+                        'endIndex' => 9
+                    ],
+                    'properties' => [
+                        'pixelSize' => $columnWidths['I']
+                    ],
+                    'fields' => 'pixelSize'
+                ]
+            ]),
+            new \Google\Service\Sheets\Request([
+                'updateDimensionProperties' => [
+                    'range' => [
+                        'sheetId' => $sheetId,
+                        'dimension' => 'COLUMNS',
+                        'startIndex' => 9,
+                        'endIndex' => 10
+                    ],
+                    'properties' => [
+                        'pixelSize' => $columnWidths['J']
+                    ],
+                    'fields' => 'pixelSize'
+                ]
+            ]),
+            new \Google\Service\Sheets\Request([
+                'updateDimensionProperties' => [
+                    'range' => [
+                        'sheetId' => $sheetId,
+                        'dimension' => 'COLUMNS',
+                        'startIndex' => 10,
+                        'endIndex' => 11
+                    ],
+                    'properties' => [
+                        'pixelSize' => $columnWidths['K']
+                    ],
+                    'fields' => 'pixelSize'
+                ]
+            ]),
+            new \Google\Service\Sheets\Request([
+                'updateDimensionProperties' => [
+                    'range' => [
+                        'sheetId' => $sheetId,
+                        'dimension' => 'COLUMNS',
+                        'startIndex' => 11,
+                        'endIndex' => 12
+                    ],
+                    'properties' => [
+                        'pixelSize' => $columnWidths['L']
+                    ],
+                    'fields' => 'pixelSize'
+                ]
+            ]),
+            new \Google\Service\Sheets\Request([
+                'updateDimensionProperties' => [
+                    'range' => [
+                        'sheetId' => $sheetId,
+                        'dimension' => 'COLUMNS',
+                        'startIndex' => 12,
+                        'endIndex' => 13
+                    ],
+                    'properties' => [
+                        'pixelSize' => $columnWidths['M']
+                    ],
+                    'fields' => 'pixelSize'
+                ]
+            ]),
+            new \Google\Service\Sheets\Request([
+                'updateDimensionProperties' => [
+                    'range' => [
+                        'sheetId' => $sheetId,
+                        'dimension' => 'COLUMNS',
+                        'startIndex' => 13,
+                        'endIndex' => 14
+                    ],
+                    'properties' => [
+                        'pixelSize' => $columnWidths['N']
+                    ],
+                    'fields' => 'pixelSize'
+                ]
+            ]),
+            new \Google\Service\Sheets\Request([
+                'updateDimensionProperties' => [
+                    'range' => [
+                        'sheetId' => $sheetId,
+                        'dimension' => 'COLUMNS',
+                        'startIndex' => 14,
+                        'endIndex' => 15
+                    ],
+                    'properties' => [
+                        'pixelSize' => $columnWidths['O']
+                    ],
+                    'fields' => 'pixelSize'
+                ]
+            ]),
+            new \Google\Service\Sheets\Request([
+                'updateDimensionProperties' => [
+                    'range' => [
+                        'sheetId' => $sheetId,
+                        'dimension' => 'COLUMNS',
+                        'startIndex' => 15,
+                        'endIndex' => 16
+                    ],
+                    'properties' => [
+                        'pixelSize' => $columnWidths['P']
+                    ],
+                    'fields' => 'pixelSize'
+                ]
+            ]),
+            new \Google\Service\Sheets\Request([
+                'updateDimensionProperties' => [
+                    'range' => [
+                        'sheetId' => $sheetId,
+                        'dimension' => 'COLUMNS',
+                        'startIndex' => 16,
+                        'endIndex' => 17
+                    ],
+                    'properties' => [
+                        'pixelSize' => $columnWidths['Q']
+                    ],
+                    'fields' => 'pixelSize'
+                ]
+            ]),
+
+            // Unmerge any existing cells first
+            new \Google\Service\Sheets\Request([
+                'unmergeCells' => [
+                    'range' => [
+                        'sheetId' => $sheetId,
+                        'startRowIndex' => 0,
+                        'endRowIndex' => 2,
+                        'startColumnIndex' => 0,
+                        'endColumnIndex' => 17
+                    ]
+                ]
+            ]),
+            // Merge B1-D1
+            new \Google\Service\Sheets\Request([
+                'mergeCells' => [
+                    'range' => [
+                        'sheetId' => $sheetId,
+                        'startRowIndex' => 0,
+                        'endRowIndex' => 1,
+                        'startColumnIndex' => 1,
+                        'endColumnIndex' => 4
+                    ],
+                    'mergeType' => 'MERGE_ALL'
+                ]
+            ]),
+            // Merge E1-Q1
+            new \Google\Service\Sheets\Request([
+                'mergeCells' => [
+                    'range' => [
+                        'sheetId' => $sheetId,
+                        'startRowIndex' => 0,
+                        'endRowIndex' => 1,
+                        'startColumnIndex' => 4,
+                        'endColumnIndex' => 17
+                    ],
+                    'mergeType' => 'MERGE_ALL'
+                ]
+            ]),
+
+            // A1 - Dark blue header
+            new \Google\Service\Sheets\Request([
+                'repeatCell' => [
+                    'range' => [
+                        'sheetId' => $sheetId,
+                        'startRowIndex' => 0,
+                        'endRowIndex' => 1,
+                        'startColumnIndex' => 0,
+                        'endColumnIndex' => 1
+                    ],
+                    'cell' => [
+                        'userEnteredFormat' => [
+                            'backgroundColor' => $hexToRgb($colors['blueHeaderDark']['rgb']),
+                            'textFormat' => [
+                                'bold' => true,
+                                'foregroundColor' => $hexToRgb($colors['textLight']['rgb']),
+                                'fontSize' => 13
+                            ],
+                            'horizontalAlignment' => 'CENTER',
+                            'verticalAlignment' => 'MIDDLE'
+                        ]
+                    ],
+                    'fields' => 'userEnteredFormat(backgroundColor,textFormat,horizontalAlignment,verticalAlignment)'
+                ]
+            ]),
+
+            // B1-D1 - Dark red header (customer info)
+            new \Google\Service\Sheets\Request([
+                'repeatCell' => [
+                    'range' => [
+                        'sheetId' => $sheetId,
+                        'startRowIndex' => 0,
+                        'endRowIndex' => 1,
+                        'startColumnIndex' => 1,
+                        'endColumnIndex' => 4
+                    ],
+                    'cell' => [
+                        'userEnteredFormat' => [
+                            'backgroundColor' => $hexToRgb($colors['redHeaderDark']['rgb']),
+                            'textFormat' => [
+                                'bold' => true,
+                                'foregroundColor' => $hexToRgb($colors['textLight']['rgb']),
+                                'fontSize' => 15
+                            ],
+                            'horizontalAlignment' => 'CENTER',
+                            'verticalAlignment' => 'MIDDLE'
+                        ]
+                    ],
+                    'fields' => 'userEnteredFormat(backgroundColor,textFormat,horizontalAlignment,verticalAlignment)'
+                ]
+            ]),
+
+            // E1-Q1 - Dark green header (service info)
+            new \Google\Service\Sheets\Request([
+                'repeatCell' => [
+                    'range' => [
+                        'sheetId' => $sheetId,
+                        'startRowIndex' => 0,
+                        'endRowIndex' => 1,
+                        'startColumnIndex' => 4,
+                        'endColumnIndex' => 17
+                    ],
+                    'cell' => [
+                        'userEnteredFormat' => [
+                            'backgroundColor' => $hexToRgb($colors['greenHeaderDark']['rgb']),
+                            'textFormat' => [
+                                'bold' => true,
+                                'foregroundColor' => $hexToRgb($colors['textLight']['rgb']),
+                                'fontSize' => 14
+                            ],
+                            'horizontalAlignment' => 'CENTER',
+                            'verticalAlignment' => 'MIDDLE'
+                        ]
+                    ],
+                    'fields' => 'userEnteredFormat(backgroundColor,textFormat,horizontalAlignment,verticalAlignment)'
+                ]
+            ]),
+
+            // A2-D2 - Light blue (customer column headers)
+            new \Google\Service\Sheets\Request([
+                'repeatCell' => [
+                    'range' => [
+                        'sheetId' => $sheetId,
+                        'startRowIndex' => 1,
+                        'endRowIndex' => 2,
+                        'startColumnIndex' => 0,
+                        'endColumnIndex' => 1
+                    ],
+                    'cell' => [
+                        'userEnteredFormat' => [
+                            'backgroundColor' => $hexToRgb('#D6E4F5'),
+                            'textFormat' => [
+                                'bold' => true,
+                                'foregroundColor' => $hexToRgb($colors['textDark']['rgb']),
+                                'fontSize' => 10
+                            ],
+                            'horizontalAlignment' => 'CENTER',
+                            'verticalAlignment' => 'MIDDLE'
+                        ]
+                    ],
+                    'fields' => 'userEnteredFormat(backgroundColor,textFormat,horizontalAlignment,verticalAlignment)'
+                ]
+            ]),
+
+            // B2-D2 - Light red (customer column headers)
+            new \Google\Service\Sheets\Request([
+                'repeatCell' => [
+                    'range' => [
+                        'sheetId' => $sheetId,
+                        'startRowIndex' => 1,
+                        'endRowIndex' => 2,
+                        'startColumnIndex' => 1,
+                        'endColumnIndex' => 4
+                    ],
+                    'cell' => [
+                        'userEnteredFormat' => [
+                            'backgroundColor' => $hexToRgb('#F4CCCC'),
+                            'textFormat' => [
+                                'bold' => true,
+                                'foregroundColor' => $hexToRgb($colors['textDark']['rgb']),
+                                'fontSize' => 10
+                            ],
+                            'horizontalAlignment' => 'CENTER',
+                            'verticalAlignment' => 'MIDDLE'
+                        ]
+                    ],
+                    'fields' => 'userEnteredFormat(backgroundColor,textFormat,horizontalAlignment,verticalAlignment)'
+                ]
+            ]),
+
+            // E2-Q2 - Light green (service column headers)
+            new \Google\Service\Sheets\Request([
+                'repeatCell' => [
+                    'range' => [
+                        'sheetId' => $sheetId,
+                        'startRowIndex' => 1,
+                        'endRowIndex' => 2,
+                        'startColumnIndex' => 4,
+                        'endColumnIndex' => 17
+                    ],
+                    'cell' => [
+                        'userEnteredFormat' => [
+                            'backgroundColor' => $hexToRgb('#E2EFDA'),
+                            'textFormat' => [
+                                'bold' => true,
+                                'foregroundColor' => $hexToRgb($colors['textDark']['rgb']),
+                                'fontSize' => 10
+                            ],
+                            'horizontalAlignment' => 'CENTER',
+                            'verticalAlignment' => 'MIDDLE',
+                            'wrapStrategy' => 'WRAP'
+                        ]
+                    ],
+                    'fields' => 'userEnteredFormat(backgroundColor,textFormat,horizontalAlignment,verticalAlignment,wrapStrategy)'
+                ]
+            ]),
+
+            // Data cell formatting - centered with padding
+            new \Google\Service\Sheets\Request([
+                'repeatCell' => [
+                    'range' => [
+                        'sheetId' => $sheetId,
+                        'startRowIndex' => 2,
+                        'endRowIndex' => $lastRow,
+                        'startColumnIndex' => 0,
+                        'endColumnIndex' => 17
+                    ],
+                    'cell' => [
+                        'userEnteredFormat' => [
+                            'wrapStrategy' => 'WRAP',
+                            'horizontalAlignment' => 'CENTER',
+                            'verticalAlignment' => 'MIDDLE',
+                            'textFormat' => [
+                                'foregroundColor' => $hexToRgb($colors['textDark']['rgb']),
+                                'fontSize' => 11
+                            ]
+                        ]
+                    ],
+                    'fields' => 'userEnteredFormat(wrapStrategy,horizontalAlignment,verticalAlignment,textFormat)'
+                ]
+            ]),
+
+            // Column A (Nome) - Make all data rows bold
+            new \Google\Service\Sheets\Request([
+                'repeatCell' => [
+                    'range' => [
+                        'sheetId' => $sheetId,
+                        'startRowIndex' => 2,
+                        'endRowIndex' => $lastRow,
+                        'startColumnIndex' => 0,
+                        'endColumnIndex' => 1
+                    ],
+                    'cell' => [
+                        'userEnteredFormat' => [
+                            'textFormat' => [
+                                'bold' => true,
+                                'foregroundColor' => $hexToRgb($colors['textDark']['rgb']),
+                                'fontSize' => 11
+                            ],
+                            'wrapStrategy' => 'WRAP',
+                            'horizontalAlignment' => 'CENTER',
+                            'verticalAlignment' => 'MIDDLE'
+                        ]
+                    ],
+                    'fields' => 'userEnteredFormat(textFormat,wrapStrategy,horizontalAlignment,verticalAlignment)'
+                ]
+            ])
+        ];
+
+        // Execute batch update
+        $batchUpdateRequest = new \Google\Service\Sheets\BatchUpdateSpreadsheetRequest([
+            'requests' => $requests
+        ]);
+
+        $service->spreadsheets->batchUpdate($settings['sheet_id'], $batchUpdateRequest);
+    }
+
+    /**
+     * Bidirectional merge - merge both Google Sheets and Database
+     * Combines Google→DB and DB→Google operations with conflict resolution
+     */
     private function mergeBidirectional($googleData, $dbData, $settings)
     {
-        // Use newer timestamp to resolve conflicts
         $result = [
             'added_to_db' => 0,
             'updated_in_db' => 0,
             'added_to_google' => 0,
+            'updated_in_google' => 0,
             'conflicts_resolved' => 0,
             'errors' => []
         ];
 
-        // First: merge Google to DB
-        $dbResult = $this->mergeGoogleToDatabase($googleData);
-        $result['added_to_db'] = $dbResult['added'];
-        $result['updated_in_db'] = $dbResult['updated'];
+        try {
+            // First: merge Google to DB (imports new/updated records from Google)
+            $dbResult = $this->mergeGoogleToDatabase($googleData);
+            $result['added_to_db'] = $dbResult['added'] ?? 0;
+            $result['updated_in_db'] = $dbResult['updated'] ?? 0;
+            if (!empty($dbResult['errors'])) {
+                $result['errors'] = array_merge($result['errors'], $dbResult['errors']);
+            }
 
-        // Second: merge DB to Google
-        $googleResult = $this->mergeDatabaseToGoogle($dbData, $settings);
-        $result['added_to_google'] = $googleResult['updated'] ?? 0;
+            // Second: merge DB to Google (exports all DB records to Google)
+            $googleResult = $this->mergeDatabaseToGoogle($dbData, $settings);
+            $result['updated_in_google'] = $googleResult['updated'] ?? 0;
+            if (!empty($googleResult['errors'])) {
+                $result['errors'] = array_merge($result['errors'], $googleResult['errors']);
+            }
+        } catch (Exception $e) {
+            $result['errors'][] = "Bidirectional merge failed: " . $e->getMessage();
+        }
 
         return $result;
-    }}
+    }
+
+    // Diagnostic endpoint for debugging Google Sheets issues
+    public function diagnosticGoogleSheets()
+    {
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: index.php?action=login');
+            exit;
+        }
+        
+        try {
+            $settings = $this->settingsModel->getGoogleSheetsSettings();
+            
+            // Build stored settings info
+            $storedSettingsInfo = "=== STORED SETTINGS ===\n";
+            $storedSettingsInfo .= "Sheet ID: " . $settings['sheet_id'] . "\n";
+            $storedSettingsInfo .= "Sheet Name: '" . $settings['sheet_name'] . "'\n";
+            $storedSettingsInfo .= "Sheet Name Length: " . strlen($settings['sheet_name']) . "\n";
+            $storedSettingsInfo .= "Sheet Name Hex: " . bin2hex($settings['sheet_name']) . "\n";
+            $storedSettingsInfo .= "Enabled: " . $settings['enabled'] . "\n";
+            $storedSettingsInfo .= "Credentials Present: " . (!empty($settings['credentials']) ? "YES" : "NO") . "\n";
+            
+            require_once APP_PATH . '/vendor/autoload.php';
+            
+            $client = $this->getGoogleClient($settings);
+            $service = new \Google\Service\Sheets($client);
+            
+            // Build connection info
+            $googleConnectionInfo = "=== CONNECTING TO GOOGLE ===\n";
+            $spreadsheet = $service->spreadsheets->get($settings['sheet_id'], ['includeGridData' => false]);
+            $googleConnectionInfo .= "Spreadsheet Title: " . $spreadsheet->getProperties()->getTitle() . "\n";
+            $googleConnectionInfo .= "Spreadsheet ID: " . $spreadsheet->getSpreadsheetId() . "\n";
+            $googleConnectionInfo .= "Status: CONNECTED\n";
+            
+            // Build available sheets info
+            $availableSheetsInfo = "=== AVAILABLE SHEETS ===\n";
+            $sheets = $spreadsheet->getSheets();
+            $availableSheetsInfo .= "Total Sheets: " . count($sheets) . "\n\n";
+            
+            foreach ($sheets as $sheet) {
+                $title = $sheet->getProperties()->getTitle();
+                $availableSheetsInfo .= "Sheet: '" . $title . "'\n";
+                $availableSheetsInfo .= "  Length: " . strlen($title) . "\n";
+                $availableSheetsInfo .= "  Hex: " . bin2hex($title) . "\n";
+                $availableSheetsInfo .= "  Exact Match: " . ($title === $settings['sheet_name'] ? "YES" : "NO") . "\n";
+                $availableSheetsInfo .= "  Case-Insensitive Match: " . (strtolower($title) === strtolower($settings['sheet_name']) ? "YES" : "NO") . "\n";
+                $availableSheetsInfo .= "  Trim Match: " . (trim($title) === trim($settings['sheet_name']) ? "YES" : "NO") . "\n";
+                $availableSheetsInfo .= "\n";
+            }
+            
+        } catch (Exception $e) {
+            $googleConnectionInfo = "ERROR: " . $e->getMessage();
+            $availableSheetsInfo = "Unable to retrieve sheets due to connection error.";
+        }
+        
+        require APP_PATH . '/includes/header.php';
+        require APP_PATH . '/includes/sidebar.php';
+        require APP_PATH . '/views/settings/diagnostic.php';
+        require APP_PATH . '/includes/footer.php';
+    }
+}

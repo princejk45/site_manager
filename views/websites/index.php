@@ -44,8 +44,11 @@
                 <div><?php if ($userRole === 'manager' || $userRole === 'super_admin'): ?>
                         <a href="index.php?action=websites&do=create&lang=<?= $_SESSION['lang'] ?? 'it' ?>" class="btn btn-primary btn-sm mr-2">
                             <i class="fas fa-plus"></i> <?= __('websites.add_service') ?>
-                        </a><?php endif; ?>
-
+                        </a>
+                        <button type="button" id="bulkDeleteBtn" class="btn btn-danger btn-sm mr-2" style="display:none;">
+                            <i class="fas fa-trash"></i> <span id="selectedCount">0</span> <?= __('common.delete') ?>
+                        </button>
+                    <?php endif; ?>
                 </div>
                 <form method="post" action="index.php?action=websites&do=export&lang=<?= $_SESSION['lang'] ?? 'it' ?>" class="d-inline">
                     <button type="submit" class="btn btn-success btn-sm">
@@ -239,6 +242,42 @@
                 [title]:hover::after {
                     display: none !important;
                 }
+
+                /* Action buttons styling - keep horizontal with good spacing */
+                td.no-wrap {
+                    vertical-align: middle !important;
+                }
+
+                td.no-wrap a,
+                td.no-wrap button,
+                td.no-wrap form {
+                    margin-right: 0.3rem;
+                    margin-bottom: 0.3rem;
+                    display: inline-block;
+                }
+
+                td.no-wrap form {
+                    margin: 0;
+                }
+
+                td.no-wrap .d-inline {
+                    display: inline-block !important;
+                    margin-right: 0.3rem;
+                }
+
+                /* Ensure buttons wrap nicely on smaller screens */
+                @media (max-width: 768px) {
+                    td.no-wrap a,
+                    td.no-wrap button {
+                        margin-right: 0.25rem;
+                        margin-bottom: 0.25rem;
+                        padding: 0.25rem 0.5rem !important;
+                    }
+
+                    td.no-wrap {
+                        min-width: 140px;
+                    }
+                }
             </style>
             <!-- Website Table (Wrapped in a card) -->
             <div class="card">
@@ -250,6 +289,12 @@
                         <table class="table table-bordered table-striped table-hover mb-0 table-sm-text">
                             <thead class="thead-dark">
                                 <tr>
+                                    <!-- Checkbox Column -->
+                                    <?php if ($userRole === 'manager' || $userRole === 'super_admin'): ?>
+                                        <th style="width: 30px;">
+                                            <input type="checkbox" id="selectAllCheckbox" />
+                                        </th>
+                                    <?php endif; ?>
                                     <!-- Hosting Server Column -->
                                     <th>
                                         <a
@@ -313,6 +358,12 @@
                             <tbody>
                                 <?php foreach ($websites as $website): ?>
                                     <tr>
+                                        <!-- Checkbox Column -->
+                                        <?php if ($userRole === 'manager' || $userRole === 'super_admin'): ?>
+                                            <td style="width: 30px;">
+                                                <input type="checkbox" class="website-checkbox" value="<?= $website['id'] ?>" data-domain="<?= htmlspecialchars($website['domain']) ?>" />
+                                            </td>
+                                        <?php endif; ?>
                                         <td><?= htmlspecialchars($website['hosting_server'] ?? 'N/A') ?></td>
                                         <td class="no-wrap"><?= htmlspecialchars($website['domain']) ?></td>
                                         <td><?= htmlspecialchars($website['name'] ?? 'N/A') ?></td>
@@ -418,8 +469,81 @@
 <!-- /.content-wrapper -->
 
 <script>
+    // Translation strings
+    const transMessages = {
+        warning: '<?= __('common.bulk_delete_warning') ?>',
+        services: '<?= __('common.bulk_delete_services') ?>',
+        cannotUndo: '<?= __('common.cannot_be_undone') ?>'
+    };
+
     document.addEventListener('DOMContentLoaded', function() {
         let pendingAction = null;
+
+        // ===== BULK DELETE FUNCTIONALITY =====
+        const selectAllCheckbox = document.getElementById('selectAllCheckbox');
+        const websiteCheckboxes = document.querySelectorAll('.website-checkbox');
+        const bulkDeleteBtn = document.getElementById('bulkDeleteBtn');
+        const selectedCount = document.getElementById('selectedCount');
+
+        function updateBulkDeleteButton() {
+            const checkedCount = document.querySelectorAll('.website-checkbox:checked').length;
+            if (checkedCount > 0) {
+                bulkDeleteBtn.style.display = 'inline-block';
+                selectedCount.textContent = checkedCount;
+            } else {
+                bulkDeleteBtn.style.display = 'none';
+                selectAllCheckbox.checked = false;
+            }
+        }
+
+        // Select all checkbox
+        if (selectAllCheckbox) {
+            selectAllCheckbox.addEventListener('change', function() {
+                websiteCheckboxes.forEach(checkbox => {
+                    checkbox.checked = this.checked;
+                });
+                updateBulkDeleteButton();
+            });
+        }
+
+        // Individual checkboxes
+        websiteCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                updateBulkDeleteButton();
+                // Update select all checkbox state
+                if (selectAllCheckbox) {
+                    const allChecked = Array.from(websiteCheckboxes).every(cb => cb.checked);
+                    const someChecked = Array.from(websiteCheckboxes).some(cb => cb.checked);
+                    selectAllCheckbox.checked = allChecked;
+                    selectAllCheckbox.indeterminate = someChecked && !allChecked;
+                }
+            });
+        });
+
+        // Bulk delete button
+        if (bulkDeleteBtn) {
+            bulkDeleteBtn.addEventListener('click', function() {
+                const checkedBoxes = document.querySelectorAll('.website-checkbox:checked');
+                const selectedDomains = Array.from(checkedBoxes).map(cb => cb.dataset.domain).join(', ');
+                const message = `<strong>${transMessages.warning}</strong> ${checkedBoxes.length} ${transMessages.services}:<br/><br/><strong>${selectedDomains}</strong><br/><br/>${transMessages.cannotUndo}.`;
+                document.getElementById('confirmationMessage').innerHTML = message;
+                $('#confirmationModal').modal('show');
+
+                pendingAction = () => {
+                    const ids = Array.from(checkedBoxes).map(cb => cb.value).join(',');
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = 'index.php?action=websites&do=bulk_delete';
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'ids';
+                    input.value = ids;
+                    form.appendChild(input);
+                    document.body.appendChild(form);
+                    form.submit();
+                };
+            });
+        }
 
         // Handle confirmable actions (email and delete)
         document.querySelectorAll('.confirmable').forEach(el => {
