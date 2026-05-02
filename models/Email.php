@@ -31,8 +31,8 @@ class Email
         // Remove all encryption-related code
         $stmt = $this->pdo->prepare("
             INSERT INTO smtp_settings 
-            (host, port, username, password, encryption, from_email, from_name, cc_email) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            (host, port, username, password, encryption, from_email, from_name, cc_email, test_email) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
             ON DUPLICATE KEY UPDATE 
             host = VALUES(host), 
             port = VALUES(port), 
@@ -41,7 +41,8 @@ class Email
             encryption = VALUES(encryption), 
             from_email = VALUES(from_email), 
             from_name = VALUES(from_name),
-            cc_email = VALUES(cc_email)
+            cc_email = VALUES(cc_email),
+            test_email = VALUES(test_email)
         ");
 
         return $stmt->execute([
@@ -52,7 +53,8 @@ class Email
             $data['encryption'],
             $data['from_email'],
             $data['from_name'],
-            $data['cc_email'] ?? null
+            $data['cc_email'] ?? null,
+            $data['test_email'] ?? null
         ]);
     }
 

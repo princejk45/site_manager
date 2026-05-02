@@ -234,11 +234,146 @@
                             </div>
                         <?php endif; ?>
                     </div>
-                    <div class="card-footer">
+                    <div class="card-footer d-flex justify-content-between">
                         <button type="submit" class="btn btn-primary"><?= __('settings.save_settings') ?></button>
+                        <button type="button" id="cronDiagnosticsBtn" class="btn btn-info"><?= __('settings.cron_diagnostics_button') ?></button>
                     </div>
                 </form>
             </div>
+
+            <!-- Cron Diagnostics Modal -->
+            <div class="modal fade" id="cronDiagnosticsModal" tabindex="-1" role="dialog" aria-labelledby="cronDiagnosticsModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="cronDiagnosticsModalLabel"><?= __('settings.cron_diagnostics') ?></h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div id="cronDiagnosticsContent">
+                                <div class="text-center">
+                                    <div class="spinner-border" role="status">
+                                        <span class="sr-only">Loading...</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal"><?= __('common.close') ?></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                document.getElementById('cronDiagnosticsBtn').addEventListener('click', function() {
+                    const btn = this;
+                    const originalText = btn.innerHTML;
+                    
+                    btn.disabled = true;
+                    btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> <?= __('settings.test_in_progress') ?>';
+
+                    fetch('index.php?action=settings&do=cron_diagnostics', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        btn.disabled = false;
+                        btn.innerHTML = originalText;
+
+                        if (!data.success) {
+                            document.getElementById('cronDiagnosticsContent').innerHTML = 
+                                '<div class="alert alert-danger"><?= __('settings.diagnostic_error') ?><br>' + 
+                                (data.error || '') + '</div>';
+                        } else {
+                            let html = '<div class="row">';
+                            
+                            // Cron Status
+                            html += '<div class="col-md-12 mb-3">';
+                            html += '<h6><?= __('settings.cron_management') ?></h6>';
+                            html += '<p><strong><?= __('common.status') ?>:</strong> ';
+                            html += data.cron_enabled ? '<span class="badge badge-success">Active</span>' : '<span class="badge badge-danger">Inactive</span>';
+                            html += '</p></div>';
+
+                            // Next Execution
+                            html += '<div class="col-md-12 mb-3">';
+                            if (data.is_localhost) {
+                                html += '<p><strong><?= __('settings.next_execution') ?>:</strong><br>';
+                                html += '<span class="text-info"><?= __('settings.local_system') ?> - <?= __('settings.system_scheduler_configured') ?></span></p>';
+                            } else if (data.next_execution) {
+                                html += '<p><strong><?= __('settings.next_execution') ?>:</strong> ' + data.next_execution;
+                                if (data.cron_expression) {
+                                    html += '<br><small class="text-muted"><?= __('settings.cron_expression') ?>: ' + data.cron_expression + '</small>';
+                                }
+                                html += '</p>';
+                            } else {
+                                html += '<p><strong><?= __('settings.next_execution') ?>:</strong><br>';
+                                html += '<span class="text-warning">' + (data.next_execution_message || '') + '</span></p>';
+                            }
+                            html += '</div>';
+
+                            // Last Execution
+                            html += '<div class="col-md-12 mb-3">';
+                            html += '<p><strong><?= __('settings.last_execution') ?>:</strong> ';
+                            html += data.last_run ? data.last_run : '<?= __('settings.never_run') ?>';
+                            html += '</p></div>';
+
+                            // Websites Summary
+                            html += '<div class="col-md-12 mb-3"><hr></div>';
+                            html += '<div class="col-md-6">';
+                            html += '<p><strong><?= __('settings.total_websites') ?>:</strong> <span class="badge badge-primary">' + data.total_websites + '</span></p>';
+                            html += '</div>';
+                            html += '<div class="col-md-6">';
+                            html += '<p><strong><?= __('settings.total_emails_to_send') ?>:</strong> <span class="badge badge-warning">' + data.total_emails + '</span></p>';
+                            html += '</div>';
+
+                            // Websites by Status
+                            html += '<div class="col-md-3 text-center">';
+                            html += '<p><small><?= __('settings.websites_expired') ?></small><br><span class="badge badge-danger">' + data.expired_count + '</span></p>';
+                            html += '</div>';
+                            html += '<div class="col-md-3 text-center">';
+                            html += '<p><small><?= __('settings.websites_expiring_1') ?></small><br><span class="badge badge-danger">' + data.expires_1_day_count + '</span></p>';
+                            html += '</div>';
+                            html += '<div class="col-md-3 text-center">';
+                            html += '<p><small><?= __('settings.websites_expiring_15') ?></small><br><span class="badge badge-warning">' + data.expires_15_days_count + '</span></p>';
+                            html += '</div>';
+                            html += '<div class="col-md-3 text-center">';
+                            html += '<p><small><?= __('settings.websites_expiring_30') ?></small><br><span class="badge badge-info">' + data.expires_30_days_count + '</span></p>';
+                            html += '</div>';
+
+                            // SMTP Status
+                            html += '<div class="col-md-12 mb-3" style="margin-top: 1rem;"><hr></div>';
+                            html += '<div class="col-md-12">';
+                            html += '<p><strong><?= __('settings.smtp_status') ?>:</strong> ';
+                            html += data.smtp_configured ? 
+                                '<span class="badge badge-success"><?= __('settings.smtp_configured_yes') ?></span>' : 
+                                '<span class="badge badge-danger"><?= __('settings.smtp_configured_no') ?></span>';
+                            if (data.smtp_from_email) {
+                                html += '<br><small><?= __('settings.sending_from') ?>: ' + data.smtp_from_email + '</small>';
+                            }
+                            html += '</p></div>';
+
+                            html += '</div>';
+                            document.getElementById('cronDiagnosticsContent').innerHTML = html;
+                        }
+
+                        $('#cronDiagnosticsModal').modal('show');
+                    })
+                    .catch(error => {
+                        btn.disabled = false;
+                        btn.innerHTML = originalText;
+                        document.getElementById('cronDiagnosticsContent').innerHTML = 
+                            '<div class="alert alert-danger">Error: ' + error + '</div>';
+                        $('#cronDiagnosticsModal').modal('show');
+                    });
+                });
+            </script>
 
             <?php if (isset($_SESSION['google_error'])): ?>
                 <div class="alert alert-danger">
@@ -383,6 +518,38 @@
                     </form>
                 </div>
             </div>
+
+            <!-- WordPress Configuration & Database Setup Section -->
+            <div class="row mt-4" id="migrations">
+                <div class="col-md-6">
+                    <div class="card card-info">
+                        <div class="card-header">
+                            <h5 class="m-0"><i class="fas fa-wordpress mr-2"></i>WordPress Integration</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-muted">Configure API keys for remote WordPress site diagnostics.</p>
+                            <a href="index.php?action=settings&do=wordpress&lang=<?= $_SESSION['lang'] ?? 'it' ?>" class="btn btn-info btn-block">
+                                <i class="fas fa-cog mr-2"></i>Configure API Keys
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card card-warning">
+                        <div class="card-header">
+                            <h5 class="m-0"><i class="fas fa-database mr-2"></i>Database Setup</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-muted">Create WordPress integration tables. Creates missing tables only, preserves existing data.</p>
+                            <button type="button" class="btn btn-warning btn-block" id="migrateDbBtn">
+                                <i class="fas fa-sync-alt mr-2"></i>Run Migrations
+                            </button>
+                            <div id="migrationResult" class="mt-3"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </section>
 </div>
@@ -473,6 +640,67 @@
             confirmMergeBtn.addEventListener('click', function() {
                 $('#mergeModal').modal('hide');
                 document.getElementById('mergeForm').submit();
+            });
+        }
+
+        // Handle database migration
+        const migrateDbBtn = document.getElementById('migrateDbBtn');
+        if (migrateDbBtn) {
+            migrateDbBtn.addEventListener('click', async function() {
+                if (!confirm('Run database migrations? This will create missing tables without affecting existing data.')) {
+                    return;
+                }
+
+                migrateDbBtn.disabled = true;
+                migrateDbBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Running...';
+
+                try {
+                    const response = await fetch('index.php?action=settings&do=migrate_database', {
+                        method: 'GET',
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    });
+
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                    
+                    const result = await response.json();
+
+                    // Build result HTML
+                    let resultHtml = `<div class="alert alert-${result.success ? 'success' : 'danger'} alert-dismissible fade show">
+                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        <h5>${result.success ? '<i class="fas fa-check-circle mr-2"></i>Migration Complete' : '<i class="fas fa-exclamation-circle mr-2"></i>Migration Failed'}</h5>`;
+
+                    if (result.tables && result.tables.length > 0) {
+                        resultHtml += '<ul class="mb-0">';
+                        result.tables.forEach(table => {
+                            const icon = table.status === 'created' ? '✓' : '→';
+                            resultHtml += `<li><strong>${icon} ${table.name}</strong>: ${table.reason}</li>`;
+                        });
+                        resultHtml += '</ul>';
+                    }
+
+                    if (result.errors && result.errors.length > 0) {
+                        resultHtml += '<div class="mt-2"><strong>Errors:</strong><ul>';
+                        result.errors.forEach(err => {
+                            resultHtml += `<li>${err}</li>`;
+                        });
+                        resultHtml += '</ul></div>';
+                    }
+
+                    resultHtml += '</div>';
+
+                    document.getElementById('migrationResult').innerHTML = resultHtml;
+
+                } catch (error) {
+                    console.error('Error:', error);
+                    document.getElementById('migrationResult').innerHTML = `
+                        <div class="alert alert-danger alert-dismissible fade show">
+                            <button type="button" class="close" data-dismiss="alert">&times;</button>
+                            Migration error: ${error.message}
+                        </div>`;
+                } finally {
+                    migrateDbBtn.disabled = false;
+                    migrateDbBtn.innerHTML = '<i class="fas fa-database mr-2"></i>Run Migrations';
+                }
             });
         }
     });

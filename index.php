@@ -70,6 +70,9 @@ switch ($action) {
             case 'view':
                 $websiteController->view($id);
                 break;
+            case 'fetch_diagnostics':
+                $websiteController->fetch_diagnostics();
+                break;
             case 'import':
                 $websiteController->import();
                 break;
@@ -164,6 +167,9 @@ switch ($action) {
             case 'test_smtp':
                 $settingsController->testSmtp();
                 break;
+            case 'cron_diagnostics':
+                $settingsController->cronDiagnostics();
+                break;
             case 'advanced':
                 // This will handle both GET and POST requests
                 $settingsController->advanced();
@@ -194,6 +200,21 @@ switch ($action) {
                 break;
             case 'diagnostic_google_sheets':
                 $settingsController->diagnosticGoogleSheets();
+                break;
+            case 'wordpress':
+                $settingsController->wordpress();
+                break;
+            case 'wordpress_edit':
+                $settingsController->wordpress_edit();
+                break;
+            case 'wordpress_save':
+                $settingsController->wordpress_save();
+                break;
+            case 'wordpress_delete':
+                $settingsController->wordpress_delete();
+                break;
+            case 'migrate_database':
+                $settingsController->migrate_database();
                 break;
             default:
                 header('Location: index.php?action=settings&do=smtp');

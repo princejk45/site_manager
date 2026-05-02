@@ -98,7 +98,7 @@
                             <label for="test_email"><?= __('settings.test_email') ?></label>
                             <input type="email" class="form-control" id="test_email" name="test_email"
                                 placeholder="<?= __('common.email') ?>"
-                                value="<?= $smtpSettings['from_email'] ?? '' ?>">
+                                value="<?= isset($smtpSettings['test_email']) ? htmlspecialchars($smtpSettings['test_email']) : (isset($smtpSettings['from_email']) ? htmlspecialchars($smtpSettings['from_email']) : '') ?>">
                         </div>
 
                         <div class="d-flex justify-content-between">

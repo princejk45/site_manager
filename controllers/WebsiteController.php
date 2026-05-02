@@ -8,6 +8,7 @@ class WebsiteController
     private $pdo;
     public function __construct($pdo)
     {
+        $this->pdo = $pdo;
         $this->websiteModel = new Website($pdo);
         $this->hostingModel = new Hosting($pdo);
         $this->emailController = new EmailController($pdo);
@@ -152,7 +153,60 @@ class WebsiteController
         // Calculate dynamic status for the view
         $website['dynamic_status'] = $this->websiteModel->calculateDynamicStatus($website['expiry_date']);
 
+        // Check if WordPress integration is configured for this website
+        $wordPressSiteModel = new WordPressSite($this->pdo);
+        $hasWordPressConfig = $wordPressSiteModel->exists($id);
+
         require APP_PATH . '/views/websites/view.php';
+    }
+
+    /**
+     * Fetch WordPress diagnostics for a website
+     * Called via AJAX
+     */
+    public function fetch_diagnostics()
+    {
+        header('Content-Type: application/json');
+
+        try {
+            if (!isset($_SESSION['user_id'])) {
+                throw new Exception('Unauthorized');
+            }
+
+            $websiteId = $_GET['id'] ?? null;
+            if (!$websiteId) {
+                throw new Exception('Website ID required');
+            }
+
+            // Require service classes
+            require_once APP_PATH . '/services/WordPress/Exceptions.php';
+            require_once APP_PATH . '/services/WordPress/WordPressApiClient.php';
+            require_once APP_PATH . '/services/WordPress/DiagnosticsNormalizer.php';
+            require_once APP_PATH . '/services/WordPress/DiagnosticsService.php';
+            require_once APP_PATH . '/models/WordPressSite.php';
+
+            // Get PDO from globals
+            $pdo = $GLOBALS['pdo'] ?? null;
+            if (!$pdo) {
+                throw new Exception('Database connection unavailable');
+            }
+
+            // Initialize service and fetch diagnostics
+            $diagnosticsService = new DiagnosticsService($pdo);
+            $result = $diagnosticsService->fetchDiagnostics($websiteId);
+
+            http_response_code($result['success'] ? 200 : 400);
+            echo json_encode($result);
+            exit;
+
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode([
+                'success' => false,
+                'error' => $e->getMessage()
+            ]);
+            exit;
+        }
     }
 
     public function edit($id)

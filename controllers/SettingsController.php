@@ -39,7 +39,8 @@ class SettingsController
                 'encryption' => $_POST['encryption'],
                 'from_email' => $_POST['from_email'],
                 'from_name' => $_POST['from_name'],
-                'cc_email' => $_POST['cc_email'] ?? null // Add this line
+                'cc_email' => $_POST['cc_email'] ?? null,
+                'test_email' => $_POST['test_email'] ?? null
             ];
 
             $success = $this->emailModel->updateSmtpSettings($data);
@@ -167,6 +168,34 @@ class SettingsController
             echo json_encode([
                 'success' => false,
                 'message' => __('settings.smtp_test_error') . $e->getMessage()
+            ]);
+        }
+        exit;
+    }
+
+    public function cronDiagnostics()
+    {
+        // Set JSON header - must be before any output
+        header('Content-Type: application/json');
+
+        try {
+            if (!isset($_SESSION['user_id'])) {
+                throw new Exception(__('auth.invalid_credentials'));
+            }
+
+            // Get diagnostics from CronModel
+            $diagnostics = $this->cronModel->getDiagnostics();
+
+            if (!$diagnostics['success']) {
+                throw new Exception($diagnostics['error'] ?? __('settings.diagnostic_error'));
+            }
+
+            // Return JSON response
+            echo json_encode($diagnostics);
+        } catch (Exception $e) {
+            echo json_encode([
+                'success' => false,
+                'error' => $e->getMessage()
             ]);
         }
         exit;
@@ -1955,5 +1984,238 @@ class SettingsController
         require APP_PATH . '/includes/sidebar.php';
         require APP_PATH . '/views/settings/diagnostic.php';
         require APP_PATH . '/includes/footer.php';
+    }
+
+    /**
+     * Display WordPress API configuration page
+     */
+    public function wordpress()
+    {
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: index.php?action=login');
+            exit;
+        }
+
+        $authController = new AuthController($this->db);
+        $authController->checkPermission('super_admin');
+
+        $wordPressSiteModel = new WordPressSite($this->db);
+        
+        // Get all websites
+        $allWebsites = $this->websiteModel->getAllWebsites();
+        
+        // Filter to only include websites where type (name field) matches "domain" or "dominio" (case-insensitive)
+        $websites = array_filter($allWebsites, function($website) {
+            $type = strtolower($website['name'] ?? '');
+            return stripos($type, 'domain') !== false || stripos($type, 'dominio') !== false;
+        });
+
+        // Get configured WordPress sites with website info
+        $wpSitesData = [];
+        $tablesExist = true;
+        $migrationError = null;
+
+        try {
+            $allWpSites = $wordPressSiteModel->getAllActive();
+            
+            foreach ($allWpSites as $wpSite) {
+                $website = $this->websiteModel->getWebsiteById($wpSite['website_id']);
+                $wpSite['website_domain'] = $website['domain'] ?? 'Unknown';
+                $wpSitesData[] = $wpSite;
+            }
+        } catch (PDOException $e) {
+            // Check if error is about missing table
+            if (strpos($e->getMessage(), 'Base table or view not found') !== false || 
+                strpos($e->getMessage(), "doesn't exist") !== false) {
+                $tablesExist = false;
+                $migrationError = 'WordPress integration tables not found. Please run database migrations first.';
+                $_SESSION['warning'] = $migrationError;
+            } else {
+                throw $e;
+            }
+        }
+
+        $wordpressSites = $wpSitesData;
+        $editingId = null;
+        $editingWebsiteId = null;
+        $editingUrl = null;
+        $editingKey = null;
+        $editingActive = true;
+
+        require APP_PATH . '/includes/header.php';
+        require APP_PATH . '/includes/sidebar.php';
+        require APP_PATH . '/views/settings/wordpress.php';
+        require APP_PATH . '/includes/footer.php';
+    }
+
+    /**
+     * Edit WordPress site configuration
+     */
+    public function wordpress_edit()
+    {
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: index.php?action=login');
+            exit;
+        }
+
+        $authController = new AuthController($this->db);
+        $authController->checkPermission('super_admin');
+
+        $wpSiteId = $_GET['id'] ?? null;
+        if (!$wpSiteId) {
+            $_SESSION['error'] = 'Invalid WordPress site ID';
+            header('Location: index.php?action=settings&do=wordpress');
+            exit;
+        }
+
+        $wordPressSiteModel = new WordPressSite($this->db);
+        $wpSite = $wordPressSiteModel->getById($wpSiteId);
+
+        if (!$wpSite) {
+            $_SESSION['error'] = 'WordPress site not found';
+            header('Location: index.php?action=settings&do=wordpress');
+            exit;
+        }
+
+        // Get all websites
+        $websites = $this->websiteModel->getAllWebsites();
+
+        // Get all configured WordPress sites
+        $allWpSites = $wordPressSiteModel->getAllActive();
+        $wpSitesData = [];
+        
+        foreach ($allWpSites as $site) {
+            $website = $this->websiteModel->getWebsiteById($site['website_id']);
+            $site['website_domain'] = $website['domain'] ?? 'Unknown';
+            $wpSitesData[] = $site;
+        }
+
+        $wordpressSites = $wpSitesData;
+        $editingId = $wpSiteId;
+        $editingWebsiteId = $wpSite['website_id'];
+        $editingUrl = $wpSite['wordpress_url'];
+        $editingKey = $wpSite['api_key'];
+        $editingActive = (bool)$wpSite['is_active'];
+
+        require APP_PATH . '/includes/header.php';
+        require APP_PATH . '/includes/sidebar.php';
+        require APP_PATH . '/views/settings/wordpress.php';
+        require APP_PATH . '/includes/footer.php';
+    }
+
+    /**
+     * Save WordPress site configuration
+     */
+    public function wordpress_save()
+    {
+        if (!isset($_SESSION['user_id']) || $_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: index.php?action=login');
+            exit;
+        }
+
+        $authController = new AuthController($this->db);
+        $authController->checkPermission('super_admin');
+
+        try {
+            $websiteId = (int)$_POST['website_id'] ?? 0;
+            $wordpressUrl = trim($_POST['wordpress_url'] ?? '');
+            $apiKey = trim($_POST['api_key'] ?? '');
+            $isActive = isset($_POST['is_active']) ? 1 : 0;
+            $wordPressSiteId = $_POST['wordpress_site_id'] ?? null;
+
+            // Validate inputs
+            if (!$websiteId || empty($wordpressUrl) || empty($apiKey)) {
+                throw new Exception('All fields are required');
+            }
+
+            if (!filter_var($wordpressUrl, FILTER_VALIDATE_URL)) {
+                throw new Exception('Invalid WordPress URL');
+            }
+
+            $wordPressSiteModel = new WordPressSite($this->db);
+
+            if ($wordPressSiteId) {
+                // Update
+                $wordPressSiteModel->update($websiteId, $wordpressUrl, $apiKey, $isActive);
+                $_SESSION['message'] = 'WordPress configuration updated successfully';
+            } else {
+                // Create
+                $wordPressSiteModel->create($websiteId, $wordpressUrl, $apiKey, $isActive);
+                $_SESSION['message'] = 'WordPress configuration saved successfully';
+            }
+
+            header('Location: index.php?action=settings&do=wordpress');
+            exit;
+
+        } catch (Exception $e) {
+            $_SESSION['error'] = $e->getMessage();
+            header('Location: index.php?action=settings&do=wordpress');
+            exit;
+        }
+    }
+
+    /**
+     * Delete WordPress site configuration
+     */
+    public function wordpress_delete()
+    {
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: index.php?action=login');
+            exit;
+        }
+
+        $authController = new AuthController($this->db);
+        $authController->checkPermission('super_admin');
+
+        try {
+            $wpSiteId = $_GET['id'] ?? null;
+            if (!$wpSiteId) {
+                throw new Exception('Invalid WordPress site ID');
+            }
+
+            $wordPressSiteModel = new WordPressSite($this->db);
+            $wordPressSiteModel->delete($wpSiteId);
+
+            $_SESSION['message'] = 'WordPress configuration deleted successfully';
+        } catch (Exception $e) {
+            $_SESSION['error'] = $e->getMessage();
+        }
+
+        header('Location: index.php?action=settings&do=wordpress');
+        exit;
+    }
+
+    /**
+     * Run database migrations for WordPress integration
+     */
+    public function migrate_database()
+    {
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: index.php?action=login');
+            exit;
+        }
+
+        $authController = new AuthController($this->db);
+        $authController->checkPermission('super_admin');
+
+        try {
+            require_once APP_PATH . '/services/Database/DbMigrator.php';
+            
+            $migrator = new DbMigrator($this->db);
+            $results = $migrator->migrate();
+
+            header('Content-Type: application/json');
+            echo json_encode($results);
+            exit;
+
+        } catch (Exception $e) {
+            header('Content-Type: application/json');
+            http_response_code(500);
+            echo json_encode([
+                'success' => false,
+                'error' => $e->getMessage()
+            ]);
+            exit;
+        }
     }
 }

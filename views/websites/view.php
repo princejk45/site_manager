@@ -13,6 +13,11 @@
                 </div>
                 <div class="col-sm-6 text-right">
                     <div class="btn-group">
+                        <?php if ($hasWordPressConfig ?? false): ?>
+                            <button type="button" class="btn btn-info" id="openDiagnosticsBtn" data-website-id="<?= $website['id'] ?>">
+                                <i class="fas fa-stethoscope"></i> <?= __('common.diagnostics') ?? 'Diagnostics' ?>
+                            </button>
+                        <?php endif; ?>
                         <a href="index.php?action=email&do=expiry&id=<?= $website['id'] ?>&lang=<?= $_SESSION['lang'] ?? 'it' ?>"
                             class="btn btn-success confirmable" data-type="email"
                             data-name="<?= htmlspecialchars($website['domain']) ?>">
@@ -214,5 +219,200 @@
         });
     });
 </script>
+
+<!-- WordPress Diagnostics Modal -->
+<?php if ($hasWordPressConfig ?? false): ?>
+<div class="modal fade" id="diagnosticsModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title"><i class="fas fa-stethoscope mr-2"></i>WordPress Diagnostics</h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="diagnosticsModalBody">
+                <div class="text-center">
+                    <i class="fas fa-spinner fa-spin fa-2x text-info"></i>
+                    <p class="mt-3">Loading diagnostics...</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="refreshDiagnosticsBtn">
+                    <i class="fas fa-sync-alt mr-2"></i>Refresh
+                </button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const openDiagnosticsBtn = document.getElementById('openDiagnosticsBtn');
+        const refreshDiagnosticsBtn = document.getElementById('refreshDiagnosticsBtn');
+        
+        if (openDiagnosticsBtn) {
+            openDiagnosticsBtn.addEventListener('click', function() {
+                fetchDiagnostics();
+                $('#diagnosticsModal').modal('show');
+            });
+        }
+        
+        if (refreshDiagnosticsBtn) {
+            refreshDiagnosticsBtn.addEventListener('click', function() {
+                fetchDiagnostics();
+            });
+        }
+        
+        function fetchDiagnostics() {
+            const websiteId = openDiagnosticsBtn?.dataset.websiteId || <?= $website['id'] ?>;
+            const modalBody = document.getElementById('diagnosticsModalBody');
+            
+            // Show loading
+            modalBody.innerHTML = '<div class="text-center"><i class="fas fa-spinner fa-spin fa-2x text-info"></i><p class="mt-3">Loading diagnostics...</p></div>';
+            
+            fetch(`index.php?action=websites&do=fetch_diagnostics&id=${websiteId}`, {
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => {
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                return response.json();
+            })
+            .then(result => {
+                if (result.success) {
+                    displayDiagnostics(result.data);
+                } else {
+                    showError(result.error || 'Failed to fetch diagnostics');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showError('Network error: ' + error.message);
+            });
+        }
+        
+        function displayDiagnostics(data) {
+            const modalBody = document.getElementById('diagnosticsModalBody');
+            
+            const statusBadgeClass = {
+                'healthy': 'success',
+                'degraded': 'warning',
+                'critical': 'danger',
+                'unknown': 'secondary'
+            };
+            
+            const healthStatus = data.health?.status || 'unknown';
+            const healthScore = data.health?.score || 0;
+            const badgeClass = statusBadgeClass[healthStatus] || 'secondary';
+            
+            let html = `
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Site Information</h6>
+                        <table class="table table-sm table-borderless">
+                            <tr><th style="width: 50%">Site Name:</th><td>${escapeHtml(data.site_name || '')}</td></tr>
+                            <tr><th>Site URL:</th><td><a href="${escapeHtml(data.site_url)}" target="_blank">${escapeHtml(data.site_url)}</a></td></tr>
+                            <tr><th>WordPress:</th><td>${escapeHtml(data.wordpress_version || 'Unknown')}</td></tr>
+                            <tr><th>PHP:</th><td>${escapeHtml(data.php_version || 'Unknown')}</td></tr>
+                            <tr><th>MySQL:</th><td>${escapeHtml(data.mysql_version || 'Unknown')}</td></tr>
+                            <tr><th>Theme:</th><td>${escapeHtml(data.theme_name || 'Unknown')}</td></tr>
+                            <tr><th>Memory Limit:</th><td>${escapeHtml(data.memory_limit || 'Unknown')}</td></tr>
+                            <tr><th>Debug Mode:</th><td><span class="badge badge-${data.debug_mode ? 'danger' : 'success'}">${data.debug_mode ? 'Enabled' : 'Disabled'}</span></td></tr>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Health Status</h6>
+                        <div class="text-center mb-3">
+                            <div class="mb-2">
+                                <span class="badge badge-${badgeClass}" style="font-size: 16px; padding: 10px 20px;">
+                                    ${healthStatus.toUpperCase()}
+                                </span>
+                            </div>
+                            <div style="font-size: 36px; font-weight: bold; color: #007bff;">${healthScore}/100</div>
+                            <small class="text-muted">Health Score</small>
+                        </div>
+                        <h6 class="mt-4">Wordfence</h6>
+                        <p><span class="badge badge-${data.wordfence?.installed ? 'success' : 'warning'}">${data.wordfence?.installed ? 'Installed' : 'Not Installed'}</span></p>
+                        <h6 class="mt-4">Active Plugins</h6>
+                        <p>${data.active_plugins?.length || 0} plugin${(data.active_plugins?.length || 0) !== 1 ? 's' : ''} active</p>
+                    </div>
+                </div>
+                
+                <hr>
+                
+                <h6>Security Check</h6>
+                <div class="row">
+            `;
+            
+            const securityItems = [
+                { key: 'wp_config_writable', label: 'wp-config.php Writable', critical: true },
+                { key: 'xmlrpc_enabled', label: 'XML-RPC Enabled', critical: false },
+                { key: 'debug_mode', label: 'Debug Mode', critical: false },
+                { key: 'directory_listing', label: 'Directory Listing', critical: false },
+                { key: 'default_admin_user', label: 'Default Admin User', critical: false }
+            ];
+            
+            securityItems.forEach(item => {
+                const isIssue = data.security?.[item.key] || false;
+                const badgeClass = isIssue ? (item.critical ? 'danger' : 'warning') : 'success';
+                html += `
+                    <div class="col-md-6 mb-2">
+                        <span class="badge badge-${badgeClass}">${item.label}: ${isIssue ? 'YES' : 'NO'}</span>
+                    </div>
+                `;
+            });
+            
+            html += `
+                </div>
+                
+                <hr>
+                
+                <h6>Top Plugins</h6>
+                <ul class="list-group" style="max-height: 200px; overflow-y: auto;">
+            `;
+            
+            if (data.active_plugins && data.active_plugins.length > 0) {
+                data.active_plugins.slice(0, 10).forEach(plugin => {
+                    html += `<li class="list-group-item d-flex justify-content-between align-items-center">
+                        ${escapeHtml(plugin.name || '')}
+                        <span class="badge badge-secondary">${escapeHtml(plugin.version || '')}</span>
+                    </li>`;
+                });
+            } else {
+                html += '<li class="list-group-item">No plugins active</li>';
+            }
+            
+            html += `
+                </ul>
+                <small class="text-muted d-block mt-2">Last updated: ${new Date().toLocaleString()}</small>
+            `;
+            
+            modalBody.innerHTML = html;
+        }
+        
+        function showError(message) {
+            const modalBody = document.getElementById('diagnosticsModalBody');
+            modalBody.innerHTML = `
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-circle mr-2"></i>
+                    ${escapeHtml(message)}
+                </div>
+            `;
+        }
+        
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    });
+</script>
+<?php endif; ?>
 
 <?php include APP_PATH . '/includes/footer.php'; ?>
