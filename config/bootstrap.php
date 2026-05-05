@@ -1,18 +1,28 @@
 <?php
 // Configure temporary directory for PHP and Google API client
 // This ensures that running as Apache daemon user can create temp files
-if (!ini_get('upload_tmp_dir') || !is_writable(ini_get('upload_tmp_dir'))) {
-    @ini_set('upload_tmp_dir', '/Applications/XAMPP/xamppfiles/temp');
+if (!ini_get('upload_tmp_dir') || !is_writable((string)ini_get('upload_tmp_dir'))) {
+    @ini_set('upload_tmp_dir', sys_get_temp_dir());
 }
-if (!ini_get('sys_temp_dir') || !is_writable(ini_get('sys_temp_dir'))) {
-    @ini_set('sys_temp_dir', '/Applications/XAMPP/xamppfiles/temp');
+if (!ini_get('sys_temp_dir') || !is_writable((string)ini_get('sys_temp_dir'))) {
+    @ini_set('sys_temp_dir', sys_get_temp_dir());
 }
 
 // Define base path FIRST
 define('BASE_PATH', realpath(dirname(__DIR__)));
 define('APP_PATH', BASE_PATH);
-// Define web path for use in href/src attributes
-define('WEB_PATH', '/fullmidia/site_manager');
+// Derive WEB_PATH dynamically so assets resolve correctly on any server
+if (!defined('WEB_PATH')) {
+    $docRoot = rtrim($_SERVER['DOCUMENT_ROOT'] ?? '', '/');
+    $appPath = rtrim(BASE_PATH, '/');
+    if ($docRoot !== '' && strpos($appPath, $docRoot) === 0) {
+        $_webPath = substr($appPath, strlen($docRoot));
+    } else {
+        $_webPath = '';
+    }
+    define('WEB_PATH', $_webPath);
+    unset($_webPath, $docRoot, $appPath);
+}
 if (file_exists(APP_PATH . '/vendor/autoload.php')) {
     require_once APP_PATH . '/vendor/autoload.php';
 }
@@ -172,12 +182,11 @@ require APP_PATH . '/config/constants.php';
 
 if (!isset($dbConfig) || !is_array($dbConfig)) {
     $dbConfig = [
-        'host' => 'localhost',
+        'host'     => 'localhost',
         'username' => 'root',
         'password' => '',
         'database' => 'website_manager',
-        'charset' => 'utf8mb4',
-        'socket' => '/Applications/XAMPP/xamppfiles/var/mysql/mysql.sock',
+        'charset'  => 'utf8mb4',
     ];
 }
 
@@ -238,7 +247,8 @@ try {
     if (!empty($dbConfig['socket']) && file_exists($dbConfig['socket'])) {
         $dsn = "mysql:unix_socket={$dbConfig['socket']};dbname={$dbConfig['database']};charset={$dbConfig['charset']}";
     } else {
-        $dsn = "mysql:host={$dbConfig['host']};dbname={$dbConfig['database']};charset={$dbConfig['charset']}";
+        $port = isset($dbConfig['port']) && (int)$dbConfig['port'] > 0 ? (int)$dbConfig['port'] : 3306;
+        $dsn = "mysql:host={$dbConfig['host']};port={$port};dbname={$dbConfig['database']};charset={$dbConfig['charset']}";
     }
     
     $options = [

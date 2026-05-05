@@ -1,4 +1,6 @@
 # Ignore sensitive config files
 /config/auth.php
+/config/.installed
+/config/database_installer.php
 /.env
 /vendor/

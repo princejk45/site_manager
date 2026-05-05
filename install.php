@@ -17,8 +17,84 @@ ini_set('max_execution_time', 300);
 session_start();
 
 // Check if already installed
-if (file_exists(__DIR__ . '/config/.installed')) {
-    header('Location: index.php');
+// Add ?force=1 to re-run installer when credentials/config are broken.
+$forceInstall = isset($_GET['force']) && $_GET['force'] === '1';
+if ($forceInstall) {
+    $_SESSION['force_install'] = true;
+}
+$forceModeActive = $forceInstall || (isset($_SESSION['force_install']) && $_SESSION['force_install'] === true);
+if (file_exists(__DIR__ . '/config/.installed') && !$forceModeActive) {
+    ?>
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Fullmidia Installer</title>
+        <style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+                margin: 0;
+                min-height: 100vh;
+                display: grid;
+                place-items: center;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: #1f2937;
+            }
+            .card {
+                width: min(560px, 92vw);
+                background: #fff;
+                border-radius: 12px;
+                box-shadow: 0 20px 50px rgba(0, 0, 0, 0.22);
+                padding: 28px;
+            }
+            h1 {
+                margin: 0 0 8px;
+                font-size: 24px;
+            }
+            p {
+                margin: 0 0 14px;
+                line-height: 1.5;
+                color: #4b5563;
+            }
+            .actions {
+                margin-top: 18px;
+                display: flex;
+                gap: 10px;
+                flex-wrap: wrap;
+            }
+            a.btn {
+                text-decoration: none;
+                padding: 11px 14px;
+                border-radius: 8px;
+                font-weight: 600;
+                display: inline-block;
+            }
+            .primary {
+                background: #2563eb;
+                color: #fff;
+            }
+            .secondary {
+                background: #f3f4f6;
+                color: #111827;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="card">
+            <h1>Installation already completed</h1>
+            <p>
+                This instance already has <strong>config/.installed</strong>. If the app fails due to database credentials,
+                start installer recovery mode.
+            </p>
+            <div class="actions">
+                <a class="btn primary" href="install.php?force=1">Repair database configuration</a>
+                <a class="btn secondary" href="index.php">Open application</a>
+            </div>
+        </div>
+    </body>
+    </html>
+    <?php
     exit;
 }
 
@@ -26,6 +102,7 @@ class InstallerWizard
 {
     private $baseDir;
     private $currentStep;
+    private bool $forceMode;
     private $steps = [
         'welcome' => 'Welcome',
         'requirements' => 'Requirements Check',
@@ -40,6 +117,7 @@ class InstallerWizard
     public function __construct()
     {
         $this->baseDir = __DIR__;
+        $this->forceMode = isset($_SESSION['force_install']) && $_SESSION['force_install'] === true;
 
         if (($_GET['action'] ?? '') === 'run_migrations') {
             $this->runMigrations();
@@ -53,6 +131,15 @@ class InstallerWizard
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $this->handleFormSubmission();
         }
+    }
+
+    private function installUrl(string $query): string
+    {
+        if ($this->forceMode && strpos($query, 'force=1') === false) {
+            return 'install.php?' . $query . '&force=1';
+        }
+
+        return 'install.php?' . $query;
     }
 
     private function runMigrations(): void
@@ -77,6 +164,10 @@ class InstallerWizard
             require_once $this->baseDir . '/services/Database/DbMigrator.php';
             $migrator = new DbMigrator($pdo);
             $result = $migrator->migrate();
+
+            if (($result['success'] ?? false) === false && empty($result['error'])) {
+                $result['error'] = $result['errors'][0] ?? 'Unknown migration error';
+            }
 
             echo json_encode($result);
         } catch (Throwable $e) {
@@ -466,6 +557,12 @@ class InstallerWizard
             <h2>Welcome to Fullmidia!</h2>
             <p>We'll set up your installation in just a few steps</p>
         </div>
+
+        <?php if ((isset($_GET['force']) && $_GET['force'] === '1') || (isset($_SESSION['force_install']) && $_SESSION['force_install'] === true)): ?>
+            <div class="alert alert-warning">
+                <strong>Recovery mode enabled.</strong> You are running the installer on an existing installation to repair configuration.
+            </div>
+        <?php endif; ?>
         
         <div class="alert alert-info">
             <strong>ℹ No technical knowledge required.</strong> This wizard handles all the configuration automatically.
@@ -606,21 +703,35 @@ class InstallerWizard
             // Auto-migrate in background
             async function runMigrations() {
                 const statusDiv = document.getElementById('migration-status');
+                const migrationEndpoint = <?= json_encode($this->installUrl('action=run_migrations')) ?>;
+                const nextStepUrl = <?= json_encode($this->installUrl('step=admin')) ?>;
+
                 try {
-                    const response = await fetch('install.php?action=run_migrations', {
+                    const endpoint = new URL(migrationEndpoint, window.location.href).toString();
+                    const response = await fetch(endpoint, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' }
                     });
-                    
-                    const result = await response.json();
+
+                    const bodyText = await response.text();
+                    let result;
+                    try {
+                        result = JSON.parse(bodyText);
+                    } catch (parseError) {
+                        throw new Error('Invalid migration response: ' + bodyText.slice(0, 300));
+                    }
                     
                     if (result.success) {
                         statusDiv.innerHTML += `<p style="color: green;">✓ All migrations completed successfully</p>`;
                         setTimeout(() => {
-                            window.location.href = 'install.php?step=admin';
+                            window.location.href = nextStepUrl;
                         }, 2000);
                     } else {
-                        statusDiv.innerHTML += `<p style="color: red;">✗ Migration error: ${result.error}</p>`;
+                        const errorMessage = result.error
+                            || (Array.isArray(result.errors) && result.errors.length ? result.errors.join(' | ') : null)
+                            || bodyText.slice(0, 300)
+                            || 'Unknown migration error';
+                        statusDiv.innerHTML += `<p style="color: red;">✗ Migration error: ${errorMessage}</p>`;
                     }
                 } catch (e) {
                     statusDiv.innerHTML += `<p style="color: red;">✗ Error: ${e.message}</p>`;
@@ -694,35 +805,47 @@ class InstallerWizard
 
     private function renderLicense()
     {
+        $licenseError   = $_SESSION['license_error'] ?? null;
+        $licenseSuccess = $_SESSION['license_success'] ?? null;
+        unset($_SESSION['license_error'], $_SESSION['license_success']);
         ?>
         <div class="step-header">
             <h2>License Configuration</h2>
             <p>Activate your license or start with trial</p>
         </div>
-        
+
+        <?php if ($licenseError): ?>
+            <div class="alert alert-danger" style="background:#f8d7da;color:#721c24;border:1px solid #f5c6cb;border-radius:4px;padding:12px 16px;margin-bottom:16px;">
+                ✗ <?= htmlspecialchars($licenseError) ?>
+            </div>
+        <?php endif; ?>
+        <?php if ($licenseSuccess): ?>
+            <div class="alert alert-success" style="background:#d4edda;color:#155724;border:1px solid #c3e6cb;border-radius:4px;padding:12px 16px;margin-bottom:16px;">
+                ✓ <?= htmlspecialchars($licenseSuccess) ?>
+            </div>
+        <?php endif; ?>
+
         <div class="alert alert-info">
-            <strong>Have a license key?</strong> Paste it below. Otherwise, click "Use Trial Mode" to start with 30 days of free access.
+            <strong>Have a license key?</strong> Paste it below and click <em>Verify &amp; Activate</em>. Otherwise, click <em>Use Trial Mode</em> for 30 days of free access.
         </div>
-        
+
         <form method="POST">
             <input type="hidden" name="action" value="setup_license">
-            
+
             <div class="form-group">
-                <label for="license_key">License Key (Optional)</label>
-                <textarea id="license_key" name="license_key" rows="3" placeholder="FM-XXXX-XXXX-XXXX-XX"></textarea>
-                <small style="color: #666;">Paste your license key here if you have one</small>
+                <label for="license_key">License Key</label>
+                <textarea id="license_key" name="license_key" rows="3" placeholder="FM-XXXX-XXXX-XXXX-XX" style="font-family:monospace;font-size:13px;"></textarea>
+                <small style="color:#666;">Paste your license key here</small>
             </div>
-            
+
             <div class="alert alert-info">
-                <strong>📝 No license yet?</strong> You can start with our 30-day trial. All features included. <a href="https://fullmidia.it/pricing" target="_blank" style="color: #0c5460; font-weight: 600;">Get a license →</a>
+                <strong>📝 No license yet?</strong> You can start with our 30-day trial. All features included. <a href="https://fullmidia.it/pricing" target="_blank" style="color:#0c5460;font-weight:600;">Get a license →</a>
             </div>
-            
+
             <div class="button-group">
-                <form method="GET" style="flex: 1;">
-                    <input type="hidden" name="step" value="admin">
-                    <button type="submit" class="btn-secondary" style="width: 100%;">← Back</button>
-                </form>
-                <button type="submit" class="btn-primary" name="use_trial" value="1" style="flex: 1;">Use Trial Mode →</button>
+                <a href="?step=admin" class="btn-secondary" style="flex:1;text-align:center;padding:12px;text-decoration:none;display:block;">← Back</a>
+                <button type="submit" name="use_trial" value="1" class="btn-secondary" style="flex:1;background:#6c757d;">Use Trial Mode →</button>
+                <button type="submit" name="verify_license" value="1" class="btn-primary" style="flex:1;">Verify &amp; Activate →</button>
             </div>
         </form>
         <?php
@@ -731,12 +854,20 @@ class InstallerWizard
     private function renderSummary()
     {
         $config = $_SESSION['install_config'] ?? [];
+        $completeError = $_SESSION['complete_error'] ?? null;
+        unset($_SESSION['complete_error']);
 
         ?>
         <div class="step-header">
             <h2>Installation Summary</h2>
             <p>Review your settings before completing setup</p>
         </div>
+
+        <?php if ($completeError): ?>
+            <div class="alert alert-error">
+                <strong>Error:</strong> <?= htmlspecialchars($completeError) ?>
+            </div>
+        <?php endif; ?>
         
         <div style="background: #f8f9fa; padding: 20px; border-radius: 6px; margin-bottom: 25px;">
             <h4 style="margin-bottom: 15px; color: #333;">Configuration Details:</h4>
@@ -839,20 +970,32 @@ class InstallerWizard
     private function testDatabaseConnection()
     {
         try {
-            $host = $_POST['db_host'] ?? 'localhost';
-            $port = $_POST['db_port'] ?? 3306;
-            $database = $_POST['db_name'] ?? 'website_manager';
+            $host = trim($_POST['db_host'] ?? 'localhost');
+            $port = (int) ($_POST['db_port'] ?? 3306);
+            if ($port <= 0) {
+                $port = 3306;
+            }
+            $database = trim($_POST['db_name'] ?? 'website_manager');
             $user = $_POST['db_user'] ?? 'root';
             $pass = $_POST['db_pass'] ?? '';
 
-            $dsn = "mysql:host=$host;port=$port";
+            // Validate database name - only allow safe identifier characters
+            if (!preg_match('/^[a-zA-Z0-9_\-]+$/', $database)) {
+                throw new Exception('Database name may only contain letters, numbers, underscores and hyphens.');
+            }
+            if (strlen($database) > 64) {
+                throw new Exception('Database name must not exceed 64 characters.');
+            }
+
+            $dsn = "mysql:host=$host;port=$port;charset=utf8mb4";
             $pdo = new PDO($dsn, $user, $pass, [
-                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                PDO::ATTR_TIMEOUT => 5
+                PDO::ATTR_ERRMODE      => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_TIMEOUT      => 5,
+                PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci"
             ]);
 
-            // Create database if not exists
-            $pdo->exec("CREATE DATABASE IF NOT EXISTS `$database`");
+            // Create database if not exists (name validated above — safe to interpolate)
+            $pdo->exec("CREATE DATABASE IF NOT EXISTS `$database` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
 
             // Store config
             $_SESSION['install_config']['db_host'] = $host;
@@ -860,6 +1003,11 @@ class InstallerWizard
             $_SESSION['install_config']['db_name'] = $database;
             $_SESSION['install_config']['db_user'] = $user;
             $_SESSION['install_config']['db_pass'] = $pass;
+            $_SESSION['install_config']['host'] = $host;
+            $_SESSION['install_config']['port'] = $port;
+            $_SESSION['install_config']['database'] = $database;
+            $_SESSION['install_config']['user'] = $user;
+            $_SESSION['install_config']['password'] = $pass;
 
             // Write to config file
             $this->writeConfigFile([
@@ -870,10 +1018,10 @@ class InstallerWizard
                 'password' => $pass
             ]);
 
-            header('Location: install.php?step=database_migrate');
+            header('Location: ' . $this->installUrl('step=database_migrate'));
         } catch (Exception $e) {
             $_SESSION['db_error'] = $e->getMessage();
-            header('Location: install.php?step=database');
+            header('Location: ' . $this->installUrl('step=database'));
         }
     }
 
@@ -886,26 +1034,31 @@ class InstallerWizard
 
         if ($password !== $confirmPassword) {
             $_SESSION['admin_error'] = 'Passwords do not match';
-            header('Location: install.php?step=admin');
+            header('Location: ' . $this->installUrl('step=admin'));
             return;
         }
 
         if (strlen($password) < 8) {
             $_SESSION['admin_error'] = 'Password must be at least 8 characters';
-            header('Location: install.php?step=admin');
+            header('Location: ' . $this->installUrl('step=admin'));
             return;
         }
 
         if (strlen($username) < 3) {
             $_SESSION['admin_error'] = 'Username must be at least 3 characters';
-            header('Location: install.php?step=admin');
+            header('Location: ' . $this->installUrl('step=admin'));
             return;
         }
 
         try {
             $config = $this->getDbConfig();
-            $dsn = "mysql:host={$config['host']};port={$config['port']};dbname={$config['database']}";
-            $pdo = new PDO($dsn, $config['user'], $config['password']);
+            $dsn = "mysql:host={$config['host']};port={$config['port']};dbname={$config['database']};charset=utf8mb4";
+            $pdo = new PDO($dsn, $config['user'], $config['password'], [
+                PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                PDO::ATTR_EMULATE_PREPARES   => false,
+                PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci"
+            ]);
 
             // Check if user exists
             $stmt = $pdo->prepare("SELECT id FROM users WHERE username = ? OR email = ?");
@@ -913,7 +1066,7 @@ class InstallerWizard
 
             if ($stmt->fetch()) {
                 $_SESSION['admin_error'] = 'Username or email already exists';
-                header('Location: install.php?step=admin');
+                header('Location: ' . $this->installUrl('step=admin'));
                 return;
             }
 
@@ -928,47 +1081,132 @@ class InstallerWizard
             $_SESSION['install_config']['admin_username'] = $username;
             $_SESSION['install_config']['admin_email'] = $email;
 
-            header('Location: install.php?step=license');
+            header('Location: ' . $this->installUrl('step=license'));
         } catch (Exception $e) {
             $_SESSION['admin_error'] = 'Error creating admin user: ' . $e->getMessage();
-            header('Location: install.php?step=admin');
+            header('Location: ' . $this->installUrl('step=admin'));
         }
     }
 
     private function setupLicense()
     {
-        $licenseKey = trim($_POST['license_key'] ?? '');
-        $useTrial = isset($_POST['use_trial']);
+        $licenseKey  = trim($_POST['license_key'] ?? '');
+        $useTrial    = isset($_POST['use_trial']);
+        $verifyKey   = isset($_POST['verify_license']);
 
-        $_SESSION['install_config']['license_mode'] = $useTrial ? 'trial' : 'licensed';
-
-        if (!$useTrial && !empty($licenseKey)) {
-            // Validate and activate license
-            try {
-                // Store for later activation
-                $_SESSION['install_config']['license_key'] = $licenseKey;
-            } catch (Exception $e) {
-                $_SESSION['license_error'] = $e->getMessage();
-            }
+        if ($useTrial) {
+            $_SESSION['install_config']['license_mode'] = 'trial';
+            unset($_SESSION['install_config']['license_key']);
+            header('Location: ' . $this->installUrl('step=summary'));
+            return;
         }
 
-        header('Location: install.php?step=summary');
+        if ($verifyKey) {
+            if (empty($licenseKey)) {
+                $_SESSION['license_error'] = 'Please enter a license key before clicking Verify & Activate.';
+                header('Location: ' . $this->installUrl('step=license'));
+                return;
+            }
+
+            // Basic format check before doing anything heavy
+            if (!preg_match('/^FM-[A-Za-z0-9\-\.]+$/', $licenseKey)) {
+                $_SESSION['license_error'] = 'Invalid license key format. Keys start with FM- followed by alphanumeric segments.';
+                header('Location: ' . $this->installUrl('step=license'));
+                return;
+            }
+
+            // Save key so LicenseValidator::validate() can read it
+            if (!defined('APP_PATH')) {
+                define('APP_PATH', $this->baseDir);
+            }
+            if (!class_exists('LicenseValidator')) {
+                $lv = $this->baseDir . '/models/LicenseValidator.php';
+                if (file_exists($lv)) require_once $lv;
+            }
+
+            if (class_exists('LicenseValidator')) {
+                LicenseValidator::saveLicenseKey($licenseKey);
+                $result = LicenseValidator::check();
+
+                if (!$result['valid'] && !in_array($result['reason'], ['no_enforcement', 'disabled'], true)) {
+                    // Revert the saved key
+                    LicenseValidator::saveLicenseKey('');
+                    $msg = match ($result['reason'] ?? '') {
+                        'expired'          => 'License key has expired (expired: ' . ($result['expires_at'] ?? 'unknown') . ').',
+                        'invalid_signature'=> 'License key signature is invalid. Please check the key and try again.',
+                        'invalid_format'   => 'License key format is not recognised.',
+                        'invalid_payload'  => 'License key payload could not be decoded.',
+                        'invalid_public_key' => 'Server RSA public key is not configured.',
+                        default            => 'License validation failed: ' . ($result['reason'] ?? 'unknown error'),
+                    };
+                    $_SESSION['license_error'] = $msg;
+                    header('Location: ' . $this->installUrl('step=license'));
+                    return;
+                }
+            }
+
+            $_SESSION['install_config']['license_key']  = $licenseKey;
+            $_SESSION['install_config']['license_mode'] = 'licensed';
+            $_SESSION['license_success'] = 'License key verified and activated successfully!';
+            header('Location: ' . $this->installUrl('step=summary'));
+            return;
+        }
+
+        // Fallback: just store whatever was submitted and proceed
+        $_SESSION['install_config']['license_mode'] = empty($licenseKey) ? 'trial' : 'licensed';
+        if (!empty($licenseKey)) {
+            $_SESSION['install_config']['license_key'] = $licenseKey;
+        }
+        header('Location: ' . $this->installUrl('step=summary'));
     }
 
     private function completeInstallation()
     {
         try {
+            // Verify the database is still reachable before marking install as done
+            $config = $this->getDbConfig();
+            if (empty($config['host']) || empty($config['database'])) {
+                throw new Exception('Database configuration is missing from session. Please go back to the database step.');
+            }
+
+            $dsn = "mysql:host={$config['host']};port={$config['port']};dbname={$config['database']};charset=utf8mb4";
+            $pdo = new PDO($dsn, $config['user'], $config['password'], [
+                PDO::ATTR_ERRMODE  => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_TIMEOUT  => 5
+            ]);
+
+            // Quick sanity check — the users table must exist
+            $count = $pdo->query("SELECT COUNT(*) FROM users")->fetchColumn();
+            if ($count < 1) {
+                throw new Exception('Admin user was not created. Please go back and complete the admin step.');
+            }
+
+            // Verify config/database.php was written correctly
+            $dbPhpPath = $this->baseDir . '/config/database.php';
+            if (!file_exists($dbPhpPath)) {
+                // Re-write it now
+                $this->writeConfigFile([
+                    'host'     => $config['host'],
+                    'port'     => $config['port'],
+                    'database' => $config['database'],
+                    'user'     => $config['user'],
+                    'password' => $config['password']
+                ]);
+            }
+
             // Create .installed marker file
-            touch($this->baseDir . '/config/.installed');
+            if (file_put_contents($this->baseDir . '/config/.installed', date('Y-m-d H:i:s')) === false) {
+                throw new Exception('Cannot write config/.installed — check directory permissions.');
+            }
             chmod($this->baseDir . '/config/.installed', 0600);
 
-            // Delete install.php
-            // (User will delete manually for security)
+            // Clean up session install data
+            unset($_SESSION['install_config']);
 
-            header('Location: install.php?step=complete');
+            header('Location: ' . $this->installUrl('step=complete'));
         } catch (Exception $e) {
-            $_SESSION['error'] = 'Error completing installation: ' . $e->getMessage();
-            header('Location: install.php?step=summary');
+            $_SESSION['complete_error'] = $e->getMessage();
+            header('Location: ' . $this->installUrl('step=summary'));
         }
     }
 
@@ -1015,27 +1253,71 @@ class InstallerWizard
             mkdir($configPath, 0755, true);
         }
 
-        $content = "<?php\n// Database Configuration - Auto-generated by installer\nreturn [\n";
-        $content .= "    'host' => '{$dbConfig['host']}',\n";
-        $content .= "    'port' => {$dbConfig['port']},\n";
-        $content .= "    'database' => '{$dbConfig['database']}',\n";
-        $content .= "    'user' => '{$dbConfig['user']}',\n";
-        $content .= "    'password' => '{$dbConfig['password']}'\n";
+        // Use var_export for correct PHP string escaping (handles quotes, backslashes, etc.)
+        $eHost     = var_export($dbConfig['host'], true);
+        $ePort     = (int) $dbConfig['port'];
+        $eDatabase = var_export($dbConfig['database'], true);
+        $eUser     = var_export($dbConfig['user'], true);
+        $ePassword = var_export($dbConfig['password'], true);
+
+        // database.php defines ONLY $dbConfig — bootstrap.php handles the actual PDO connection.
+        // This avoids a wasted double-connection on every request.
+        $content  = "<?php\n";
+        $content .= "// Database Configuration - Auto-generated by installer on " . date('Y-m-d H:i:s') . "\n";
+        $content .= "\$dbConfig = [\n";
+        $content .= "    'host'     => $eHost,\n";
+        $content .= "    'port'     => $ePort,\n";
+        $content .= "    'database' => $eDatabase,\n";
+        $content .= "    'username' => $eUser,\n";
+        $content .= "    'password' => $ePassword,\n";
+        $content .= "    'charset'  => 'utf8mb4',\n";
         $content .= "];\n";
 
-        file_put_contents($configPath . '/database_installer.php', $content);
+        // Write as the canonical database.php the app reads
+        if (file_put_contents($configPath . '/database.php', $content) === false) {
+            throw new Exception('Could not write config/database.php — check file permissions.');
+        }
+        chmod($configPath . '/database.php', 0600);
+
+        // Also write the legacy installer config for getDbConfig() fallback
+        $legacyContent = "<?php\nreturn [" .
+            "'host'=>$eHost," .
+            "'port'=>$ePort," .
+            "'database'=>$eDatabase," .
+            "'user'=>$eUser," .
+            "'password'=>$ePassword" .
+            "];\n";
+        file_put_contents($configPath . '/database_installer.php', $legacyContent);
         chmod($configPath . '/database_installer.php', 0600);
     }
 
     private function getDbConfig(): array
     {
-        return $_SESSION['install_config'] ?? [
-            'host' => 'localhost',
-            'port' => 3306,
-            'database' => 'website_manager',
-            'user' => 'root',
-            'password' => ''
+        $config = $_SESSION['install_config'] ?? [];
+
+        if (empty($config)) {
+            $installerConfigPath = $this->baseDir . '/config/database_installer.php';
+            if (file_exists($installerConfigPath)) {
+                $fileConfig = require $installerConfigPath;
+                if (is_array($fileConfig)) {
+                    $config = $fileConfig;
+                }
+            }
+        }
+
+        $normalized = [
+            'host' => $config['host'] ?? $config['db_host'] ?? 'localhost',
+            'port' => (int) ($config['port'] ?? $config['db_port'] ?? 3306),
+            'database' => $config['database'] ?? $config['db_name'] ?? 'website_manager',
+            'user' => $config['user'] ?? $config['db_user'] ?? 'root',
+            'password' => $config['password'] ?? $config['db_pass'] ?? ''
         ];
+
+        if ($normalized['port'] <= 0) {
+            $normalized['port'] = 3306;
+        }
+
+        return $normalized;
     }
 
     private function getProgressPercent(): int

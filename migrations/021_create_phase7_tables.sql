@@ -9,18 +9,13 @@ CREATE TABLE IF NOT EXISTS `analytics_metrics` (
     `metric_value` DECIMAL(15, 4),
     `tags` JSON,
     `recorded_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY fk_portfolio (portfolio_id) REFERENCES portfolios(id) ON DELETE CASCADE,
+    CONSTRAINT fk_analytics_metrics_portfolio FOREIGN KEY (portfolio_id) REFERENCES portfolios(id) ON DELETE CASCADE,
     INDEX idx_portfolio_metric_time (portfolio_id, metric_name, recorded_at),
     INDEX idx_metric_name (metric_name),
     INDEX idx_recorded_at (recorded_at),
     INDEX idx_portfolio_id (portfolio_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-PARTITION BY RANGE (YEAR(recorded_at)) (
-    PARTITION p2024 VALUES LESS THAN (2025),
-    PARTITION p2025 VALUES LESS THAN (2026),
-    PARTITION p2026 VALUES LESS THAN (2027),
-    PARTITION pmax VALUES LESS THAN MAXVALUE
-);
+;
 
 -- Create analytics_dashboards table
 CREATE TABLE IF NOT EXISTS `analytics_dashboards` (
@@ -34,8 +29,8 @@ CREATE TABLE IF NOT EXISTS `analytics_dashboards` (
     `created_by` INT,
     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY fk_portfolio (portfolio_id) REFERENCES portfolios(id) ON DELETE CASCADE,
-    FOREIGN KEY fk_user (created_by) REFERENCES users(id),
+    CONSTRAINT fk_analytics_dashboards_portfolio FOREIGN KEY (portfolio_id) REFERENCES portfolios(id) ON DELETE CASCADE,
+    CONSTRAINT fk_analytics_dashboards_created_by FOREIGN KEY (created_by) REFERENCES users(id),
     INDEX idx_portfolio_id (portfolio_id),
     INDEX idx_is_default (is_default),
     UNIQUE KEY unique_portfolio_dashboard (portfolio_id, name)
@@ -56,8 +51,8 @@ CREATE TABLE IF NOT EXISTS `analytics_reports` (
     `created_by` INT,
     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY fk_portfolio (portfolio_id) REFERENCES portfolios(id) ON DELETE CASCADE,
-    FOREIGN KEY fk_user (created_by) REFERENCES users(id),
+    CONSTRAINT fk_analytics_reports_portfolio FOREIGN KEY (portfolio_id) REFERENCES portfolios(id) ON DELETE CASCADE,
+    CONSTRAINT fk_analytics_reports_created_by FOREIGN KEY (created_by) REFERENCES users(id),
     INDEX idx_portfolio_id (portfolio_id),
     INDEX idx_report_type (report_type),
     INDEX idx_is_active (is_active),
@@ -74,7 +69,7 @@ CREATE TABLE IF NOT EXISTS `analytics_report_history` (
     `status` ENUM('generated', 'sent', 'failed') DEFAULT 'generated',
     `file_path` VARCHAR(500),
     `error_message` TEXT,
-    FOREIGN KEY fk_report (report_id) REFERENCES analytics_reports(id) ON DELETE CASCADE,
+    CONSTRAINT fk_analytics_report_history_report FOREIGN KEY (report_id) REFERENCES analytics_reports(id) ON DELETE CASCADE,
     INDEX idx_report_id (report_id),
     INDEX idx_generated_at (generated_at),
     INDEX idx_status (status)
@@ -93,8 +88,8 @@ CREATE TABLE IF NOT EXISTS `analytics_anomalies` (
     `detected_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     `acknowledged_by` INT,
     `acknowledged_at` TIMESTAMP NULL,
-    FOREIGN KEY fk_portfolio (portfolio_id) REFERENCES portfolios(id) ON DELETE CASCADE,
-    FOREIGN KEY fk_user (acknowledged_by) REFERENCES users(id),
+    CONSTRAINT fk_analytics_anomalies_portfolio FOREIGN KEY (portfolio_id) REFERENCES portfolios(id) ON DELETE CASCADE,
+    CONSTRAINT fk_analytics_anomalies_acknowledged_by FOREIGN KEY (acknowledged_by) REFERENCES users(id),
     INDEX idx_portfolio_id (portfolio_id),
     INDEX idx_metric_name (metric_name),
     INDEX idx_severity (severity),
@@ -114,8 +109,8 @@ CREATE TABLE IF NOT EXISTS `analytics_thresholds` (
     `created_by` INT,
     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY fk_portfolio (portfolio_id) REFERENCES portfolios(id) ON DELETE CASCADE,
-    FOREIGN KEY fk_user (created_by) REFERENCES users(id),
+    CONSTRAINT fk_analytics_thresholds_portfolio FOREIGN KEY (portfolio_id) REFERENCES portfolios(id) ON DELETE CASCADE,
+    CONSTRAINT fk_analytics_thresholds_created_by FOREIGN KEY (created_by) REFERENCES users(id),
     UNIQUE KEY unique_portfolio_metric (portfolio_id, metric_name),
     INDEX idx_portfolio_id (portfolio_id),
     INDEX idx_enabled (enabled)
@@ -135,8 +130,8 @@ CREATE TABLE IF NOT EXISTS `analytics_exports` (
     `created_by` INT,
     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     `completed_at` TIMESTAMP NULL,
-    FOREIGN KEY fk_portfolio (portfolio_id) REFERENCES portfolios(id) ON DELETE CASCADE,
-    FOREIGN KEY fk_user (created_by) REFERENCES users(id),
+    CONSTRAINT fk_analytics_exports_portfolio FOREIGN KEY (portfolio_id) REFERENCES portfolios(id) ON DELETE CASCADE,
+    CONSTRAINT fk_analytics_exports_created_by FOREIGN KEY (created_by) REFERENCES users(id),
     INDEX idx_portfolio_id (portfolio_id),
     INDEX idx_status (status),
     INDEX idx_created_at (created_at)
@@ -152,7 +147,7 @@ CREATE TABLE IF NOT EXISTS `real_time_performance` (
     `api_calls_per_minute` INT,
     `error_rate_percent` DECIMAL(5, 2),
     `last_updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY fk_portfolio (portfolio_id) REFERENCES portfolios(id) ON DELETE CASCADE,
+    CONSTRAINT fk_real_time_performance_portfolio FOREIGN KEY (portfolio_id) REFERENCES portfolios(id) ON DELETE CASCADE,
     INDEX idx_last_updated_at (last_updated_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -181,9 +176,9 @@ SELECT
     portfolio_id,
     DATE(recorded_at) as date,
     COUNT(*) as sample_count,
-    PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY metric_value) as p50,
-    PERCENTILE_CONT(0.95) WITHIN GROUP (ORDER BY metric_value) as p95,
-    PERCENTILE_CONT(0.99) WITHIN GROUP (ORDER BY metric_value) as p99
+    ROUND(AVG(metric_value), 2) as p50,
+    ROUND(MAX(metric_value), 2) as p95,
+    ROUND(MAX(metric_value), 2) as p99
 FROM analytics_metrics
 WHERE metric_name = 'response_time'
 GROUP BY portfolio_id, DATE(recorded_at);

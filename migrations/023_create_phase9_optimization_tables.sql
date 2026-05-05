@@ -71,7 +71,7 @@ CREATE TABLE IF NOT EXISTS api_gateway_logs (
 -- Cache storage table
 CREATE TABLE IF NOT EXISTS cache_storage (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    key VARCHAR(255) UNIQUE NOT NULL,
+    `key` VARCHAR(255) UNIQUE NOT NULL,
     data LONGBLOB,
     ttl INT,
     expires_at TIMESTAMP NULL,
@@ -87,13 +87,13 @@ CREATE TABLE IF NOT EXISTS cache_storage (
 -- Cache statistics table
 CREATE TABLE IF NOT EXISTS cache_stats (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    key VARCHAR(255),
+    `key` VARCHAR(255),
     tier VARCHAR(50),
     hits INT DEFAULT 0,
     misses INT DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     
-    INDEX idx_key (key),
+    INDEX idx_key (`key`),
     INDEX idx_created_at (created_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -154,7 +154,7 @@ CREATE TABLE IF NOT EXISTS monitoring_metrics (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     portfolio_id INT NOT NULL,
     metric_type VARCHAR(50),
-    value DECIMAL(10, 2),
+    `value` DECIMAL(10, 2),
     metadata JSON,
     recorded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     
@@ -168,9 +168,9 @@ CREATE TABLE IF NOT EXISTS monitoring_alerts (
     id INT AUTO_INCREMENT PRIMARY KEY,
     portfolio_id INT NOT NULL,
     metric_type VARCHAR(50),
-    condition VARCHAR(10),
+    `condition` VARCHAR(10),
     threshold DECIMAL(10, 2),
-    level VARCHAR(50),
+    `level` VARCHAR(50),
     message VARCHAR(500),
     enabled TINYINT DEFAULT 1,
     created_by INT,
@@ -185,7 +185,7 @@ CREATE TABLE IF NOT EXISTS monitoring_alerts_triggered (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     alert_id INT NOT NULL,
     portfolio_id INT NOT NULL,
-    value DECIMAL(10, 2),
+    `value` DECIMAL(10, 2),
     triggered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     acknowledged TINYINT DEFAULT 0,
     acknowledged_by INT,
@@ -234,7 +234,7 @@ GROUP BY portfolio_id, host, port, status;
 -- Create view for cache performance
 CREATE OR REPLACE VIEW cache_performance AS
 SELECT 
-    key,
+    `key`,
     hits,
     misses,
     (hits + misses) as total_accesses,
@@ -248,9 +248,9 @@ CREATE OR REPLACE VIEW monitoring_dashboard AS
 SELECT 
     portfolio_id,
     'cpu' as metric_type,
-    AVG(value) as current_value,
-    MAX(value) as peak_value,
-    MIN(value) as min_value
+    AVG(`value`) as current_value,
+    MAX(`value`) as peak_value,
+    MIN(`value`) as min_value
 FROM monitoring_metrics
 WHERE metric_type = 'cpu' AND recorded_at > DATE_SUB(NOW(), INTERVAL 1 HOUR)
 GROUP BY portfolio_id
@@ -258,9 +258,9 @@ UNION ALL
 SELECT 
     portfolio_id,
     'memory' as metric_type,
-    AVG(value) as current_value,
-    MAX(value) as peak_value,
-    MIN(value) as min_value
+    AVG(`value`) as current_value,
+    MAX(`value`) as peak_value,
+    MIN(`value`) as min_value
 FROM monitoring_metrics
 WHERE metric_type = 'memory' AND recorded_at > DATE_SUB(NOW(), INTERVAL 1 HOUR)
 GROUP BY portfolio_id;

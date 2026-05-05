@@ -56,7 +56,7 @@ class CachingService {
             $stmt = $this->pdo->prepare("
                 SELECT data, ttl
                 FROM cache_storage
-                WHERE key = ? AND (ttl IS NULL OR expires_at > NOW())
+                WHERE `key` = ? AND (ttl IS NULL OR expires_at > NOW())
             ");
             
             $stmt->execute([$key]);
@@ -97,7 +97,7 @@ class CachingService {
             $expiresAt = $ttlSeconds ? date('Y-m-d H:i:s', time() + $ttlSeconds) : null;
             
             $stmt = $this->pdo->prepare("
-                INSERT INTO cache_storage (key, data, ttl, expires_at, portfolio_id, created_at, last_accessed)
+                INSERT INTO cache_storage (`key`, data, ttl, expires_at, portfolio_id, created_at, last_accessed)
                 VALUES (?, ?, ?, ?, ?, NOW(), NOW())
                 ON DUPLICATE KEY UPDATE
                     data = VALUES(data),
@@ -131,7 +131,7 @@ class CachingService {
                 $this->redis->del($key);
             }
             
-            $stmt = $this->pdo->prepare("DELETE FROM cache_storage WHERE key = ?");
+            $stmt = $this->pdo->prepare("DELETE FROM cache_storage WHERE `key` = ?");
             $stmt->execute([$key]);
             
             return true;
@@ -148,7 +148,7 @@ class CachingService {
     public function clearPortfolioCache($portfolioId) {
         try {
             $stmt = $this->pdo->prepare("
-                SELECT key FROM cache_storage WHERE portfolio_id = ?
+                SELECT `key` FROM cache_storage WHERE portfolio_id = ?
             ");
             
             $stmt->execute([$portfolioId]);
@@ -179,7 +179,7 @@ class CachingService {
             $where = [];
             $params = [];
             
-            $where[] = 'key LIKE ?';
+            $where[] = '`key` LIKE ?';
             $params[] = $pattern;
             
             if ($portfolioId) {
@@ -188,7 +188,7 @@ class CachingService {
             }
             
             $stmt = $this->pdo->prepare("
-                SELECT key FROM cache_storage WHERE " . implode(' AND ', $where)
+                SELECT `key` FROM cache_storage WHERE " . implode(' AND ', $where)
             );
             
             $stmt->execute($params);
@@ -363,7 +363,7 @@ class CachingService {
     private function recordCacheHit($key, $tier) {
         try {
             $stmt = $this->pdo->prepare("
-                INSERT INTO cache_stats (key, tier, hits, misses, created_at)
+                INSERT INTO cache_stats (`key`, tier, hits, misses, created_at)
                 VALUES (?, ?, 1, 0, NOW())
                 ON DUPLICATE KEY UPDATE
                     hits = hits + 1
@@ -382,7 +382,7 @@ class CachingService {
     private function recordCacheMiss($key) {
         try {
             $stmt = $this->pdo->prepare("
-                INSERT INTO cache_stats (key, hits, misses, created_at)
+                INSERT INTO cache_stats (`key`, hits, misses, created_at)
                 VALUES (?, 0, 1, NOW())
                 ON DUPLICATE KEY UPDATE
                     misses = misses + 1

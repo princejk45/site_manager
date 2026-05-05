@@ -43,7 +43,7 @@ class MonitoringService {
                 INSERT INTO monitoring_metrics (
                     portfolio_id,
                     metric_type,
-                    value,
+                    `value`,
                     metadata,
                     recorded_at
                 ) VALUES (?, ?, ?, ?, NOW())
@@ -154,10 +154,10 @@ class MonitoringService {
             
             $stmt = $this->pdo->prepare("
                 SELECT 
-                    AVG(value) as average,
-                    MIN(value) as minimum,
-                    MAX(value) as maximum,
-                    STDDEV(value) as stddev,
+                    AVG(`value`) as average,
+                    MIN(`value`) as minimum,
+                    MAX(`value`) as maximum,
+                    STDDEV(`value`) as stddev,
                     COUNT(*) as data_points
                 FROM monitoring_metrics
                 WHERE portfolio_id = ? AND metric_type = ? AND recorded_at > ?
@@ -181,9 +181,9 @@ class MonitoringService {
                 INSERT INTO monitoring_alerts (
                     portfolio_id,
                     metric_type,
-                    condition,
+                    `condition`,
                     threshold,
-                    level,
+                    `level`,
                     message,
                     enabled,
                     created_by
@@ -231,7 +231,7 @@ class MonitoringService {
             foreach ($alerts as $alert) {
                 // Get latest metric
                 $stmt = $this->pdo->prepare("
-                    SELECT value FROM monitoring_metrics
+                    SELECT `value` FROM monitoring_metrics
                     WHERE portfolio_id = ? AND metric_type = ?
                     ORDER BY recorded_at DESC
                     LIMIT 1
@@ -316,7 +316,7 @@ class MonitoringService {
             $stmt = $this->pdo->prepare("
                 SELECT 
                     COUNT(*) as total_measurements,
-                    SUM(CASE WHEN value >= 95 THEN 1 ELSE 0 END) as healthy_measurements
+                    SUM(CASE WHEN `value` >= 95 THEN 1 ELSE 0 END) as healthy_measurements
                 FROM monitoring_metrics
                 WHERE portfolio_id = ? AND metric_type = 'uptime' AND recorded_at > ?
             ");
@@ -364,11 +364,11 @@ class MonitoringService {
             // Alert summary
             $stmt = $this->pdo->prepare("
                 SELECT 
-                    level,
+                    `level`,
                     COUNT(*) as count
                 FROM monitoring_alerts_triggered
                 WHERE portfolio_id = ? AND triggered_at > ?
-                GROUP BY level
+                GROUP BY `level`
             ");
             
             $stmt->execute([$portfolioId, $startDate]);
@@ -412,7 +412,7 @@ class MonitoringService {
             $stmt = $this->pdo->prepare("
                 INSERT INTO monitoring_alerts_triggered (
                     alert_id,
-                    value,
+                    `value`,
                     triggered_at
                 ) VALUES (?, ?, NOW())
             ");

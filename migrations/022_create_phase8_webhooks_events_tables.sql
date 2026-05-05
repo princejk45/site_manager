@@ -23,6 +23,23 @@ CREATE TABLE IF NOT EXISTS webhooks (
     FOREIGN KEY (portfolio_id) REFERENCES portfolios(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+ALTER TABLE webhooks ADD COLUMN IF NOT EXISTS portfolio_id INT NULL AFTER id;
+ALTER TABLE webhooks ADD COLUMN IF NOT EXISTS url VARCHAR(500) NULL AFTER portfolio_id;
+ALTER TABLE webhooks ADD COLUMN IF NOT EXISTS secret VARCHAR(255) NULL AFTER events;
+ALTER TABLE webhooks ADD COLUMN IF NOT EXISTS active TINYINT DEFAULT 1 AFTER secret;
+ALTER TABLE webhooks ADD COLUMN IF NOT EXISTS retry_attempts INT DEFAULT 3 AFTER headers;
+ALTER TABLE webhooks ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE webhooks ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+ALTER TABLE webhooks ADD COLUMN IF NOT EXISTS last_delivery_at TIMESTAMP NULL AFTER retry_delay_seconds;
+
+UPDATE webhooks
+SET url = COALESCE(url, webhook_url),
+    active = COALESCE(active, is_active, 1),
+    retry_attempts = COALESCE(retry_attempts, max_retries, 3),
+    last_delivery_at = COALESCE(last_delivery_at, last_triggered_at)
+WHERE url IS NULL
+   OR last_delivery_at IS NULL;
+
 -- Webhook events table
 CREATE TABLE IF NOT EXISTS webhook_events (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -56,6 +73,20 @@ CREATE TABLE IF NOT EXISTS webhook_deliveries (
     FOREIGN KEY (event_id) REFERENCES webhook_events(id) ON DELETE CASCADE,
     FOREIGN KEY (webhook_id) REFERENCES webhooks(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+ALTER TABLE webhook_deliveries ADD COLUMN IF NOT EXISTS event_id BIGINT NULL AFTER id;
+ALTER TABLE webhook_deliveries ADD COLUMN IF NOT EXISTS response_code INT NULL AFTER status;
+ALTER TABLE webhook_deliveries ADD COLUMN IF NOT EXISTS attempts INT DEFAULT 0 AFTER response_body;
+ALTER TABLE webhook_deliveries ADD COLUMN IF NOT EXISTS next_retry_at TIMESTAMP NULL AFTER attempts;
+ALTER TABLE webhook_deliveries ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP AFTER delivered_at;
+
+UPDATE webhook_deliveries
+SET response_code = COALESCE(response_code, http_status_code),
+    attempts = COALESCE(attempts, attempt_number, 0),
+    created_at = COALESCE(created_at, triggered_at)
+WHERE response_code IS NULL
+   OR attempts = 0
+   OR created_at IS NULL;
 
 -- Event stream connections table
 CREATE TABLE IF NOT EXISTS event_stream_connections (
@@ -168,7 +199,7 @@ CREATE OR REPLACE VIEW webhook_performance AS
 SELECT 
     w.id,
     w.portfolio_id,
-    w.url,
+    COALESCE(w.url, w.webhook_url) as url,
     COUNT(wd.id) as total_deliveries,
     SUM(CASE WHEN wd.status = 'delivered' THEN 1 ELSE 0 END) as successful_deliveries,
     SUM(CASE WHEN wd.status = 'failed' THEN 1 ELSE 0 END) as failed_deliveries,
@@ -176,7 +207,7 @@ SELECT
     MAX(wd.delivered_at) as last_delivery
 FROM webhooks w
 LEFT JOIN webhook_deliveries wd ON w.id = wd.webhook_id
-GROUP BY w.id, w.portfolio_id, w.url;
+GROUP BY w.id, w.portfolio_id, COALESCE(w.url, w.webhook_url);
 
 -- Create view for stream statistics
 CREATE OR REPLACE VIEW stream_statistics AS

@@ -34,11 +34,12 @@ class DbMigrator
         try {
             $this->ensureMigrationTrackingTable();
             $this->ensureCoreTables();
-            $this->runSqlMigrations();
+            $this->ensureWebsitesColumns();
             $this->createWordPressSitesTable();
             $this->createWordPressDiagnosticsTable();
             $this->createWordPressSecurityIssuesTable();
             $this->createWordPressKeyRotationLogTable();
+            $this->runSqlMigrations();
         } catch (Exception $e) {
             $this->results['success'] = false;
             $this->results['errors'][] = $e->getMessage();
@@ -82,6 +83,23 @@ class DbMigrator
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
             ",
             "
+            CREATE TABLE IF NOT EXISTS portfolios (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                name VARCHAR(255) NOT NULL,
+                slug VARCHAR(255) NULL,
+                description TEXT NULL,
+                status ENUM('active','inactive','archived') NOT NULL DEFAULT 'active',
+                created_by INT NULL,
+                created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                UNIQUE KEY uk_portfolios_slug (slug),
+                INDEX idx_portfolios_status (status),
+                CONSTRAINT fk_portfolios_created_by
+                    FOREIGN KEY (created_by) REFERENCES users(id)
+                    ON DELETE SET NULL
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+            ",
+            "
             CREATE TABLE IF NOT EXISTS hosting (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 name VARCHAR(255) NOT NULL,
@@ -104,6 +122,9 @@ class DbMigrator
                 service_type ENUM('domain','hosting_web','hosting_mail') NOT NULL DEFAULT 'hosting_web',
                 status ENUM('active','warning','expired','suspended','cancelled') NOT NULL DEFAULT 'active',
                 expiry_date DATE NULL,
+                health_score INT NULL DEFAULT NULL,
+                is_healthy TINYINT(1) NULL DEFAULT NULL,
+                last_check DATETIME NULL DEFAULT NULL,
                 notes TEXT NULL,
                 created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -246,11 +267,40 @@ class DbMigrator
             $this->pdo->exec($sql);
         }
 
+        $this->pdo->exec(
+            "INSERT INTO portfolios (id, name, slug, description, status)
+             SELECT 1, 'Default Portfolio', 'default', 'Auto-created during installation', 'active'
+             WHERE NOT EXISTS (SELECT 1 FROM portfolios WHERE id = 1)"
+        );
+
         $this->results['tables'][] = [
             'name' => 'core_schema',
             'status' => 'created',
             'reason' => 'Core application tables ensured'
         ];
+    }
+
+    private function ensureWebsitesColumns(): void
+    {
+        // Columns added after initial release - safe on both fresh and existing installs
+        $upgrades = [
+            ['table' => 'websites', 'column' => 'health_score', 'ddl' => 'INT NULL DEFAULT NULL'],
+            ['table' => 'websites', 'column' => 'is_healthy',   'ddl' => 'TINYINT(1) NULL DEFAULT NULL'],
+            ['table' => 'websites', 'column' => 'last_check',   'ddl' => 'DATETIME NULL DEFAULT NULL'],
+        ];
+
+        foreach ($upgrades as $u) {
+            $exists = $this->pdo->query(
+                "SELECT COUNT(*) FROM information_schema.COLUMNS
+                 WHERE TABLE_SCHEMA = DATABASE()
+                   AND TABLE_NAME   = '{$u['table']}'
+                   AND COLUMN_NAME  = '{$u['column']}'"
+            )->fetchColumn();
+
+            if (!$exists) {
+                $this->pdo->exec("ALTER TABLE `{$u['table']}` ADD COLUMN `{$u['column']}` {$u['ddl']}");
+            }
+        }
     }
 
     private function runSqlMigrations(): void
