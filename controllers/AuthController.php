@@ -1,9 +1,9 @@
 <?php
 class AuthController
 {
-    private $userModel;
+    private User $userModel;
 
-    public function __construct($pdo)
+    public function __construct(PDO $pdo)
     {
         $this->userModel = new User($pdo);
     }
@@ -65,6 +65,16 @@ class AuthController
             $this->logout();
         }
 
+        // Check license validity (skip check on the license gate itself to avoid redirect loop)
+        $current_action = $_GET['action'] ?? '';
+        if ($current_action !== 'license_gate') {
+            $license = LicenseValidator::check();
+            if (!$license['valid']) {
+                header('Location: index.php?action=license_gate');
+                exit();
+            }
+        }
+
         $roleHierarchy = [
             'viewer' => 1,
             'manager' => 2,
@@ -124,7 +134,7 @@ class AuthController
         require APP_PATH . '/views/users/list.php';
     }
 
-    public function showEditForm($userId)
+    public function showEditForm(int $userId)
     {
         $this->checkPermission('super_admin');
         $user = $this->userModel->getUserById($userId);
@@ -136,7 +146,7 @@ class AuthController
         require APP_PATH . '/views/users/edit.php';
     }
 
-    public function updateUser($userId)
+    public function updateUser(int $userId)
     {
         $this->checkPermission('super_admin');
 

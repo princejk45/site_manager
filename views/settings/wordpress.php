@@ -1,3 +1,9 @@
+<?php
+$wordpressSites = $wordpressSites ?? [];
+$editingWebsiteId = isset($editingWebsiteId) ? (int)$editingWebsiteId : 0;
+$error = $error ?? null;
+?>
+
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
     <!-- Content Header -->
@@ -259,7 +265,7 @@
         return [
             'id' => (int)$w['id'],
             'domain' => $w['domain'],
-            'type' => $w['name'] ?? 'N/A'
+            'type' => $w['service_type'] ?? ($w['hosting_server'] ?? 'N/A')
         ];
     }, $websites ?? []))) ?>;
 

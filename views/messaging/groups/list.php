@@ -10,7 +10,7 @@ if (isset($_SESSION['user_id'])) {
     $unreadMessageCount = 0;
 }
 ?>
-<?php include APP_PATH . '/includes/sidebar.php'; ?>
+<?php include APP_PATH . '/includes/sidebar-v2.php'; ?>
 
 <div class="content-wrapper">
     <section class="content-header">

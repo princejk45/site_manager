@@ -1,9 +1,9 @@
 <?php
 class User
 {
-    private $pdo;
+    private PDO $pdo;
 
-    public function __construct($pdo)
+    public function __construct(PDO $pdo)
     {
         $this->pdo = $pdo;
     }
@@ -22,13 +22,13 @@ class User
         return false;
     }
 
-    private function updateLastLogin($userId)
+    private function updateLastLogin(int $userId)
     {
         $stmt = $this->pdo->prepare("UPDATE users SET last_login = NOW() WHERE id = ?");
         $stmt->execute([$userId]);
     }
 
-    public function changePassword($userId, $currentPassword, $newPassword)
+    public function changePassword(int $userId, $currentPassword, $newPassword)
     {
         $stmt = $this->pdo->prepare("SELECT password_hash FROM users WHERE id = ?");
         $stmt->execute([$userId]);
@@ -42,14 +42,14 @@ class User
         return false;
     }
 
-    public function getUserById($userId)
+    public function getUserById(int $userId)
     {
         $stmt = $this->pdo->prepare("SELECT * FROM users WHERE id = ?");
         $stmt->execute([$userId]);
         return $stmt->fetch();
     }
 
-    public function createUser($data)
+    public function createUser(array $data)
     {
         // First check if username exists
         $check = $this->pdo->prepare("SELECT id FROM users WHERE username = ?");
@@ -69,7 +69,7 @@ class User
         ]);
     }
 
-    public function updateUser($data)
+    public function updateUser(array $data)
     {
         // Check if password is being updated
         if (!empty($data['password'])) {
@@ -102,7 +102,7 @@ class User
         return $stmt->fetchAll();
     }
 
-    public function hasPermission($userId, $requiredRole)
+    public function hasPermission(int $userId, string $requiredRole): bool
     {
         $user = $this->getUserById($userId);
         if (!$user || !$user['is_active']) return false;
@@ -124,7 +124,7 @@ class User
         return $stmt->fetch();
     }
 
-    public function savePasswordResetToken($userId, $token, $expiresAt)
+    public function savePasswordResetToken(int $userId, $token, $expiresAt)
     {
         // First, ensure the table exists
         try {
@@ -226,6 +226,47 @@ class User
         } catch (Exception $e) {
             error_log("Error deleting password reset token: " . $e->getMessage());
             return false;
+        }
+    }
+
+    /**
+     * Get user by ID
+     * @param int $userId User ID
+     * @return array|false User data or false if not found
+     */
+    public function getById(int $userId)
+    {
+        try {
+            $stmt = $this->pdo->prepare("
+                SELECT * FROM users
+                WHERE id = ?
+                LIMIT 1
+            ");
+            $stmt->execute([$userId]);
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch (Exception $e) {
+            error_log("Error fetching user by ID: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Get all users
+     * @return array Array of all users
+     */
+    public function getAll(): array
+    {
+        try {
+            $stmt = $this->pdo->prepare("
+                SELECT id, email, username, full_name, created_at, updated_at
+                FROM users
+                ORDER BY email ASC
+            ");
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (Exception $e) {
+            error_log("Error fetching all users: " . $e->getMessage());
+            return [];
         }
     }
 }

@@ -27,7 +27,7 @@ class EmailTemplate
     /**
      * Get template by ID
      */
-    public function getById($id)
+    public function getById(int $id)
     {
         try {
             $stmt = $this->db->prepare('SELECT * FROM email_templates WHERE id = ?');
@@ -61,7 +61,7 @@ class EmailTemplate
     /**
      * Create a new template
      */
-    public function create($data)
+    public function create(array $data)
     {
         try {
             $stmt = $this->db->prepare(
@@ -86,7 +86,7 @@ class EmailTemplate
     /**
      * Update a template
      */
-    public function update($id, $data)
+    public function update(int $id, array $data)
     {
         try {
             $updates = [];
@@ -119,7 +119,7 @@ class EmailTemplate
     /**
      * Delete a template
      */
-    public function delete($id)
+    public function delete(int $id)
     {
         try {
             $stmt = $this->db->prepare('DELETE FROM email_templates WHERE id = ?');
@@ -179,7 +179,7 @@ class EmailTemplate
     /**
      * Duplicate a template
      */
-    public function duplicate($id, $newName = null)
+    public function duplicate(int $id, $newName = null)
     {
         try {
             $original = $this->getById($id);

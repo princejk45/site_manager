@@ -1,9 +1,9 @@
 <?php
 class Email
 {
-    private $pdo;
+    private PDO $pdo;
 
-    public function __construct($pdo)
+    public function __construct(PDO $pdo)
     {
         $this->pdo = $pdo;
     }
@@ -26,7 +26,7 @@ class Email
         return $settings;
     }
 
-    public function updateSmtpSettings($data)
+    public function updateSmtpSettings(array $data)
     {
         // Remove all encryption-related code
         $stmt = $this->pdo->prepare("
@@ -239,7 +239,7 @@ HTML;
         }
     }
 
-    public function logEmail($data)
+    public function logEmail(array $data)
     {
         $stmt = $this->pdo->prepare("
             INSERT INTO email_logs 

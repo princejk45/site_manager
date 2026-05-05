@@ -7,10 +7,9 @@
     <title><?= APP_NAME ?> - <?= __('app.title') ?></title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
-    <link rel="stylesheet" href="<?= BASE_PATH ?>/assets/css/styles.css">
     <link rel="icon" href="assets/images/logo.png" type="image/png">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css">
+    <!-- Dashboard 2.0 Styles -->
+    <link rel="stylesheet" href="<?= WEB_PATH ?>/assets/css/dashboard-v2-clean.css">
     <style>
         /* Session Timeout Modal */
         #sessionTimeoutModal {
@@ -47,7 +46,7 @@
     </style>
 </head>
 
-<body class="hold-transition sidebar-mini">
+<body>
     <div class="wrapper">
 
         <!-- Navbar -->
@@ -56,7 +55,7 @@
             <ul class="navbar-nav">
                 <li class="nav-item">
                     <!-- Toggle for sidebar -->
-                    <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i
+                    <a class="nav-link hamburger-toggle" href="#" role="button"><i
                             class="fas fa-bars"></i></a>
                 </li>
                 <li class="nav-item">
@@ -69,9 +68,23 @@
 
             <!-- Right navbar links -->
             <ul class="navbar-nav ml-auto">
+                <!-- Refresh Button -->
+                <li class="nav-item topbar-desktop-action">
+                    <a class="nav-link" href="#" onclick="location.reload(); return false;" title="Refresh">
+                        <i class="fas fa-sync"></i>
+                    </a>
+                </li>
+
+                <!-- Dark Mode Toggle -->
+                <li class="nav-item topbar-desktop-action">
+                    <a class="nav-link" href="#" id="darkModeToggle" title="Dark Mode">
+                        <i class="fas fa-moon"></i>
+                    </a>
+                </li>
+
                 <!-- Language Switcher -->
                 <li class="nav-item dropdown language-switcher">
-                    <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" data-toggle="dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="languageDropdown">
                         <i class="fas fa-language mr-1"></i>
                         <?= strtoupper($_SESSION['lang'] ?? 'it') ?>
                     </a>
@@ -101,16 +114,40 @@
                 <!-- Settings Dropdown -->
                 <li class="nav-item dropdown">
                     <a class="nav-link" data-toggle="dropdown" href="#">
-                        <i class="fas fa-cogs"></i> <!-- Settings Cog Icon -->
+                        <i class="fas fa-sliders-h"></i>
                     </a>
                     <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+                        <a href="#" class="dropdown-item mobile-settings-action" onclick="location.reload(); return false;">
+                            <i class="fas fa-sync mr-2"></i> Refresh
+                        </a>
+                        <a href="#" class="dropdown-item mobile-settings-action" id="darkModeDropdownToggle">
+                            <i class="fas fa-moon mr-2"></i> Dark Mode
+                        </a>
+                        <div class="dropdown-divider mobile-settings-action"></div>
+                        <a href="index.php?action=settings&do=site_settings&lang=<?= $_SESSION['lang'] ?? 'it' ?>" class="dropdown-item">
+                            <i class="fas fa-cog mr-2"></i> <?= __('menu.settings') ?>
+                        </a>
+                        <a href="index.php?action=settings&do=cron_settings&lang=<?= $_SESSION['lang'] ?? 'it' ?>" class="dropdown-item">
+                            <i class="fas fa-clock mr-2"></i> <?= __('menu.cron_settings') ?>
+                        </a>
                         <a href="index.php?action=settings&do=smtp&lang=<?= $_SESSION['lang'] ?? 'it' ?>" class="dropdown-item">
                             <i class="fas fa-cogs mr-2"></i> <?= __('settings.smtp') ?>
                         </a>
-                        <div class="dropdown-divider"></div>
+                        <a href="index.php?action=settings&do=templates&lang=<?= $_SESSION['lang'] ?? 'it' ?>" class="dropdown-item">
+                            <i class="fas fa-envelope-open-text mr-2"></i> <?= __('menu.email_templates') ?>
+                        </a>
                         <a href="index.php?action=settings&do=password&lang=<?= $_SESSION['lang'] ?? 'it' ?>" class="dropdown-item">
                             <i class="fas fa-key mr-2"></i> <?= __('settings.password') ?>
                         </a>
+                        <?php if (($_SESSION['user_role'] ?? '') === 'super_admin'): ?>
+                            <a href="index.php?action=users&lang=<?= $_SESSION['lang'] ?? 'it' ?>" class="dropdown-item">
+                                <i class="fas fa-user-tie mr-2"></i> <?= __('sidebar.users') ?>
+                            </a>
+                            <a href="index.php?action=settings&do=license&lang=<?= $_SESSION['lang'] ?? 'it' ?>" class="dropdown-item">
+                                <i class="fas fa-certificate mr-2"></i> <?= __('sidebar.license') ?>
+                            </a>
+                        <?php endif; ?>
+                        <div class="dropdown-divider"></div>
                         <a href="index.php?action=logout" class="dropdown-item">
                             <i class="fas fa-sign-out-alt mr-2"></i> <?= __('menu.logout') ?>
                         </a>

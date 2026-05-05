@@ -7,14 +7,14 @@
     <title><?= APP_NAME ?> - <?= __('app.title') ?></title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
-    <link rel="stylesheet" href="<?= BASE_PATH ?>/assets/css/styles.css">
+    <link rel="stylesheet" href="<?= WEB_PATH ?>/assets/css/styles.css">
     <link rel="icon" href="assets/images/logo.png" type="image/png">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css">
     <style>
         /* Set the background color outside the login card */
         body {
-            background: url('assets/images/bg.gif') no-repeat center center fixed;
+            background: url('assets/images/full_bg.png') no-repeat center center fixed;
             background-size: cover;
             background-color: #e9ecef;
             /* fallback color */

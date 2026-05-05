@@ -1,16 +1,16 @@
 <?php
 class SettingsController
 {
-    private $emailModel;
-    private $cronModel;
-    private $settingsModel;
-    private $hostingModel;
-    private $websiteModel;
-    private $siteSettings;
-    private $emailTemplate;
-    private $db;
+    private Email $emailModel;
+    private CronModel $cronModel;
+    private SettingsModel $settingsModel;
+    private Hosting $hostingModel;
+    private Website $websiteModel;
+    private SiteSettings $siteSettings;
+    private EmailTemplate $emailTemplate;
+    private PDO $db;
 
-    public function __construct($pdo)
+    public function __construct(PDO $pdo)
     {
         $this->db = $pdo;
         $this->emailModel = new Email($pdo);
@@ -185,6 +185,9 @@ class SettingsController
 
             // Get diagnostics from CronModel
             $diagnostics = $this->cronModel->getDiagnostics();
+            if (!is_array($diagnostics)) {
+                throw new Exception(__('settings.diagnostic_error'));
+            }
 
             if (!$diagnostics['success']) {
                 throw new Exception($diagnostics['error'] ?? __('settings.diagnostic_error'));
@@ -208,18 +211,6 @@ class SettingsController
             exit;
         }
 
-        // Handle Cron Job settings
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $isActive = isset($_POST['cron_active']) && $_POST['cron_active'] === '1';
-            $success = $this->cronModel->updateCronStatus($isActive);
-
-            if ($success) {
-                $_SESSION['message'] = __('settings.cron_settings_updated');
-            } else {
-                $_SESSION['error'] = __('settings.cron_settings_error');
-            }
-        }
-
         // Handle Google Sheets actions
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && (
             isset($_POST['save_google_settings']) ||
@@ -230,8 +221,6 @@ class SettingsController
             $this->handleGoogleSheets();
         }
 
-        $cronStatus = $this->cronModel->getCronStatus();
-        $lastRun = $this->cronModel->getLastRunTime();
         $googleSheetSettings = $this->settingsModel->getGoogleSheetsSettings();
 
         require APP_PATH . '/views/settings/advanced.php';
@@ -248,12 +237,12 @@ class SettingsController
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $this->handleGoogleSheetsPost();
                 // Redirect back to advanced page after successful operation
-                header('Location: index.php?action=settings&do=advanced');
+                header('Location: index.php?action=import_export');
                 exit;
             }
         } catch (Exception $e) {
             $_SESSION['google_error'] = $e->getMessage();
-            header('Location: index.php?action=settings&do=advanced');
+            header('Location: index.php?action=import_export');
             exit;
         }
     }
@@ -325,227 +314,65 @@ class SettingsController
     private function exportToGoogleSheets($settings = null): array
     {
         require_once APP_PATH . '/vendor/autoload.php';
-        
-        // If no settings provided, retrieve from database
+
         if ($settings === null) {
             $settings = $this->settingsModel->getGoogleSheetsSettings();
         }
-        
-        // Debug: Log the settings being used
-        error_log("=== DEBUG EXPORT START ===");
-        error_log("DEBUG Export - Settings received:");
-        error_log("  Sheet Name: '" . $settings['sheet_name'] . "'");
-        error_log("  Sheet ID: '" . $settings['sheet_id'] . "'");
-        error_log("  Enabled: " . $settings['enabled']);
-        error_log("  Credentials Length: " . strlen($settings['credentials']));
-        error_log("  Credentials Present: " . (!empty($settings['credentials']) ? 'YES' : 'NO'));
-        
-        // Validate credentials are valid JSON
-        $creds = json_decode($settings['credentials'], true);
+
+        $creds = json_decode($settings['credentials'] ?? '', true);
         if (json_last_error() !== JSON_ERROR_NONE) {
-            error_log("  Credentials JSON Error: " . json_last_error_msg());
             return [
                 'exported' => 0,
                 'updated' => 0,
-                'errors' => ['Invalid credentials format: ' . json_last_error_msg()]
+                'skipped_not_found' => 0,
+                'errors' => ['Invalid credentials format: ' . json_last_error_msg()],
             ];
         }
-        error_log("  Credentials Valid JSON: YES");
-        error_log("=== DEBUG EXPORT END ===");
-
-        // Column width definitions (in pixels)
-        $columnWidths = [
-            'A' => 180,  // Name
-            'B' => 200,  // Address
-            'C' => 220,  // Email
-            'D' => 120,  // P.IVA
-            'E' => 120,  // TIPOLOGIA DI SERVIZI
-            'F' => 200,  // DETTAGLIO SERVIZI
-            'G' => 220,  // EMAIL ASSEGNATA
-            'H' => 120,  // PROPRIETARIO
-            'I' => 120,  // REGISTRANTE
-            'J' => 120,  // SCADENZA
-            'K' => 120,  // COSTO SERVER
-            'L' => 120,  // PREZZO DI VENDITA
-            'M' => 120,  // Direct DNS A
-            'N' => 120,  // User Name cpanel
-            'O' => 150,  // Email panel
-            'P' => 200,  // Bug report
-            'Q' => 200   // Notes
-        ];
-
-        // Updated Color definitions (hex RGB)
-        $colors = [
-            'blueHeaderDark' => ['rgb' => '1565C0'],  // Dark blue
-            'blueHeaderLight' => ['rgb' => '1E88E5'], // Light blue
-            'redHeaderDark' => ['rgb' => 'C62828'],   // Dark red
-            'redHeaderLight' => ['rgb' => 'E53935'],  // Light red
-            'greenHeaderDark' => ['rgb' => '1B5E20'], // Dark green
-            'greenHeaderLight' => ['rgb' => '2E7D32'], // Medium dark green
-            'textLight' => ['rgb' => 'FFFFFF'],       // White text
-            'textDark' => ['rgb' => '000000']        // Black text
-        ];
-
-        // Helper function to convert hex color to RGB
-        $hexToRgb = function ($hex) {
-            $hex = str_replace('#', '', $hex);
-            if (strlen($hex) == 3) {
-                $r = hexdec(substr($hex, 0, 1) . substr($hex, 0, 1));
-                $g = hexdec(substr($hex, 1, 1) . substr($hex, 1, 1));
-                $b = hexdec(substr($hex, 2, 1) . substr($hex, 2, 1));
-            } else {
-                $r = hexdec(substr($hex, 0, 2));
-                $g = hexdec(substr($hex, 2, 2));
-                $b = hexdec(substr($hex, 4, 2));
-            }
-            return [
-                'red' => $r / 255,
-                'green' => $g / 255,
-                'blue' => $b / 255
-            ];
-        };
 
         try {
             $client = $this->getGoogleClient($settings);
             $service = new \Google\Service\Sheets($client);
 
-            error_log("DEBUG: Fetching spreadsheet with ID: '" . $settings['sheet_id'] . "'");
-            try {
-                $spreadsheet = $service->spreadsheets->get($settings['sheet_id'], ['includeGridData' => false]);
-            } catch (\Exception $e) {
-                error_log("ERROR: Failed to fetch spreadsheet: " . $e->getMessage());
-                throw $e;
-            }
-            
-            error_log("DEBUG: Spreadsheet Title: " . $spreadsheet->getProperties()->getTitle());
-            error_log("DEBUG: Spreadsheet ID: " . $spreadsheet->getSpreadsheetId());
-            
-            $sheetsCollection = $spreadsheet->getSheets();
-            error_log("DEBUG: Sheets collection type: " . gettype($sheetsCollection));
-            error_log("DEBUG: Sheets collection count: " . (is_array($sheetsCollection) ? count($sheetsCollection) : 'not array'));
-            
-            // Debug: List all available sheets
-            error_log("DEBUG: Available sheets in spreadsheet:");
-            $sheet = null;
-            $availableSheets = [];
-            $sheetCount = 0;
-            
-            if ($sheetsCollection) {
-                foreach ($sheetsCollection as $s) {
-                    $sheetTitle = $s->getProperties()->getTitle();
-                    $sheetCount++;
-                    $availableSheets[] = $sheetTitle;
-                    error_log("  Sheet $sheetCount: '" . $sheetTitle . "'");
-                    error_log("    Comparing with: '" . $settings['sheet_name'] . "'");
-                    error_log("    Match: " . ($sheetTitle === $settings['sheet_name'] ? 'YES' : 'NO'));
-                    
-                    if ($sheetTitle === $settings['sheet_name']) {
-                        $sheet = $s;
-                        break;
-                    }
-                }
-            } else {
-                error_log("ERROR: Sheets collection is null or empty!");
-            }
+            // Resolve the numeric sheet ID needed for formatting requests.
+            $sheetId = $this->getSheetId($service, $settings);
 
-            if ($sheet === null) {
-                $errorMsg = "Sheet '{$settings['sheet_name']}' not found.";
-                if (!empty($availableSheets)) {
-                    $errorMsg .= " Available sheets: " . implode(", ", array_map(function($s) { return "'" . $s . "'"; }, $availableSheets));
-                }
-                // Add debug info to error message
-                $errorMsg .= " [DEBUG: sheet_name='" . $settings['sheet_name'] . "', length=" . strlen($settings['sheet_name']) . "]";
-                error_log("ERROR: " . $errorMsg);
-                throw new Exception($errorMsg);
-            }
-
-            $sheetId = $sheet->getProperties()->getSheetId();
-
-            // Prepare headers - Row 1 with category headers (17 columns total)
-            // Row 1 spans: A1 (Clienti), B1-E1 (Informazioni per il cliente), E1-Q1 (Informazioni sul servizio)
-            $headers = [
-                [
-                    'Clienti',                           // A1
-                    'Informazioni per il cliente',       // B1 (will merge B1:E1)
-                    '',                                  // C1 (part of merge)
-                    '',                                  // D1 (part of merge)
-                    'Informazioni sul servizio',         // E1 (will merge E1:Q1)
-                    '',                                  // F1 (part of merge)
-                    '',                                  // G1 (part of merge)
-                    '',                                  // H1 (part of merge)
-                    '',                                  // I1 (part of merge)
-                    '',                                  // J1 (part of merge)
-                    '',                                  // K1 (part of merge)
-                    '',                                  // L1 (part of merge)
-                    '',                                  // M1 (part of merge)
-                    '',                                  // N1 (part of merge)
-                    '',                                  // O1 (part of merge)
-                    '',                                  // P1 (part of merge)
-                    ''                                   // Q1 (part of merge)
-                ],
-                [
-                    'Nome',
-                    'Indirizzo',
-                    'Email',
-                    'P.IVA',
-                    'Tipologia di Servizi',
-                    'Dettaglio Servizi',
-                    'Email Assegnata',
-                    'Propietario',
-                    'Registrante',
-                    'Scadenza',
-                    'Costo Server (iva inclusa)',
-                    'Prezzo di vendita (iva inclusa)',
-                    'Direct DNS A',
-                    'User Name cpanel',
-                    'Email panel',
-                    'Bug report',
-                    'Notes'
-                ]
-            ];
-
-            // Get the prepared data with client grouping information
             $preparedData = $this->websiteModel->prepareForGoogleSheets();
-            $websiteData = $preparedData['data'];
-            $clientRowGroups = $preparedData['clientRows'];
+            $websiteData = $preparedData['data'] ?? [];
 
-            error_log("DEBUG: Website data count: " . count($websiteData));
-            error_log("DEBUG: First website row (if exists): " . print_r($websiteData[0] ?? 'NO DATA', true));
+            // Update existing matched rows, and collect rows not yet in the sheet.
+            $syncResult = $this->updateExistingGoogleRowsOnly($service, $settings, $websiteData);
 
-            $allData = array_merge($headers, $websiteData);
-            $lastRow = count($allData);
-            error_log("DEBUG: Total rows to export (including headers): " . $lastRow);
+            // Append DB records that have no matching row in the sheet yet.
+            $exported = 0;
+            $skippedRows = $syncResult['skipped_rows'] ?? [];
+            if (!empty($skippedRows)) {
+                $appendResult = $this->appendRowsToGoogleSheet($service, $settings, $skippedRows);
+                $exported = $appendResult['appended'] ?? 0;
+                if (!empty($appendResult['errors'])) {
+                    $syncResult['errors'] = array_merge($syncResult['errors'] ?? [], $appendResult['errors']);
+                }
+            }
 
-            // Clear existing values
-            $service->spreadsheets_values->clear(
-                $settings['sheet_id'],
-                $settings['sheet_name'] . '!A:Z',
-                new \Google\Service\Sheets\ClearValuesRequest()
-            );
-
-            // Insert new values
-            $service->spreadsheets_values->update(
-                $settings['sheet_id'],
-                $settings['sheet_name'] . '!A1',
-                new \Google\Service\Sheets\ValueRange(['values' => $allData]),
-                ['valueInputOption' => 'USER_ENTERED']
-            );
-
-
-            // Apply consistent formatting using helper function
-            $this->applySheetFormatting($service, $settings, $sheetId, $lastRow);
+            // Re-apply header/column formatting so it is preserved after every export.
+            if ($sheetId !== null) {
+                $this->writeSheetHeaders($service, $settings);
+                $totalRows = count($websiteData) + 2; // +2 for the two header rows
+                $this->applySheetFormatting($service, $settings, $sheetId, $totalRows);
+            }
 
             return [
-                'exported' => count($websiteData),
-                'updated' => 0,
-                'errors' => []
+                'exported' => $exported,
+                'updated' => $syncResult['updated'] ?? 0,
+                'skipped_not_found' => 0,
+                'errors' => $syncResult['errors'] ?? [],
             ];
         } catch (Exception $e) {
             error_log("Google Sheets export error: " . $e->getMessage());
             return [
                 'exported' => 0,
                 'updated' => 0,
-                'errors' => [$e->getMessage()]
+                'skipped_not_found' => 0,
+                'errors' => [$e->getMessage()],
             ];
         }
     }
@@ -556,31 +383,24 @@ class SettingsController
 
     private function importFromGoogleSheets($settings = null)
     {
-        require_once APP_PATH . '/vendor/autoload.php';
-        
         // If no settings provided, retrieve from database
         if ($settings === null) {
             $settings = $this->settingsModel->getGoogleSheetsSettings();
         }
 
         try {
-            // Initialize Google Client
-            $client = $this->getGoogleClient($settings);
-            $service = new Google\Service\Sheets($client);
+            // Use the same three-way engine in forward mode to keep behavior consistent.
+            $mergeResult = $this->executeThreeWayMerge($settings, 'forward', [
+                'conflict_policy' => 'manual',
+                'dry_run' => false,
+            ]);
 
-            // Read data from Google Sheets
-            $range = $settings['sheet_name'] . '!A2:Z';
-            $response = $service->spreadsheets_values->get($settings['sheet_id'], $range);
-            $values = $response->getValues();
-
-            if (empty($values)) {
-                throw new Exception("No data found in Google Sheet");
-            }
-
-            // Process and import data
-            $result = $this->websiteModel->importFromSheets($values);
-
-            return $result;
+            return [
+                'imported' => (int)($mergeResult['added_to_db'] ?? 0),
+                'updated' => (int)($mergeResult['updated_in_db'] ?? 0),
+                'errors' => $mergeResult['errors'] ?? [],
+                'baseline_initialized' => (bool)($mergeResult['baseline_initialized'] ?? false),
+            ];
         } catch (Exception $e) {
             error_log("Google Sheets import error: " . $e->getMessage());
             return [
@@ -593,36 +413,14 @@ class SettingsController
 
     public function syncWithGoogleSheets($settings = null)
     {
-        require_once APP_PATH . '/vendor/autoload.php';
-        
-        // If no settings provided, retrieve from database
         if ($settings === null) {
             $settings = $this->settingsModel->getGoogleSheetsSettings();
         }
 
-        // 1. Get data from both sources
-        $dbData = $this->websiteModel->getAllWebsites();
-        $client = $this->getGoogleClient($settings);
-        $service = new Google\Service\Sheets($client);
-        $range = $settings['sheet_name'] . '!A2:Z';
-        $response = $service->spreadsheets_values->get($settings['sheet_id'], $range);
-        $sheetData = $response->getValues();
-
-        // 2. Perform two-way sync with conflict resolution
-        $result = [
-            'exported' => 0,
-            'imported' => 0,
-            'updated' => 0,
-            'conflicts' => 0,
-            'errors' => 0
-        ];
-
-        // 3. Update Google Sheet with merged data
-        if ($result['exported'] > 0) {
-            $this->exportToGoogleSheets();
-        }
-
-        return $result;
+        return $this->executeThreeWayMerge($settings, 'together', [
+            'conflict_policy' => 'manual',
+            'dry_run' => false,
+        ]);
     }
 
     private function getGoogleClient($settings = null)
@@ -860,7 +658,7 @@ class SettingsController
             
             if (empty($settings['sheet_id']) || empty($settings['credentials'])) {
                 $_SESSION['error'] = "Google Sheets configuration incomplete";
-                header('Location: index.php?action=settings&do=advanced');
+                header('Location: index.php?action=import_export');
                 exit;
             }
 
@@ -874,11 +672,11 @@ class SettingsController
             $comparison = $this->compareDatasets($dbData, $googleData);
             
             $_SESSION['comparison_result'] = $comparison;
-            header('Location: index.php?action=settings&do=advanced&view=comparison');
+            header('Location: index.php?action=import_export');
             exit;
         } catch (Exception $e) {
             $_SESSION['error'] = "Comparison failed: " . $e->getMessage();
-            header('Location: index.php?action=settings&do=advanced');
+            header('Location: index.php?action=import_export');
             exit;
         }
     }
@@ -887,6 +685,10 @@ class SettingsController
     private function formatMergeResultsForDisplay($result)
     {
         $output = [];
+
+        if (!empty($result['dry_run'])) {
+            $output[] = "Dry Run: enabled (no changes were written)";
+        }
         
         // Website/Service records
         if (isset($result['added']) && $result['added'] > 0) {
@@ -913,13 +715,25 @@ class SettingsController
         }
         
         // Google Sheets operations
+        if (isset($result['updated_in_google']) && $result['updated_in_google'] > 0) {
+            $output[] = "Records Updated in Google Sheets: " . $result['updated_in_google'];
+        }
         if (isset($result['added_to_google']) && $result['added_to_google'] > 0) {
             $output[] = "Records Added to Google Sheets: " . $result['added_to_google'];
+        }
+        if (isset($result['skipped_in_google']) && $result['skipped_in_google'] > 0) {
+            $output[] = "Records Skipped in Google Sheets (not found): " . $result['skipped_in_google'];
         }
         
         // Conflicts
         if (isset($result['conflicts_resolved']) && $result['conflicts_resolved'] > 0) {
             $output[] = "Conflicts Resolved: " . $result['conflicts_resolved'];
+        }
+        if (isset($result['conflicts_detected']) && $result['conflicts_detected'] > 0) {
+            $output[] = "Conflicts Detected (manual review): " . $result['conflicts_detected'];
+        }
+        if (!empty($result['baseline_initialized'])) {
+            $output[] = "Baseline initialized for safe future syncs";
         }
         
         // Errors
@@ -949,41 +763,51 @@ class SettingsController
 
         try {
             $mergeStrategy = $_POST['merge_strategy'] ?? 'forward';
+            $conflictPolicy = strtolower(trim((string)($_POST['conflict_policy'] ?? 'manual')));
+            $dryRun = isset($_POST['dry_run']) && (string)$_POST['dry_run'] === '1';
+
+            if (!in_array($conflictPolicy, ['manual', 'prefer_db', 'prefer_google'], true)) {
+                $conflictPolicy = 'manual';
+            }
             
             if (!in_array($mergeStrategy, ['forward', 'backward', 'together'])) {
                 throw new Exception("Invalid merge strategy");
             }
 
             $settings = $this->settingsModel->getGoogleSheetsSettings();
-            
-            // Get data
-            $googleData = $this->getGoogleSheetsData();
-            $dbData = $this->websiteModel->getWebsites('', 'domain', 'asc', 1, PHP_INT_MAX);
+
+            if (empty($settings['sheet_id']) || empty($settings['credentials']) || empty($settings['sheet_name'])) {
+                throw new Exception("Google Sheets configuration incomplete");
+            }
             
             $result = [];
+            $options = [
+                'conflict_policy' => $conflictPolicy,
+                'dry_run' => $dryRun,
+            ];
             
             switch ($mergeStrategy) {
                 case 'forward':
-                    // Google Sheets → Database
-                    $result = $this->mergeGoogleToDatabase($googleData);
+                    // Google Sheets → Database (three-way with baseline)
+                    $result = $this->executeThreeWayMerge($settings, 'forward', $options);
                     break;
                 case 'backward':
-                    // Database → Google Sheets
-                    $result = $this->mergeDatabaseToGoogle($dbData, $settings);
+                    // Database → Google Sheets (three-way with baseline)
+                    $result = $this->executeThreeWayMerge($settings, 'backward', $options);
                     break;
                 case 'together':
-                    // Merge both ways with conflict resolution
-                    $result = $this->mergeBidirectional($googleData, $dbData, $settings);
+                    // Merge both ways with conflict protection
+                    $result = $this->executeThreeWayMerge($settings, 'together', $options);
                     break;
             }
             
             $_SESSION['message'] = __('settings.merge_completed') . ":\n" . $this->formatMergeResultsForDisplay($result);
             $_SESSION['merge_result'] = $result;
-            header('Location: index.php?action=settings&do=advanced');
+            header('Location: index.php?action=import_export');
             exit;
         } catch (Exception $e) {
             $_SESSION['error'] = "Merge failed: " . $e->getMessage();
-            header('Location: index.php?action=settings&do=advanced');
+            header('Location: index.php?action=import_export');
             exit;
         }
     }
@@ -998,17 +822,11 @@ class SettingsController
             $client = $this->getGoogleClient($settings);
             $service = new \Google\Service\Sheets($client);
 
-            // Fetch data from sheet - read all data including headers
-            $range = $settings['sheet_name'] . '!A1:Q1000';
-            $response = $service->spreadsheets_values->get($settings['sheet_id'], $range);
-            $values = $response->getValues() ?? [];
-
-            if (empty($values)) {
+            // Fetch rows in chunks to avoid very large single responses.
+            $rowEntries = $this->readSheetRowsInChunks($service, $settings, 1);
+            if (empty($rowEntries)) {
                 return [];
             }
-
-            // Skip header rows (first 2 rows)
-            $dataRows = array_slice($values, 2);
             
             // Define consistent field mapping
             $fieldMap = [
@@ -1020,7 +838,7 @@ class SettingsController
                 5 => 'domain',           // Domain (KEY FIELD)
                 6 => 'assigned_email',   // Email Assegnata
                 7 => 'proprietario',     // Proprietario
-                8 => 'email_server',     // Registrant
+                8 => 'registrante_import', // Registrante
                 9 => 'expiry_date',      // Scadenza
                 10 => 'status',          // Status
                 11 => 'vendita',         // Prezzo di vendita
@@ -1028,14 +846,20 @@ class SettingsController
                 13 => 'cpanel',          // Cpanel
                 14 => 'epanel',          // Epanel
                 15 => 'notes',           // Notes
-                16 => 'remark'           // Remark
+                16 => 'manutenzione',    // Costo di manutenzione sito
+                17 => 'remark'           // Remark
             ];
 
             $data = [];
             $currentHosting = null;
 
-            foreach ($dataRows as $row) {
-                $row = array_pad($row, 17, '');
+            foreach ($rowEntries as $entry) {
+                if ((int)($entry['rowNo'] ?? 0) <= 2) {
+                    continue;
+                }
+
+                $row = $entry['row'] ?? [];
+                $row = array_pad($row, 18, '');
                 
                 // Skip completely empty rows
                 if (empty(array_filter($row))) {
@@ -1046,6 +870,9 @@ class SettingsController
                 foreach ($fieldMap as $colIdx => $field) {
                     $rowData[$field] = trim($row[$colIdx] ?? '');
                 }
+
+                $rowData['service_type'] = $this->normalizeSheetServiceType($rowData['name'] ?? '');
+                $rowData['expiry_date'] = sm_normalize_date($rowData['expiry_date'] ?? '', '') ?? '';
 
                 // Track hosting for client grouping
                 if (!empty($rowData['server_name'])) {
@@ -1063,6 +890,327 @@ class SettingsController
         }
     }
 
+    private function normalizeSheetServiceType(string $raw): string
+    {
+        $v = strtolower(trim($raw));
+        if ($v === '') {
+            return 'hosting_web';
+        }
+        if (str_contains($v, 'mail') || str_contains($v, 'email')) {
+            return 'hosting_mail';
+        }
+        if (str_contains($v, 'domain') || str_contains($v, 'registr') || str_contains($v, 'dominio')) {
+            return 'domain';
+        }
+        return 'hosting_web';
+    }
+
+    private function buildSheetKey(string $domain, string $serviceType): ?string
+    {
+        $d = strtolower(trim($domain));
+        if ($d === '') {
+            return null;
+        }
+        return $d . '|' . $this->normalizeSheetServiceType($serviceType);
+    }
+
+    private function getSheetId(\Google\Service\Sheets $service, array $settings): ?int
+    {
+        try {
+            $spreadsheet = $service->spreadsheets->get($settings['sheet_id'], ['includeGridData' => false]);
+            foreach ($spreadsheet->getSheets() as $sheet) {
+                if ($sheet->getProperties()->getTitle() === $settings['sheet_name']) {
+                    return (int)$sheet->getProperties()->getSheetId();
+                }
+            }
+        } catch (Exception $e) {
+            error_log("getSheetId error: " . $e->getMessage());
+        }
+        return null;
+    }
+
+    private function getSheetRowCount(\Google\Service\Sheets $service, array $settings): int
+    {
+        try {
+            $spreadsheet = $service->spreadsheets->get($settings['sheet_id'], ['includeGridData' => false]);
+            foreach ($spreadsheet->getSheets() as $sheet) {
+                if ($sheet->getProperties()->getTitle() === $settings['sheet_name']) {
+                    $grid = $sheet->getProperties()->getGridProperties();
+                    return (int)($grid ? $grid->getRowCount() : 0);
+                }
+            }
+        } catch (Exception $e) {
+            error_log("getSheetRowCount error: " . $e->getMessage());
+        }
+
+        return 0;
+    }
+
+    private function readSheetRowsInChunks(
+        \Google\Service\Sheets $service,
+        array $settings,
+        int $startRow = 3,
+        int $chunkSize = 2000
+    ): array {
+        $entries = [];
+        $rowCount = $this->getSheetRowCount($service, $settings);
+
+        if ($rowCount < $startRow || $chunkSize <= 0) {
+            return $entries;
+        }
+
+        for ($chunkStart = $startRow; $chunkStart <= $rowCount; $chunkStart += $chunkSize) {
+            $chunkEnd = min($rowCount, $chunkStart + $chunkSize - 1);
+            $range = $settings['sheet_name'] . "!A{$chunkStart}:R{$chunkEnd}";
+            $rows = $service->spreadsheets_values->get($settings['sheet_id'], $range)->getValues() ?? [];
+
+            if (empty($rows)) {
+                continue;
+            }
+
+            foreach ($rows as $idx => $row) {
+                $entries[] = [
+                    'rowNo' => $chunkStart + $idx,
+                    'row' => $row,
+                ];
+            }
+        }
+
+        return $entries;
+    }
+
+    private function appendRowsToGoogleSheet(\Google\Service\Sheets $service, array $settings, array $rows): array
+    {
+        $result = ['appended' => 0, 'errors' => []];
+
+        if (empty($rows)) {
+            return $result;
+        }
+
+        try {
+            $body = new \Google\Service\Sheets\ValueRange(['values' => $rows]);
+            $params = [
+                'valueInputOption' => 'USER_ENTERED',
+                'insertDataOption' => 'INSERT_ROWS',
+            ];
+            $service->spreadsheets_values->append(
+                $settings['sheet_id'],
+                // Anchor appends below the two header rows so row 1-2 are never overwritten.
+                $settings['sheet_name'] . '!A3:R',
+                $body,
+                $params
+            );
+            $result['appended'] = count($rows);
+        } catch (Exception $e) {
+            $result['errors'][] = "Failed to append rows to Google Sheet: " . $e->getMessage();
+        }
+
+        return $result;
+    }
+
+    private function dbRowToSheetRow(array $dbRow): array
+    {
+        // Map service_type internal key → display label (matches prepareForGoogleSheets).
+        $serviceType = (string)($dbRow['service_type'] ?? 'hosting_web');
+        $serviceLabel = match ($this->normalizeSheetServiceType($serviceType)) {
+            'domain'       => 'Domain',
+            'hosting_mail' => 'Hosting Mail',
+            default        => 'Hosting Web',
+        };
+
+        // Display-formatted expiry date (matches sm_format_date used in prepareForGoogleSheets).
+        $expiryDisplay = sm_format_date($dbRow['expiry_date'] ?? '', '');
+
+        // Provider / registrante name from the enriched JOIN in getDatabaseRowsByKey.
+        $registranteName = trim((string)($dbRow['registrante_name'] ?? $dbRow['registrante_import'] ?? ''));
+
+        return [
+            trim((string)($dbRow['server_name']     ?? '')),  // col 0: client/server name
+            trim((string)($dbRow['ip_address']      ?? '')),  // col 1: ip address
+            trim((string)($dbRow['email_address']   ?? '')),  // col 2: email address
+            trim((string)($dbRow['provider']        ?? '')),  // col 3: provider
+            $serviceLabel,                                    // col 4: service type label
+            trim((string)($dbRow['domain']          ?? '')),  // col 5: domain
+            trim((string)($dbRow['assigned_email']  ?? '')),  // col 6: assigned email
+            trim((string)($dbRow['proprietario']    ?? '')),  // col 7: proprietario
+            $registranteName,                                 // col 8: registrante
+            $expiryDisplay,                                   // col 9: expiry date (display)
+            trim((string)($dbRow['status']          ?? '')),  // col 10: status
+            trim((string)($dbRow['vendita']         ?? '')),  // col 11: vendita
+            trim((string)($dbRow['dns']             ?? '')),  // col 12: dns
+            trim((string)($dbRow['cpanel']          ?? '')),  // col 13: cpanel
+            trim((string)($dbRow['epanel']          ?? '')),  // col 14: epanel
+            trim((string)($dbRow['notes']           ?? '')),  // col 15: notes
+            trim((string)($dbRow['manutenzione']    ?? '')),  // col 16: manutenzione
+            trim((string)($dbRow['remark']          ?? '')),  // col 17: remark
+        ];
+    }
+
+    /**
+     * Fetch the DOMINI LIBERI email from SMTP settings (mirrors Website::getSmtpCcOrReplyToEmail).
+     */
+    private function getDominiLiberiEmail(): string
+    {
+        try {
+            // Only query columns that exist in smtp_settings (cc_email, from_email).
+            $stmt = $this->db->query("
+                SELECT cc_email, from_email
+                FROM smtp_settings ORDER BY id DESC LIMIT 1
+            ");
+            $row = $stmt ? ($stmt->fetch(PDO::FETCH_ASSOC) ?: []) : [];
+            foreach (['cc_email', 'from_email'] as $field) {
+                $value = trim((string)($row[$field] ?? ''));
+                if ($value !== '' && filter_var($value, FILTER_VALIDATE_EMAIL)) {
+                    return $value;
+                }
+            }
+        } catch (Throwable $e) {
+            error_log('getDominiLiberiEmail error: ' . $e->getMessage());
+        }
+        return '';
+    }
+
+    /**
+     * Convert an array of raw DB rows (from getDatabaseRowsByKey / googleAppends) to
+     * sheet row arrays, applying the same client-grouping logic as prepareForGoogleSheets:
+     *  - Client name/email shown only on the FIRST row of each client group.
+     *  - Unassigned rows (hosting_id = null) shown as DOMINI LIBERI with SMTP email.
+     *  - Rows must already be sorted by COALESCE(h.name,'zzzzzzzz'), domain, service_type.
+     */
+    private function buildGroupedSheetRows(array $dbRows): array
+    {
+        $rows             = [];
+        $lastGroupKey     = '__INIT__';
+        $dominiLiberiEmail = null;
+
+        foreach ($dbRows as $dbRow) {
+            $hostingId = $dbRow['hosting_id'] ?? null;
+            $groupKey  = $hostingId ? 'hosting_' . (int)$hostingId : 'unassigned';
+            $isNewGroup = ($lastGroupKey !== $groupKey);
+            $lastGroupKey = $groupKey;
+
+            $clientName  = trim((string)($dbRow['server_name'] ?? ''));
+            $clientEmail = '';
+
+            if ($groupKey === 'unassigned') {
+                $clientName = 'DOMINI LIBERI';
+                if ($dominiLiberiEmail === null) {
+                    $dominiLiberiEmail = $this->getDominiLiberiEmail();
+                }
+                $clientEmail = $dominiLiberiEmail;
+            }
+
+            $serviceType  = (string)($dbRow['service_type'] ?? 'hosting_web');
+            $serviceLabel = match ($this->normalizeSheetServiceType($serviceType)) {
+                'domain'       => 'Domain',
+                'hosting_mail' => 'Hosting Mail',
+                default        => 'Hosting Web',
+            };
+
+            $expiryDisplay   = sm_format_date($dbRow['expiry_date'] ?? '', '');
+            $registranteName = trim((string)($dbRow['registrante_name'] ?? $dbRow['registrante_import'] ?? ''));
+
+            $rows[] = [
+                $isNewGroup ? $clientName  : '',                                               // col 0: client name (first row only)
+                $isNewGroup ? trim((string)($dbRow['ip_address']    ?? '')) : '',             // col 1: address (first row of group)
+                $isNewGroup ? ($clientEmail ?: trim((string)($dbRow['email_address'] ?? ''))) : '', // col 2: email (first row of group)
+                $isNewGroup ? trim((string)($dbRow['provider']      ?? '')) : '',             // col 3: P.IVA/VAT (first row of group)
+                $serviceLabel,                             // col 4: service type label
+                trim((string)($dbRow['domain']          ?? '')),  // col 5
+                trim((string)($dbRow['assigned_email']  ?? '')),  // col 6
+                trim((string)($dbRow['proprietario']    ?? '')),  // col 7
+                $registranteName,                                  // col 8
+                $expiryDisplay,                                    // col 9
+                trim((string)($dbRow['status']          ?? '')),  // col 10
+                trim((string)($dbRow['vendita']         ?? '')),  // col 11
+                trim((string)($dbRow['dns']             ?? '')),  // col 12
+                trim((string)($dbRow['cpanel']          ?? '')),  // col 13
+                trim((string)($dbRow['epanel']          ?? '')),  // col 14
+                trim((string)($dbRow['notes']           ?? '')),  // col 15
+                trim((string)($dbRow['manutenzione']    ?? '')),  // col 16
+                trim((string)($dbRow['remark']          ?? '')),  // col 17
+            ];
+        }
+
+        return $rows;
+    }
+
+    private function updateExistingGoogleRowsOnly(\Google\Service\Sheets $service, array $settings, array $websiteData): array
+    {
+        $result = ['updated' => 0, 'skipped_not_found' => 0, 'skipped_rows' => [], 'errors' => []];
+
+        $sheetEntries = $this->readSheetRowsInChunks($service, $settings, 3);
+
+        $sheetIndexByKey = [];
+        $sheetRows = [];
+        foreach ($sheetEntries as $entry) {
+            $row = $entry['row'] ?? [];
+            $row = array_pad($row, 18, '');
+            $rowNo = (int)($entry['rowNo'] ?? 0);
+            $sheetRows[$rowNo] = $row;
+
+            $key = $this->buildSheetKey((string)($row[5] ?? ''), (string)($row[4] ?? ''));
+            if ($key === null) {
+                continue;
+            }
+            if (isset($sheetIndexByKey[$key])) {
+                $result['errors'][] = "Duplicate key in Google Sheet for {$key} (rows {$sheetIndexByKey[$key]} and {$rowNo})";
+                continue;
+            }
+            $sheetIndexByKey[$key] = $rowNo;
+        }
+
+        $updates = [];
+        foreach ($websiteData as $dbRow) {
+            $dbRow = array_pad($dbRow, 18, '');
+            $key = $this->buildSheetKey((string)($dbRow[5] ?? ''), (string)($dbRow[4] ?? ''));
+            if ($key === null) {
+                continue;
+            }
+
+            if (!isset($sheetIndexByKey[$key])) {
+                $result['skipped_not_found']++;
+                $result['skipped_rows'][] = $dbRow;
+                continue;
+            }
+
+            $rowNo = $sheetIndexByKey[$key];
+            $current = $sheetRows[$rowNo] ?? array_fill(0, 18, '');
+            $merged = $current;
+
+            for ($i = 0; $i < 18; $i++) {
+                $incoming = trim((string)($dbRow[$i] ?? ''));
+
+                // Live sheet protection: never clear existing cell values.
+                if ($incoming === '') {
+                    continue;
+                }
+
+                if ((string)$merged[$i] !== $incoming) {
+                    $merged[$i] = $incoming;
+                }
+            }
+
+            if ($merged !== $current) {
+                $updates[] = new \Google\Service\Sheets\ValueRange([
+                    'range' => $settings['sheet_name'] . '!A' . $rowNo . ':R' . $rowNo,
+                    'values' => [$merged],
+                ]);
+                $result['updated']++;
+            }
+        }
+
+        if (!empty($updates)) {
+            $batchBody = new \Google\Service\Sheets\BatchUpdateValuesRequest([
+                'valueInputOption' => 'USER_ENTERED',
+                'data' => $updates,
+            ]);
+            $service->spreadsheets_values->batchUpdate($settings['sheet_id'], $batchBody);
+        }
+
+        return $result;
+    }
+
     // Compare two datasets and return differences
     private function compareDatasets($dbData, $googleData)
     {
@@ -1078,21 +1226,23 @@ class SettingsController
             ]
         ];
 
-        // Map database domains for quick lookup
-        $dbByDomain = [];
+        // Map database services (domain + service_type) for quick lookup
+        $dbByKey = [];
         foreach ($dbData as $item) {
-            $domain = strtolower(trim($item['domain'] ?? ''));
-            if ($domain) {
-                $dbByDomain[$domain] = $item;
+            $key = $this->buildSheetKey((string)($item['domain'] ?? ''), (string)($item['service_type'] ?? 'hosting_web'));
+            if ($key !== null) {
+                $item['service_type'] = $this->normalizeSheetServiceType((string)($item['service_type'] ?? ''));
+                $dbByKey[$key] = $item;
             }
         }
 
-        // Map Google domains
-        $googleByDomain = [];
+        // Map Google services
+        $googleByKey = [];
         foreach ($googleData as $item) {
-            $domain = strtolower(trim($item['domain'] ?? ''));
-            if ($domain) {
-                $googleByDomain[$domain] = $item;
+            $key = $this->buildSheetKey((string)($item['domain'] ?? ''), (string)($item['service_type'] ?? ($item['name'] ?? '')));
+            if ($key !== null) {
+                $item['service_type'] = $this->normalizeSheetServiceType((string)($item['service_type'] ?? ($item['name'] ?? '')));
+                $googleByKey[$key] = $item;
             }
         }
 
@@ -1103,15 +1253,20 @@ class SettingsController
         ];
 
         // Find differences
-        foreach ($dbByDomain as $domain => $dbItem) {
-            if (isset($googleByDomain[$domain])) {
+        foreach ($dbByKey as $key => $dbItem) {
+            if (isset($googleByKey[$key])) {
                 $comparison['summary']['matches']++;
                 
                 // Check for value differences
                 $diffs = [];
                 foreach ($compareFields as $field) {
                     $dbVal = trim($dbItem[$field] ?? '');
-                    $googleVal = trim($googleByDomain[$domain][$field] ?? '');
+                    $googleVal = trim($googleByKey[$key][$field] ?? '');
+
+                    if ($field === 'expiry_date') {
+                        $dbVal = sm_normalize_date($dbVal, '') ?? '';
+                        $googleVal = sm_normalize_date($googleVal, '') ?? '';
+                    }
                     
                     if ($dbVal !== $googleVal && (!empty($dbVal) || !empty($googleVal))) {
                         $diffs[$field] = [
@@ -1123,33 +1278,208 @@ class SettingsController
                 
                 if (!empty($diffs)) {
                     $comparison['different_values'][] = [
-                        'domain' => $domain,
+                        'key' => $key,
+                        'domain' => $dbItem['domain'] ?? '',
+                        'service_type' => $dbItem['service_type'] ?? '',
                         'db_values' => $dbItem,
-                        'google_values' => $googleByDomain[$domain],
+                        'google_values' => $googleByKey[$key],
                         'differences' => $diffs
                     ];
                     $comparison['summary']['conflicts']++;
                 }
-                unset($googleByDomain[$domain]);
+                unset($googleByKey[$key]);
             } else {
                 $comparison['only_in_db'][] = $dbItem;
             }
         }
 
         // Remaining items only in Google
-        foreach ($googleByDomain as $item) {
+        foreach ($googleByKey as $item) {
             $comparison['only_in_google'][] = $item;
         }
 
         return $comparison;
     }
 
+    // -----------------------------------------------------------------------
+    // Provider + hosting-account resolution helpers (shared by all import paths)
+    // -----------------------------------------------------------------------
+
+    /**
+     * Infer the providers.type enum value from the normalised website service_type.
+     */
+    private function inferProviderType(string $serviceType): string
+    {
+        return match ($serviceType) {
+            'domain'       => 'registrar',
+            'hosting_mail' => 'email',
+            'hosting_web'  => 'whm',
+            default        => 'other',
+        };
+    }
+
+    /**
+     * Look up a provider by (name_key, type), creating it if absent.
+     * name_key is LOWER(REPLACE(name,' ','')) stored as a generated column, so
+     * "Serverplan", "Server Plan", "server plan" all resolve to the same record.
+     * Lookup key is (name_key + type) so "Aruba" as registrar vs WHM = two records.
+     *
+     * @param string $name        Registrante name from the sheet (raw)
+     * @param string $serviceType Normalised service_type
+     * @param array  &$cache      In-memory cache — pass the same array across calls in one run
+     * @return int|null           providers.id, or null when $name is blank
+     */
+    private function resolveOrCreateProvider(string $name, string $serviceType, array &$cache): ?int
+    {
+        $name = trim($name);
+        if ($name === '') {
+            return null;
+        }
+
+        $type          = $this->inferProviderType($serviceType);
+        // Normalised form used for lookup and cache key: lowercase, no spaces.
+        $nameKey       = strtolower(preg_replace('/\\s+/', '', $name));
+        // Canonical display form: ucwords with single spaces.
+        $nameCanonical = ucwords(strtolower(trim(preg_replace('/\\s+/', ' ', $name))));
+        // Enforce DB column length.
+        $nameCanonical = mb_substr($nameCanonical, 0, 100);
+
+        $cacheKey = $nameKey . '|' . $type;
+        if (isset($cache[$cacheKey])) {
+            return $cache[$cacheKey];
+        }
+
+        // Use the generated column name_key for the lookup (see migration 035).
+        $stmt = $this->db->prepare(
+            "SELECT id FROM providers WHERE name_key = ? AND type = ? LIMIT 1"
+        );
+        $stmt->execute([$nameKey, $type]);
+        $id = $stmt->fetchColumn() ?: null;
+
+        if (!$id) {
+            try {
+                $ins = $this->db->prepare("INSERT INTO providers (name, type) VALUES (?, ?)");
+                $ins->execute([$nameCanonical, $type]);
+                $id = (int)$this->db->lastInsertId();
+            } catch (\PDOException $e) {
+                // Race condition: another process inserted simultaneously — re-select.
+                $stmt->execute([$nameKey, $type]);
+                $id = $stmt->fetchColumn() ?: null;
+                if (!$id) {
+                    error_log("resolveOrCreateProvider failed for '{$nameCanonical}': " . $e->getMessage());
+                    return null;
+                }
+            }
+        }
+
+        $cache[$cacheKey] = (int)$id;
+        return (int)$id;
+    }
+
+    /**
+     * Look up a hosting_account by (client_id, provider_id, cpanel_username), creating it if absent.
+     * Using provider_id in the key means the same cPanel username can have separate accounts at
+     * different providers (e.g. hosting_web at Aruba WHM, hosting_mail at Serverplan email).
+     * When $cpanelUsername is blank the client name is used as the cPanel username.
+     * Only called for hosting_web / hosting_mail (not domain) rows.
+     * Expiry priority on existing records: hosting_web always overwrites; hosting_mail only if NULL.
+     *
+     * @param int    $clientId       hosting.id
+     * @param int    $providerId     providers.id
+     * @param string $cpanelUsername Col N value (may be blank)
+     * @param string $fallbackName   Client name, used when $cpanelUsername is blank
+     * @param string $expiryDate     YYYY-MM-DD or ''
+     * @param string $serviceType    Normalised service_type (for expiry update priority)
+     * @param array  &$cache         In-memory cache keyed by "clientId|providerId|cpanelUsername"
+     * @return int|null              hosting_accounts.id, or null when client/provider is unknown
+     */
+    private function resolveOrCreateHostingAccount(
+        int    $clientId,
+        int    $providerId,
+        string $cpanelUsername,
+        string $fallbackName,
+        string $packageName,
+        string $expiryDate,
+        string $serviceType,
+        array  &$cache
+    ): ?int {
+        $username = $cpanelUsername !== '' ? $cpanelUsername : $fallbackName;
+        if ($username === '' || $clientId <= 0 || $providerId <= 0) {
+            return null;
+        }
+
+        // Truncate to match varchar(100) column limit
+        $packageNameSafe = mb_substr($packageName, 0, 100);
+
+        $cacheKey = $clientId . '|' . $providerId . '|' . $username;
+
+        if (isset($cache[$cacheKey])) {
+            // Still update expiry for hosting_web rows even on a cache hit.
+            if ($serviceType === 'hosting_web' && $expiryDate !== '') {
+                $upd = $this->db->prepare(
+                    "UPDATE hosting_accounts SET expiry_date = ? WHERE id = ?"
+                );
+                $upd->execute([$expiryDate, $cache[$cacheKey]]);
+            }
+            return $cache[$cacheKey];
+        }
+
+        $stmt = $this->db->prepare(
+            "SELECT id FROM hosting_accounts
+             WHERE client_id = ? AND provider_id = ? AND cpanel_username = ?
+             LIMIT 1"
+        );
+        $stmt->execute([$clientId, $providerId, $username]);
+        $id = $stmt->fetchColumn() ?: null;
+
+        if (!$id) {
+            $expiry = $expiryDate !== '' ? $expiryDate : null;
+            $ins = $this->db->prepare("
+                INSERT INTO hosting_accounts (client_id, provider_id, cpanel_username, package_name, expiry_date, status)
+                VALUES (?, ?, ?, ?, ?, 'active')
+            ");
+            $ins->execute([$clientId, $providerId, $username, ($packageNameSafe !== '' ? $packageNameSafe : null), $expiry]);
+            $id = (int)$this->db->lastInsertId();
+        } else {
+            if ($packageNameSafe !== '') {
+                $updPackage = $this->db->prepare(
+                    "UPDATE hosting_accounts SET package_name = ? WHERE id = ? AND (package_name IS NULL OR package_name = '')"
+                );
+                $updPackage->execute([$packageNameSafe, $id]);
+            }
+
+            // Update expiry with priority:
+            //   hosting_web  → always overwrite
+            //   hosting_mail → only if expiry not yet set
+            if ($expiryDate !== '') {
+                if ($serviceType === 'hosting_web') {
+                    $upd = $this->db->prepare(
+                        "UPDATE hosting_accounts SET expiry_date = ? WHERE id = ?"
+                    );
+                    $upd->execute([$expiryDate, $id]);
+                } elseif ($serviceType === 'hosting_mail') {
+                    $upd = $this->db->prepare(
+                        "UPDATE hosting_accounts SET expiry_date = ? WHERE id = ? AND expiry_date IS NULL"
+                    );
+                    $upd->execute([$expiryDate, $id]);
+                }
+            }
+        }
+
+        $cache[$cacheKey] = (int)$id;
+        return (int)$id;
+    }
+
+    // -----------------------------------------------------------------------
+
     // Merge Google Sheets to Database (forward) - with hosting assignment
     private function mergeGoogleToDatabase($googleData)
     {
         $result = ['added' => 0, 'updated' => 0, 'hosting_created' => 0, 'hosting_updated' => 0, 'errors' => []];
         $currentHostingId = null;
-        $hostingMap = []; // Cache for hosting lookups
+        $hostingMap       = [];
+        $providerCache    = [];   // keyed by "name|type"
+        $haCache          = [];   // hosting_account cache keyed by "clientId|cpanelUsername"
 
         foreach ($googleData as $index => $item) {
             try {
@@ -1160,34 +1490,37 @@ class SettingsController
                 $clientEmail = trim($item['email_address'] ?? '');
                 $clientPiva = trim($item['provider'] ?? '');
 
-                // Process hosting plan if client name exists and different from previous
-                if (!empty($clientName) && $clientName !== ($hostingMap['last_client'] ?? null)) {
-                    // Check if hosting plan already exists
-                    $stmt = $this->db->prepare("SELECT id FROM hosting_plans WHERE server_name = ?");
-                    $stmt->execute([$clientName]);
-                    $currentHostingId = $stmt->fetchColumn();
+                // Treat DOMINI LIBERI as unassigned group (no hosting plan create/update).
+                $isDominiLiberi = strtoupper($clientName) === 'DOMINI LIBERI';
 
-                    if ($currentHostingId) {
-                        // Update existing hosting plan
-                        $updateStmt = $this->db->prepare("
-                        UPDATE hosting_plans 
-                        SET email_address = ?, ip_address = ?, provider = ?
-                        WHERE id = ?
-                    ");
-                        $updateStmt->execute([$clientEmail, $clientAddress, $clientPiva, $currentHostingId]);
-                        $result['hosting_updated']++;
-                    } else {
-                        // Create new hosting plan
-                        $stmt = $this->db->prepare("
-                        INSERT INTO hosting_plans 
-                        (server_name, ip_address, email_address, provider) 
-                        VALUES (?, ?, ?, ?)
-                    ");
-                        $stmt->execute([$clientName, $clientAddress, $clientEmail, $clientPiva]);
-                        $currentHostingId = $this->db->lastInsertId();
+                // Process hosting plan if client name exists and different from previous
+                if (!empty($clientName) && !$isDominiLiberi && $clientName !== ($hostingMap['last_client'] ?? null)) {
+                    // Look up the client in the `hosting` table (websites.hosting_id → hosting.id).
+                    $stmt = $this->db->prepare("SELECT id FROM hosting WHERE name = ?");
+                    $stmt->execute([$clientName]);
+                    $currentHostingId = $stmt->fetchColumn() ?: null;
+
+                    if (!$currentHostingId) {
+                        // Create new hosting/client record including contact info.
+                        $ins = $this->db->prepare("
+                            INSERT INTO hosting (name, email_address, address, vat_number, status)
+                            VALUES (?, ?, ?, ?, 'active')
+                        ");
+                        $ins->execute([$clientName, $clientEmail, $clientAddress, $clientPiva]);
+                        $currentHostingId = (int)$this->db->lastInsertId();
                         $result['hosting_created']++;
+                    } else {
+                        // Update contact fields on existing client.
+                        $upd = $this->db->prepare("
+                            UPDATE hosting SET email_address = ?, address = ?, vat_number = ?
+                            WHERE id = ?
+                        ");
+                        $upd->execute([$clientEmail, $clientAddress, $clientPiva, $currentHostingId]);
+                        $result['hosting_updated']++;
                     }
                     $hostingMap['last_client'] = $clientName;
+                } elseif ($isDominiLiberi) {
+                    $currentHostingId = null;
                 }
 
                 // Extract domain
@@ -1196,24 +1529,58 @@ class SettingsController
                     continue;
                 }
 
-                // Try to find existing website by domain
-                $website = $this->websiteModel->getWebsiteByDomain($domain);
+                $rawServiceType = strtolower(trim((string)($item['service_type'] ?? $item['name'] ?? '')));
+                if (str_contains($rawServiceType, 'mail') || str_contains($rawServiceType, 'email')) {
+                    $serviceType = 'hosting_mail';
+                } elseif (str_contains($rawServiceType, 'domain') || str_contains($rawServiceType, 'registr')) {
+                    $serviceType = 'domain';
+                } else {
+                    $serviceType = 'hosting_web';
+                }
+
+                // Resolve / create provider from the registrante column.
+                $registranteName = trim((string)($item['registrante_import'] ?? ''));
+                $providerId = $this->resolveOrCreateProvider($registranteName, $serviceType, $providerCache);
+
+                // Resolve / create hosting account for web and mail services.
+                $hostingAccountId = null;
+                if ($currentHostingId && $serviceType !== 'domain' && $providerId) {
+                    $cpanelUsername   = trim((string)($item['cpanel'] ?? ''));
+                    $expiryNormalized = $this->normalizeSyncValue('expiry_date', $item['expiry_date'] ?? '');
+                    $hostingAccountId = $this->resolveOrCreateHostingAccount(
+                        $currentHostingId,
+                        $providerId,
+                        $cpanelUsername,
+                        $clientName,
+                        trim((string)($item['domain'] ?? '')),
+                        $expiryNormalized,
+                        $serviceType,
+                        $haCache
+                    );
+                }
+
+                // Try to find existing website by domain + service type
+                $website = $this->websiteModel->getWebsiteByDomain($domain, $serviceType);
 
                 // Prepare update data with all Google values
                 $data = [
-                    'domain' => $domain,
-                    'name' => trim($item['name'] ?? ''),
-                    'assigned_email' => trim($item['assigned_email'] ?? ''),
-                    'proprietario' => trim($item['proprietario'] ?? ''),
-                    'vendita' => trim($item['vendita'] ?? '') ?: '0',
-                    'expiry_date' => trim($item['expiry_date'] ?? ''),
-                    'cpanel' => trim($item['cpanel'] ?? ''),
-                    'epanel' => trim($item['epanel'] ?? ''),
-                    'notes' => trim($item['notes'] ?? ''),
-                    'remark' => trim($item['remark'] ?? ''),
-                    'dns' => trim($item['dns'] ?? ''),
-                    'email_server' => trim($item['email_server'] ?? ''),
-                    'hosting_id' => $currentHostingId
+                    'domain'             => $domain,
+                    'name'               => trim($item['name'] ?? ''),
+                    'service_type'       => $serviceType,
+                    'assigned_email'     => trim($item['assigned_email'] ?? ''),
+                    'proprietario'       => trim($item['proprietario'] ?? ''),
+                    'vendita'            => trim($item['vendita'] ?? '') ?: '0',
+                    'expiry_date'        => trim($item['expiry_date'] ?? ''),
+                    'cpanel'             => trim($item['cpanel'] ?? ''),
+                    'epanel'             => trim($item['epanel'] ?? ''),
+                    'notes'              => trim($item['notes'] ?? ''),
+                    'manutenzione'       => trim($item['manutenzione'] ?? ''),
+                    'remark'             => trim($item['remark'] ?? ''),
+                    'dns'                => trim($item['dns'] ?? ''),
+                    'registrante_import' => $registranteName,
+                    'hosting_id'         => $currentHostingId,
+                    'provider_id'        => $providerId,
+                    'hosting_account_id' => $hostingAccountId,
                 ];
 
                 if ($website) {
@@ -1243,96 +1610,14 @@ class SettingsController
     private function mergeDatabaseToGoogle($dbData, $settings)
     {
         require_once APP_PATH . '/vendor/autoload.php';
-        $result = ['updated' => 0, 'errors' => []];
+        $result = ['updated' => 0, 'skipped_not_found' => 0, 'errors' => []];
 
         try {
             $client = $this->getGoogleClient($settings);
             $service = new \Google\Service\Sheets($client);
-
-            $spreadsheet = $service->spreadsheets->get($settings['sheet_id'], ['includeGridData' => false]);
-            
-            // Find the target sheet
-            $sheet = null;
-            foreach ($spreadsheet->getSheets() as $s) {
-                if ($s->getProperties()->getTitle() === $settings['sheet_name']) {
-                    $sheet = $s;
-                    break;
-                }
-            }
-            
-            if ($sheet === null) {
-                throw new Exception("Sheet '{$settings['sheet_name']}' not found");
-            }
-
-            $sheetId = $sheet->getProperties()->getSheetId();
-
-            // Use the same data format as export
             $preparedData = $this->websiteModel->prepareForGoogleSheets();
-            $websiteData = $preparedData['data'];
-
-            // Prepare headers (same as export)
-            $headers = [
-                [
-                    'Clienti',
-                    'Informazioni per il cliente',
-                    '',
-                    '',
-                    'Informazioni sul servizio',
-                    '',
-                    '',
-                    '',
-                    '',
-                    '',
-                    '',
-                    '',
-                    '',
-                    '',
-                    '',
-                    '',
-                    ''
-                ],
-                [
-                    'Nome',
-                    'Indirizzo',
-                    'Email',
-                    'P.IVA',
-                    'Tipologia di Servizi',
-                    'Dettaglio Servizi',
-                    'Email Assegnata',
-                    'Propietario',
-                    'Registrante',
-                    'Scadenza',
-                    'Costo Server (iva inclusa)',
-                    'Prezzo di vendita (iva inclusa)',
-                    'Direct DNS A',
-                    'User Name cpanel',
-                    'Email panel',
-                    'Bug report',
-                    'Notes'
-                ]
-            ];
-
-            $allData = array_merge($headers, $websiteData);
-
-            // Clear existing values
-            $service->spreadsheets_values->clear(
-                $settings['sheet_id'],
-                $settings['sheet_name'] . '!A:Z',
-                new \Google\Service\Sheets\ClearValuesRequest()
-            );
-
-            // Insert new values
-            $service->spreadsheets_values->update(
-                $settings['sheet_id'],
-                $settings['sheet_name'] . '!A1',
-                new \Google\Service\Sheets\ValueRange(['values' => $allData]),
-                ['valueInputOption' => 'USER_ENTERED']
-            );
-
-            // Apply formatting (same as export - for seamless merge)
-            $this->applySheetFormatting($service, $settings, $sheetId, count($allData));
-
-            $result['updated'] = count($websiteData);
+            $websiteData = $preparedData['data'] ?? [];
+            $result = $this->updateExistingGoogleRowsOnly($service, $settings, $websiteData);
         } catch (Exception $e) {
             $result['errors'][] = "Error during merge: " . $e->getMessage();
         }
@@ -1341,590 +1626,1338 @@ class SettingsController
     }
 
     /**
-     * Apply consistent formatting to Google Sheet
-     * Used by both export and merge operations
+     * Public entrypoint used by cron to run a safe bidirectional sync.
      */
-    private function applySheetFormatting($service, $settings, $sheetId, $totalRows)
+    public function runGoogleSheetsSafeSyncForCron(): array
     {
-        $lastRow = $totalRows;
-
-        // Helper function to convert hex color to RGB
-        $hexToRgb = function ($hex) {
-            $hex = ltrim($hex, '#');
-            return [
-                'red' => hexdec(substr($hex, 0, 2)) / 255,
-                'green' => hexdec(substr($hex, 2, 2)) / 255,
-                'blue' => hexdec(substr($hex, 4, 2)) / 255
-            ];
-        };
-
-        // Professional color scheme
-        $colors = [
-            'blueHeaderDark' => ['rgb' => '#003D7A'],
-            'redHeaderDark' => ['rgb' => '#C1402B'],
-            'greenHeaderLight' => ['rgb' => '#70AD47'],
-            'greenHeaderDark' => ['rgb' => '#54873B'],
-            'textLight' => ['rgb' => '#FFFFFF'],
-            'textDark' => ['rgb' => '#2E2E2E']
-        ];
-
-        // Column width specifications (in pixels)
-        // Wide columns for text data: A (Nome), B (Indirizzo), C (Email), D (P.IVA), 
-        // F (Dettaglio Servizi), G (Email Assegnata), O (Email panel), P (Bug report), Q (Notes)
-        // Narrow columns: E (Tipologia), H (Proprietario), I (Registrante), J (Scadenza), K (Costo), L (Prezzo), M (DNS), N (Cpanel)
-        $columnWidths = [
-            'A' => 200,  // Nome - WIDE
-            'B' => 220,  // Indirizzo - WIDE
-            'C' => 220,  // Email - WIDE
-            'D' => 150,  // P.IVA - WIDE
-            'E' => 140,  // Tipologia - NARROW
-            'F' => 200,  // Dettaglio Servizi - WIDE
-            'G' => 220,  // Email Assegnata - WIDE
-            'H' => 140,  // Proprietario - NARROW
-            'I' => 140,  // Registrante - NARROW
-            'J' => 130,  // Scadenza - NARROW
-            'K' => 140,  // Costo Server - NARROW
-            'L' => 150,  // Prezzo di Vendita - NARROW
-            'M' => 130,  // Direct DNS - NARROW
-            'N' => 150,  // User Name cpanel - NARROW
-            'O' => 220,  // Email panel - WIDE
-            'P' => 200,  // Bug report - WIDE
-            'Q' => 200   // Notes - WIDE
-        ];
-
-        // Build formatting requests
-        $requests = [
-            // Set column widths
-            new \Google\Service\Sheets\Request([
-                'updateDimensionProperties' => [
-                    'range' => [
-                        'sheetId' => $sheetId,
-                        'dimension' => 'COLUMNS',
-                        'startIndex' => 0,
-                        'endIndex' => 1
-                    ],
-                    'properties' => [
-                        'pixelSize' => $columnWidths['A']
-                    ],
-                    'fields' => 'pixelSize'
-                ]
-            ]),
-            new \Google\Service\Sheets\Request([
-                'updateDimensionProperties' => [
-                    'range' => [
-                        'sheetId' => $sheetId,
-                        'dimension' => 'COLUMNS',
-                        'startIndex' => 1,
-                        'endIndex' => 2
-                    ],
-                    'properties' => [
-                        'pixelSize' => $columnWidths['B']
-                    ],
-                    'fields' => 'pixelSize'
-                ]
-            ]),
-            new \Google\Service\Sheets\Request([
-                'updateDimensionProperties' => [
-                    'range' => [
-                        'sheetId' => $sheetId,
-                        'dimension' => 'COLUMNS',
-                        'startIndex' => 2,
-                        'endIndex' => 3
-                    ],
-                    'properties' => [
-                        'pixelSize' => $columnWidths['C']
-                    ],
-                    'fields' => 'pixelSize'
-                ]
-            ]),
-            new \Google\Service\Sheets\Request([
-                'updateDimensionProperties' => [
-                    'range' => [
-                        'sheetId' => $sheetId,
-                        'dimension' => 'COLUMNS',
-                        'startIndex' => 3,
-                        'endIndex' => 4
-                    ],
-                    'properties' => [
-                        'pixelSize' => $columnWidths['D']
-                    ],
-                    'fields' => 'pixelSize'
-                ]
-            ]),
-            new \Google\Service\Sheets\Request([
-                'updateDimensionProperties' => [
-                    'range' => [
-                        'sheetId' => $sheetId,
-                        'dimension' => 'COLUMNS',
-                        'startIndex' => 4,
-                        'endIndex' => 5
-                    ],
-                    'properties' => [
-                        'pixelSize' => $columnWidths['E']
-                    ],
-                    'fields' => 'pixelSize'
-                ]
-            ]),
-            new \Google\Service\Sheets\Request([
-                'updateDimensionProperties' => [
-                    'range' => [
-                        'sheetId' => $sheetId,
-                        'dimension' => 'COLUMNS',
-                        'startIndex' => 5,
-                        'endIndex' => 6
-                    ],
-                    'properties' => [
-                        'pixelSize' => $columnWidths['F']
-                    ],
-                    'fields' => 'pixelSize'
-                ]
-            ]),
-            new \Google\Service\Sheets\Request([
-                'updateDimensionProperties' => [
-                    'range' => [
-                        'sheetId' => $sheetId,
-                        'dimension' => 'COLUMNS',
-                        'startIndex' => 6,
-                        'endIndex' => 7
-                    ],
-                    'properties' => [
-                        'pixelSize' => $columnWidths['G']
-                    ],
-                    'fields' => 'pixelSize'
-                ]
-            ]),
-            new \Google\Service\Sheets\Request([
-                'updateDimensionProperties' => [
-                    'range' => [
-                        'sheetId' => $sheetId,
-                        'dimension' => 'COLUMNS',
-                        'startIndex' => 7,
-                        'endIndex' => 8
-                    ],
-                    'properties' => [
-                        'pixelSize' => $columnWidths['H']
-                    ],
-                    'fields' => 'pixelSize'
-                ]
-            ]),
-            new \Google\Service\Sheets\Request([
-                'updateDimensionProperties' => [
-                    'range' => [
-                        'sheetId' => $sheetId,
-                        'dimension' => 'COLUMNS',
-                        'startIndex' => 8,
-                        'endIndex' => 9
-                    ],
-                    'properties' => [
-                        'pixelSize' => $columnWidths['I']
-                    ],
-                    'fields' => 'pixelSize'
-                ]
-            ]),
-            new \Google\Service\Sheets\Request([
-                'updateDimensionProperties' => [
-                    'range' => [
-                        'sheetId' => $sheetId,
-                        'dimension' => 'COLUMNS',
-                        'startIndex' => 9,
-                        'endIndex' => 10
-                    ],
-                    'properties' => [
-                        'pixelSize' => $columnWidths['J']
-                    ],
-                    'fields' => 'pixelSize'
-                ]
-            ]),
-            new \Google\Service\Sheets\Request([
-                'updateDimensionProperties' => [
-                    'range' => [
-                        'sheetId' => $sheetId,
-                        'dimension' => 'COLUMNS',
-                        'startIndex' => 10,
-                        'endIndex' => 11
-                    ],
-                    'properties' => [
-                        'pixelSize' => $columnWidths['K']
-                    ],
-                    'fields' => 'pixelSize'
-                ]
-            ]),
-            new \Google\Service\Sheets\Request([
-                'updateDimensionProperties' => [
-                    'range' => [
-                        'sheetId' => $sheetId,
-                        'dimension' => 'COLUMNS',
-                        'startIndex' => 11,
-                        'endIndex' => 12
-                    ],
-                    'properties' => [
-                        'pixelSize' => $columnWidths['L']
-                    ],
-                    'fields' => 'pixelSize'
-                ]
-            ]),
-            new \Google\Service\Sheets\Request([
-                'updateDimensionProperties' => [
-                    'range' => [
-                        'sheetId' => $sheetId,
-                        'dimension' => 'COLUMNS',
-                        'startIndex' => 12,
-                        'endIndex' => 13
-                    ],
-                    'properties' => [
-                        'pixelSize' => $columnWidths['M']
-                    ],
-                    'fields' => 'pixelSize'
-                ]
-            ]),
-            new \Google\Service\Sheets\Request([
-                'updateDimensionProperties' => [
-                    'range' => [
-                        'sheetId' => $sheetId,
-                        'dimension' => 'COLUMNS',
-                        'startIndex' => 13,
-                        'endIndex' => 14
-                    ],
-                    'properties' => [
-                        'pixelSize' => $columnWidths['N']
-                    ],
-                    'fields' => 'pixelSize'
-                ]
-            ]),
-            new \Google\Service\Sheets\Request([
-                'updateDimensionProperties' => [
-                    'range' => [
-                        'sheetId' => $sheetId,
-                        'dimension' => 'COLUMNS',
-                        'startIndex' => 14,
-                        'endIndex' => 15
-                    ],
-                    'properties' => [
-                        'pixelSize' => $columnWidths['O']
-                    ],
-                    'fields' => 'pixelSize'
-                ]
-            ]),
-            new \Google\Service\Sheets\Request([
-                'updateDimensionProperties' => [
-                    'range' => [
-                        'sheetId' => $sheetId,
-                        'dimension' => 'COLUMNS',
-                        'startIndex' => 15,
-                        'endIndex' => 16
-                    ],
-                    'properties' => [
-                        'pixelSize' => $columnWidths['P']
-                    ],
-                    'fields' => 'pixelSize'
-                ]
-            ]),
-            new \Google\Service\Sheets\Request([
-                'updateDimensionProperties' => [
-                    'range' => [
-                        'sheetId' => $sheetId,
-                        'dimension' => 'COLUMNS',
-                        'startIndex' => 16,
-                        'endIndex' => 17
-                    ],
-                    'properties' => [
-                        'pixelSize' => $columnWidths['Q']
-                    ],
-                    'fields' => 'pixelSize'
-                ]
-            ]),
-
-            // Unmerge any existing cells first
-            new \Google\Service\Sheets\Request([
-                'unmergeCells' => [
-                    'range' => [
-                        'sheetId' => $sheetId,
-                        'startRowIndex' => 0,
-                        'endRowIndex' => 2,
-                        'startColumnIndex' => 0,
-                        'endColumnIndex' => 17
-                    ]
-                ]
-            ]),
-            // Merge B1-D1
-            new \Google\Service\Sheets\Request([
-                'mergeCells' => [
-                    'range' => [
-                        'sheetId' => $sheetId,
-                        'startRowIndex' => 0,
-                        'endRowIndex' => 1,
-                        'startColumnIndex' => 1,
-                        'endColumnIndex' => 4
-                    ],
-                    'mergeType' => 'MERGE_ALL'
-                ]
-            ]),
-            // Merge E1-Q1
-            new \Google\Service\Sheets\Request([
-                'mergeCells' => [
-                    'range' => [
-                        'sheetId' => $sheetId,
-                        'startRowIndex' => 0,
-                        'endRowIndex' => 1,
-                        'startColumnIndex' => 4,
-                        'endColumnIndex' => 17
-                    ],
-                    'mergeType' => 'MERGE_ALL'
-                ]
-            ]),
-
-            // A1 - Dark blue header
-            new \Google\Service\Sheets\Request([
-                'repeatCell' => [
-                    'range' => [
-                        'sheetId' => $sheetId,
-                        'startRowIndex' => 0,
-                        'endRowIndex' => 1,
-                        'startColumnIndex' => 0,
-                        'endColumnIndex' => 1
-                    ],
-                    'cell' => [
-                        'userEnteredFormat' => [
-                            'backgroundColor' => $hexToRgb($colors['blueHeaderDark']['rgb']),
-                            'textFormat' => [
-                                'bold' => true,
-                                'foregroundColor' => $hexToRgb($colors['textLight']['rgb']),
-                                'fontSize' => 13
-                            ],
-                            'horizontalAlignment' => 'CENTER',
-                            'verticalAlignment' => 'MIDDLE'
-                        ]
-                    ],
-                    'fields' => 'userEnteredFormat(backgroundColor,textFormat,horizontalAlignment,verticalAlignment)'
-                ]
-            ]),
-
-            // B1-D1 - Dark red header (customer info)
-            new \Google\Service\Sheets\Request([
-                'repeatCell' => [
-                    'range' => [
-                        'sheetId' => $sheetId,
-                        'startRowIndex' => 0,
-                        'endRowIndex' => 1,
-                        'startColumnIndex' => 1,
-                        'endColumnIndex' => 4
-                    ],
-                    'cell' => [
-                        'userEnteredFormat' => [
-                            'backgroundColor' => $hexToRgb($colors['redHeaderDark']['rgb']),
-                            'textFormat' => [
-                                'bold' => true,
-                                'foregroundColor' => $hexToRgb($colors['textLight']['rgb']),
-                                'fontSize' => 15
-                            ],
-                            'horizontalAlignment' => 'CENTER',
-                            'verticalAlignment' => 'MIDDLE'
-                        ]
-                    ],
-                    'fields' => 'userEnteredFormat(backgroundColor,textFormat,horizontalAlignment,verticalAlignment)'
-                ]
-            ]),
-
-            // E1-Q1 - Dark green header (service info)
-            new \Google\Service\Sheets\Request([
-                'repeatCell' => [
-                    'range' => [
-                        'sheetId' => $sheetId,
-                        'startRowIndex' => 0,
-                        'endRowIndex' => 1,
-                        'startColumnIndex' => 4,
-                        'endColumnIndex' => 17
-                    ],
-                    'cell' => [
-                        'userEnteredFormat' => [
-                            'backgroundColor' => $hexToRgb($colors['greenHeaderDark']['rgb']),
-                            'textFormat' => [
-                                'bold' => true,
-                                'foregroundColor' => $hexToRgb($colors['textLight']['rgb']),
-                                'fontSize' => 14
-                            ],
-                            'horizontalAlignment' => 'CENTER',
-                            'verticalAlignment' => 'MIDDLE'
-                        ]
-                    ],
-                    'fields' => 'userEnteredFormat(backgroundColor,textFormat,horizontalAlignment,verticalAlignment)'
-                ]
-            ]),
-
-            // A2-D2 - Light blue (customer column headers)
-            new \Google\Service\Sheets\Request([
-                'repeatCell' => [
-                    'range' => [
-                        'sheetId' => $sheetId,
-                        'startRowIndex' => 1,
-                        'endRowIndex' => 2,
-                        'startColumnIndex' => 0,
-                        'endColumnIndex' => 1
-                    ],
-                    'cell' => [
-                        'userEnteredFormat' => [
-                            'backgroundColor' => $hexToRgb('#D6E4F5'),
-                            'textFormat' => [
-                                'bold' => true,
-                                'foregroundColor' => $hexToRgb($colors['textDark']['rgb']),
-                                'fontSize' => 10
-                            ],
-                            'horizontalAlignment' => 'CENTER',
-                            'verticalAlignment' => 'MIDDLE'
-                        ]
-                    ],
-                    'fields' => 'userEnteredFormat(backgroundColor,textFormat,horizontalAlignment,verticalAlignment)'
-                ]
-            ]),
-
-            // B2-D2 - Light red (customer column headers)
-            new \Google\Service\Sheets\Request([
-                'repeatCell' => [
-                    'range' => [
-                        'sheetId' => $sheetId,
-                        'startRowIndex' => 1,
-                        'endRowIndex' => 2,
-                        'startColumnIndex' => 1,
-                        'endColumnIndex' => 4
-                    ],
-                    'cell' => [
-                        'userEnteredFormat' => [
-                            'backgroundColor' => $hexToRgb('#F4CCCC'),
-                            'textFormat' => [
-                                'bold' => true,
-                                'foregroundColor' => $hexToRgb($colors['textDark']['rgb']),
-                                'fontSize' => 10
-                            ],
-                            'horizontalAlignment' => 'CENTER',
-                            'verticalAlignment' => 'MIDDLE'
-                        ]
-                    ],
-                    'fields' => 'userEnteredFormat(backgroundColor,textFormat,horizontalAlignment,verticalAlignment)'
-                ]
-            ]),
-
-            // E2-Q2 - Light green (service column headers)
-            new \Google\Service\Sheets\Request([
-                'repeatCell' => [
-                    'range' => [
-                        'sheetId' => $sheetId,
-                        'startRowIndex' => 1,
-                        'endRowIndex' => 2,
-                        'startColumnIndex' => 4,
-                        'endColumnIndex' => 17
-                    ],
-                    'cell' => [
-                        'userEnteredFormat' => [
-                            'backgroundColor' => $hexToRgb('#E2EFDA'),
-                            'textFormat' => [
-                                'bold' => true,
-                                'foregroundColor' => $hexToRgb($colors['textDark']['rgb']),
-                                'fontSize' => 10
-                            ],
-                            'horizontalAlignment' => 'CENTER',
-                            'verticalAlignment' => 'MIDDLE',
-                            'wrapStrategy' => 'WRAP'
-                        ]
-                    ],
-                    'fields' => 'userEnteredFormat(backgroundColor,textFormat,horizontalAlignment,verticalAlignment,wrapStrategy)'
-                ]
-            ]),
-
-            // Data cell formatting - centered with padding
-            new \Google\Service\Sheets\Request([
-                'repeatCell' => [
-                    'range' => [
-                        'sheetId' => $sheetId,
-                        'startRowIndex' => 2,
-                        'endRowIndex' => $lastRow,
-                        'startColumnIndex' => 0,
-                        'endColumnIndex' => 17
-                    ],
-                    'cell' => [
-                        'userEnteredFormat' => [
-                            'wrapStrategy' => 'WRAP',
-                            'horizontalAlignment' => 'CENTER',
-                            'verticalAlignment' => 'MIDDLE',
-                            'textFormat' => [
-                                'foregroundColor' => $hexToRgb($colors['textDark']['rgb']),
-                                'fontSize' => 11
-                            ]
-                        ]
-                    ],
-                    'fields' => 'userEnteredFormat(wrapStrategy,horizontalAlignment,verticalAlignment,textFormat)'
-                ]
-            ]),
-
-            // Column A (Nome) - Make all data rows bold
-            new \Google\Service\Sheets\Request([
-                'repeatCell' => [
-                    'range' => [
-                        'sheetId' => $sheetId,
-                        'startRowIndex' => 2,
-                        'endRowIndex' => $lastRow,
-                        'startColumnIndex' => 0,
-                        'endColumnIndex' => 1
-                    ],
-                    'cell' => [
-                        'userEnteredFormat' => [
-                            'textFormat' => [
-                                'bold' => true,
-                                'foregroundColor' => $hexToRgb($colors['textDark']['rgb']),
-                                'fontSize' => 11
-                            ],
-                            'wrapStrategy' => 'WRAP',
-                            'horizontalAlignment' => 'CENTER',
-                            'verticalAlignment' => 'MIDDLE'
-                        ]
-                    ],
-                    'fields' => 'userEnteredFormat(textFormat,wrapStrategy,horizontalAlignment,verticalAlignment)'
-                ]
-            ])
-        ];
-
-        // Execute batch update
-        $batchUpdateRequest = new \Google\Service\Sheets\BatchUpdateSpreadsheetRequest([
-            'requests' => $requests
+        $settings = $this->settingsModel->getGoogleSheetsSettings();
+        return $this->executeThreeWayMerge($settings, 'together', [
+            'conflict_policy' => 'manual',
+            'dry_run' => false,
         ]);
-
-        $service->spreadsheets->batchUpdate($settings['sheet_id'], $batchUpdateRequest);
     }
 
-    /**
-     * Bidirectional merge - merge both Google Sheets and Database
-     * Combines Google→DB and DB→Google operations with conflict resolution
-     */
-    private function mergeBidirectional($googleData, $dbData, $settings)
+    private function getThreeWaySyncFields(): array
     {
-        $result = [
-            'added_to_db' => 0,
-            'updated_in_db' => 0,
-            'added_to_google' => 0,
-            'updated_in_google' => 0,
-            'conflicts_resolved' => 0,
-            'errors' => []
+        // All fields that exist in `websites` table and are shown in the Google Sheet.
+        // Must match exactly what dbRowToSheetRow writes (col indices 4-17).
+        return [
+            'assigned_email',
+            'proprietario',
+            'vendita',
+            'expiry_date',
+            'status',
+            'cpanel',
+            'epanel',
+            'notes',
+            'remark',
+            'dns',
+            'manutenzione',
+            'registrante_import',
+        ];
+        // Note: 'name' (col 4) is the service-type label derived from service_type;
+        // it is not a separate DB column — service_type itself is the sync key and
+        // already part of the row identity, so it is not in this list.
+    }
+
+    private function getGoogleSheetColumnMap(): array
+    {
+        return [
+            'name' => 4,
+            'domain' => 5,
+            'assigned_email' => 6,
+            'proprietario' => 7,
+            'registrante_import' => 8,
+            'expiry_date' => 9,
+            'status' => 10,
+            'vendita' => 11,
+            'dns' => 12,
+            'cpanel' => 13,
+            'epanel' => 14,
+            'notes' => 15,
+            'manutenzione' => 16,
+            'remark' => 17,
+        ];
+    }
+
+    private function normalizeSyncValue(string $field, $value): string
+    {
+        $normalized = trim((string)($value ?? ''));
+        if ($field === 'expiry_date') {
+            return sm_normalize_date($normalized, '') ?? '';
+        }
+        return $normalized;
+    }
+
+    private function ensureGoogleSyncBaselineTable(): void
+    {
+        $this->db->exec("
+            CREATE TABLE IF NOT EXISTS google_sheets_sync_baseline (
+                sync_key VARCHAR(255) PRIMARY KEY,
+                snapshot_json LONGTEXT NOT NULL,
+                synced_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+        ");
+    }
+
+    private function loadGoogleSyncBaseline(): array
+    {
+        $this->ensureGoogleSyncBaselineTable();
+
+        $stmt = $this->db->query("SELECT sync_key, snapshot_json FROM google_sheets_sync_baseline");
+        $rows = $stmt ? $stmt->fetchAll(PDO::FETCH_ASSOC) : [];
+
+        $baseline = [];
+        foreach ($rows as $row) {
+            $decoded = json_decode($row['snapshot_json'] ?? '[]', true);
+            if (is_array($decoded)) {
+                $baseline[$row['sync_key']] = $decoded;
+            }
+        }
+
+        return $baseline;
+    }
+
+    private function saveGoogleSyncBaseline(array $baseline): void
+    {
+        $stmt = $this->db->prepare("
+            INSERT INTO google_sheets_sync_baseline (sync_key, snapshot_json, synced_at)
+            VALUES (?, ?, NOW())
+            ON DUPLICATE KEY UPDATE
+                snapshot_json = VALUES(snapshot_json),
+                synced_at = NOW()
+        ");
+
+        foreach ($baseline as $key => $snapshot) {
+            $stmt->execute([$key, json_encode($snapshot)]);
+        }
+    }
+
+    private function ensureGoogleSyncAuditTable(): void
+    {
+        $this->db->exec(
+            "CREATE TABLE IF NOT EXISTS google_sheets_sync_audit (
+                id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                executed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                user_id BIGINT NULL,
+                direction VARCHAR(16) NOT NULL,
+                conflict_policy VARCHAR(16) NOT NULL,
+                dry_run TINYINT(1) NOT NULL DEFAULT 0,
+                added_to_db INT NOT NULL DEFAULT 0,
+                updated_in_db INT NOT NULL DEFAULT 0,
+                added_to_google INT NOT NULL DEFAULT 0,
+                updated_in_google INT NOT NULL DEFAULT 0,
+                conflicts_detected INT NOT NULL DEFAULT 0,
+                conflicts_resolved INT NOT NULL DEFAULT 0,
+                error_count INT NOT NULL DEFAULT 0,
+                result_json LONGTEXT NULL
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
+        );
+    }
+
+    private function logGoogleSyncAudit(string $direction, string $conflictPolicy, bool $dryRun, array $result): void
+    {
+        try {
+            $this->ensureGoogleSyncAuditTable();
+            $stmt = $this->db->prepare(
+                "INSERT INTO google_sheets_sync_audit
+                (user_id, direction, conflict_policy, dry_run, added_to_db, updated_in_db, added_to_google, updated_in_google,
+                 conflicts_detected, conflicts_resolved, error_count, result_json)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+            );
+
+            $userId = isset($_SESSION['user_id']) ? (int)$_SESSION['user_id'] : null;
+            $stmt->execute([
+                $userId,
+                $direction,
+                $conflictPolicy,
+                $dryRun ? 1 : 0,
+                (int)($result['added_to_db'] ?? 0),
+                (int)($result['updated_in_db'] ?? 0),
+                (int)($result['added_to_google'] ?? 0),
+                (int)($result['updated_in_google'] ?? 0),
+                (int)($result['conflicts_detected'] ?? 0),
+                (int)($result['conflicts_resolved'] ?? 0),
+                is_array($result['errors'] ?? null) ? count($result['errors']) : 0,
+                json_encode($result),
+            ]);
+        } catch (Throwable $e) {
+            error_log('Failed to log Google sync audit: ' . $e->getMessage());
+        }
+    }
+
+    private function getDatabaseRowsByKey(): array
+    {
+        // Use the same JOIN as prepareForGoogleSheets so dbRowToSheetRow has all columns.
+        // Sort mirrors prepareForGoogleSheets: clients alphabetically, DOMINI LIBERI last,
+        // then domain, then service_type — so googleAppends preserve the export grouping.
+        $stmt = $this->db->query("
+            SELECT w.*,
+                   h.id            AS hosting_plan_id,
+                   h.name          AS server_name,
+                   h.email_address AS email_address,
+                   h.address       AS ip_address,
+                   h.vat_number    AS provider,
+                   p.name          AS registrante_name
+            FROM websites w
+            LEFT JOIN hosting   h ON h.id = w.hosting_id
+            LEFT JOIN providers p ON p.id = w.provider_id
+            ORDER BY COALESCE(h.name, 'zzzzzzzz') ASC, w.domain ASC, w.service_type ASC
+        ");
+        $dbData = $stmt ? $stmt->fetchAll(PDO::FETCH_ASSOC) : [];
+
+        $rowsByKey = [];
+
+        foreach ($dbData as $row) {
+            $row['service_type'] = $this->normalizeSheetServiceType((string)($row['service_type'] ?? 'hosting_web'));
+            // Keep the raw expiry for sync comparison; display formatting happens in dbRowToSheetRow.
+            $row['expiry_date'] = $this->normalizeSyncValue('expiry_date', $row['expiry_date'] ?? '');
+
+            $key = $this->buildSheetKey((string)($row['domain'] ?? ''), (string)($row['service_type'] ?? 'hosting_web'));
+            if ($key === null) {
+                continue;
+            }
+            $rowsByKey[$key] = $row;
+        }
+
+        return $rowsByKey;
+    }
+
+    private function getGoogleRowsByKeyIndexed(\Google\Service\Sheets $service, array $settings): array
+    {
+        $sheetEntries = $this->readSheetRowsInChunks($service, $settings, 3);
+
+        $indexed = [];
+        $errors = [];
+        $lastServerName   = ''; // tracks client group across blank col-0 rows
+        $lastIpAddress    = ''; // col 1 — blank after first row of each group
+        $lastEmailAddress = ''; // col 2 — blank after first row of each group
+        $lastVatNumber    = ''; // col 3 (P.IVA) — blank after first row of each group
+
+        foreach ($sheetEntries as $entry) {
+            $rawRow = $entry['row'] ?? [];
+            $rawRow = array_pad($rawRow, 18, '');
+            if (empty(array_filter($rawRow, static fn($v) => trim((string)$v) !== ''))) {
+                continue;
+            }
+
+            $rawServerName = trim((string)($rawRow[0] ?? ''));
+            // When col 0 is populated we are on the first row of a new client group —
+            // capture all four client-level fields and propagate them to subsequent rows.
+            if ($rawServerName !== '') {
+                $lastServerName   = $rawServerName;
+                $lastIpAddress    = trim((string)($rawRow[1] ?? ''));
+                $lastEmailAddress = trim((string)($rawRow[2] ?? ''));
+                $lastVatNumber    = trim((string)($rawRow[3] ?? ''));
+            }
+
+            $mapped = [
+                'server_name'  => $lastServerName,   // propagated from group's first row
+                'ip_address'   => $lastIpAddress,    // propagated from group's first row
+                'email_address' => $lastEmailAddress, // propagated from group's first row
+                'provider'     => $lastVatNumber,    // propagated (P.IVA) from group's first row
+                'name' => trim((string)($rawRow[4] ?? '')),
+                'domain' => trim((string)($rawRow[5] ?? '')),
+                'assigned_email' => trim((string)($rawRow[6] ?? '')),
+                'proprietario' => trim((string)($rawRow[7] ?? '')),
+                'registrante_import' => trim((string)($rawRow[8] ?? '')),
+                'expiry_date' => $this->normalizeSyncValue('expiry_date', $rawRow[9] ?? ''),
+                'status' => trim((string)($rawRow[10] ?? '')),
+                'vendita' => trim((string)($rawRow[11] ?? '')),
+                'dns' => trim((string)($rawRow[12] ?? '')),
+                'cpanel' => trim((string)($rawRow[13] ?? '')),
+                'epanel' => trim((string)($rawRow[14] ?? '')),
+                'notes' => trim((string)($rawRow[15] ?? '')),
+                'manutenzione' => trim((string)($rawRow[16] ?? '')),
+                'remark' => trim((string)($rawRow[17] ?? '')),
+            ];
+
+            $mapped['service_type'] = $this->normalizeSheetServiceType((string)($mapped['name'] ?? ''));
+            $key = $this->buildSheetKey((string)($mapped['domain'] ?? ''), (string)($mapped['service_type'] ?? 'hosting_web'));
+            if ($key === null) {
+                continue;
+            }
+
+            $rowNo = (int)($entry['rowNo'] ?? 0);
+            if (isset($indexed[$key])) {
+                $errors[] = "Duplicate key in Google Sheet for {$key} (rows {$indexed[$key]['rowNo']} and {$rowNo})";
+                continue;
+            }
+
+            $indexed[$key] = [
+                'rowNo' => $rowNo,
+                'raw' => $rawRow,
+                'mapped' => $mapped,
+            ];
+        }
+
+        return ['rows' => $indexed, 'errors' => $errors];
+    }
+
+    private function extractComparableSnapshot(array $row): array
+    {
+        $snapshot = [
+            'domain' => trim((string)($row['domain'] ?? '')),
+            'service_type' => $this->normalizeSheetServiceType((string)($row['service_type'] ?? 'hosting_web')),
         ];
 
-        try {
-            // First: merge Google to DB (imports new/updated records from Google)
-            $dbResult = $this->mergeGoogleToDatabase($googleData);
-            $result['added_to_db'] = $dbResult['added'] ?? 0;
-            $result['updated_in_db'] = $dbResult['updated'] ?? 0;
-            if (!empty($dbResult['errors'])) {
-                $result['errors'] = array_merge($result['errors'], $dbResult['errors']);
+        foreach ($this->getThreeWaySyncFields() as $field) {
+            $snapshot[$field] = $this->normalizeSyncValue($field, $row[$field] ?? '');
+        }
+
+        return $snapshot;
+    }
+
+    private function applyDatabasePatches(array $dbRowsByKey, array $dbPatches, array $dbCreates): array
+    {
+        $result        = ['added_to_db' => 0, 'updated_in_db' => 0, 'errors' => []];
+        $providerCache = [];  // shared across both loops
+        $haCache       = [];  // hosting_account cache
+
+        foreach ($dbPatches as $key => $patches) {
+            if (!isset($dbRowsByKey[$key])) {
+                continue;
             }
 
-            // Second: merge DB to Google (exports all DB records to Google)
-            $googleResult = $this->mergeDatabaseToGoogle($dbData, $settings);
-            $result['updated_in_google'] = $googleResult['updated'] ?? 0;
-            if (!empty($googleResult['errors'])) {
-                $result['errors'] = array_merge($result['errors'], $googleResult['errors']);
+            $existing = $dbRowsByKey[$key];
+            $websiteId = (int)($existing['id'] ?? 0);
+            if ($websiteId <= 0) {
+                continue;
             }
-        } catch (Exception $e) {
-            $result['errors'][] = "Bidirectional merge failed: " . $e->getMessage();
+
+            foreach ($patches as $field => $value) {
+                $existing[$field] = $value;
+            }
+
+            // Only refresh provider/hosting-account when a relevant field was actually patched.
+            $relevantPatchFields = ['registrante_import', 'cpanel', 'expiry_date', 'service_type'];
+            if (!empty(array_intersect(array_keys($patches), $relevantPatchFields))) {
+                $pRegistrante = trim((string)($existing['registrante_import'] ?? ''));
+                $pServiceType = $this->normalizeSheetServiceType((string)($existing['service_type'] ?? 'hosting_web'));
+                if ($pRegistrante !== '') {
+                    $existing['provider_id'] = $this->resolveOrCreateProvider($pRegistrante, $pServiceType, $providerCache);
+                    $pHostingId = (int)($existing['hosting_id'] ?? 0);
+                    if ($pHostingId > 0 && $pServiceType !== 'domain' && $existing['provider_id']) {
+                        $pCpanel     = trim((string)($existing['cpanel'] ?? ''));
+                        $pExpiry     = $this->normalizeSyncValue('expiry_date', $existing['expiry_date'] ?? '');
+                        $pClientName = trim((string)($existing['server_name'] ?? ''));
+                        $existing['hosting_account_id'] = $this->resolveOrCreateHostingAccount(
+                            $pHostingId,
+                            $existing['provider_id'],
+                            $pCpanel,
+                            $pClientName,
+                            trim((string)($existing['domain'] ?? '')),
+                            $pExpiry,
+                            $pServiceType,
+                            $haCache
+                        );
+                    }
+                }
+            }
+
+            if ($this->websiteModel->updateWebsite($websiteId, $existing)) {
+                $result['updated_in_db']++;
+            } else {
+                $result['errors'][] = "Failed to update database row for {$key}";
+            }
+        }
+
+        foreach ($dbCreates as $key => $row) {
+            $serverName = trim((string)($row['server_name'] ?? ''));
+            $isDominiLiberi = strtoupper($serverName) === 'DOMINI LIBERI';
+
+            // Resolve hosting_id from the client name (propagated by getGoogleRowsByKeyIndexed).
+            $hostingId = null;
+            if ($serverName !== '' && !$isDominiLiberi) {
+                try {
+                    $hStmt = $this->db->prepare("SELECT id FROM hosting WHERE name = ?");
+                    $hStmt->execute([$serverName]);
+                    $hostingId = $hStmt->fetchColumn() ?: null;
+
+                    $clientEmail   = trim((string)($row['email_address'] ?? ''));
+                    $clientAddress = trim((string)($row['ip_address']    ?? ''));
+                    $clientVat     = trim((string)($row['provider']      ?? ''));
+
+                    if (!$hostingId) {
+                        // Client exists in sheet but not yet in DB — create it.
+                        $hIns = $this->db->prepare("
+                            INSERT INTO hosting (name, email_address, address, vat_number, status)
+                            VALUES (?, ?, ?, ?, 'active')
+                        ");
+                        $hIns->execute([$serverName, $clientEmail, $clientAddress, $clientVat]);
+                        $hostingId = (int)$this->db->lastInsertId() ?: null;
+                    } else {
+                        // Update contact info on existing client record.
+                        $hUpd = $this->db->prepare("
+                            UPDATE hosting SET email_address = ?, address = ?, vat_number = ?
+                            WHERE id = ?
+                        ");
+                        $hUpd->execute([$clientEmail, $clientAddress, $clientVat, $hostingId]);
+                    }
+                } catch (Throwable $e) {
+                    error_log("applyDatabasePatches hosting lookup error for '{$serverName}': " . $e->getMessage());
+                }
+            }
+
+            $insert = [
+                'hosting_id'         => $hostingId,
+                'domain'             => trim((string)($row['domain'] ?? '')),
+                'service_type'       => $this->normalizeSheetServiceType((string)($row['service_type'] ?? 'hosting_web')),
+                'assigned_email'     => trim((string)($row['assigned_email'] ?? '')),
+                'proprietario'       => trim((string)($row['proprietario'] ?? '')),
+                'vendita'            => trim((string)($row['vendita'] ?? '')),
+                'expiry_date'        => $this->normalizeSyncValue('expiry_date', $row['expiry_date'] ?? ''),
+                'status'             => trim((string)($row['status'] ?? 'active')) ?: 'active',
+                'cpanel'             => trim((string)($row['cpanel'] ?? '')),
+                'epanel'             => trim((string)($row['epanel'] ?? '')),
+                'notes'              => trim((string)($row['notes'] ?? '')),
+                'manutenzione'       => trim((string)($row['manutenzione'] ?? '')),
+                'remark'             => trim((string)($row['remark'] ?? '')),
+                'dns'                => trim((string)($row['dns'] ?? '')),
+                'registrante_import' => trim((string)($row['registrante_import'] ?? '')),
+            ];
+
+            if ($insert['domain'] === '') {
+                continue;
+            }
+
+            // Resolve / create provider and hosting account for this new row.
+            $cRegistrante = $insert['registrante_import'];
+            $cServiceType = $insert['service_type'];
+            $insert['provider_id'] = $this->resolveOrCreateProvider($cRegistrante, $cServiceType, $providerCache);
+
+            $insert['hosting_account_id'] = null;
+            if ($hostingId && $cServiceType !== 'domain' && $insert['provider_id']) {
+                $insert['hosting_account_id'] = $this->resolveOrCreateHostingAccount(
+                    $hostingId,
+                    $insert['provider_id'],
+                    $insert['cpanel'],
+                    $serverName,
+                    trim((string)($insert['domain'] ?? '')),
+                    $insert['expiry_date'],
+                    $cServiceType,
+                    $haCache
+                );
+            }
+
+            if ($this->websiteModel->createWebsite($insert)) {
+                $result['added_to_db']++;
+            } else {
+                $result['errors'][] = "Failed to create database row for {$key}";
+            }
         }
 
         return $result;
+    }
+
+    private function applyGooglePatches(\Google\Service\Sheets $service, array $settings, array $googleRowsByKey, array $googlePatches): array
+    {
+        $result = ['updated_in_google' => 0, 'skipped_in_google' => 0, 'errors' => []];
+
+        if (empty($googlePatches)) {
+            return $result;
+        }
+
+        $columnMap = $this->getGoogleSheetColumnMap();
+        $updates = [];
+
+        foreach ($googlePatches as $key => $patches) {
+            if (!isset($googleRowsByKey[$key])) {
+                $result['skipped_in_google']++;
+                continue;
+            }
+
+            $entry = $googleRowsByKey[$key];
+            $rowNo = (int)$entry['rowNo'];
+            $raw = array_pad($entry['raw'], 18, '');
+            $changed = false;
+
+            foreach ($patches as $field => $value) {
+                if (!isset($columnMap[$field])) {
+                    continue;
+                }
+
+                $colIdx = $columnMap[$field];
+                // expiry_date must be written in display format (DD-MM-YYYY) to match
+                // the format used by export/dbRowToSheetRow. normalizeSyncValue returns
+                // YYYY-MM-DD which is only for internal baseline comparisons.
+                if ($field === 'expiry_date') {
+                    $newValue = sm_format_date($this->normalizeSyncValue($field, $value), '');
+                } else {
+                    $newValue = $this->normalizeSyncValue($field, $value);
+                }
+
+                // Live sheet protection: do not clear populated cells during automated merge.
+                if ($newValue === '' && trim((string)($raw[$colIdx] ?? '')) !== '') {
+                    continue;
+                }
+
+                if ((string)($raw[$colIdx] ?? '') !== $newValue) {
+                    $raw[$colIdx] = $newValue;
+                    $changed = true;
+                }
+            }
+
+            if ($changed) {
+                $updates[] = new \Google\Service\Sheets\ValueRange([
+                    'range' => $settings['sheet_name'] . '!A' . $rowNo . ':R' . $rowNo,
+                    'values' => [$raw],
+                ]);
+                $result['updated_in_google']++;
+            }
+        }
+
+        if (!empty($updates)) {
+            $batchBody = new \Google\Service\Sheets\BatchUpdateValuesRequest([
+                'valueInputOption' => 'USER_ENTERED',
+                'data' => $updates,
+            ]);
+            $service->spreadsheets_values->batchUpdate($settings['sheet_id'], $batchBody);
+        }
+
+        return $result;
+    }
+
+    private function acquireGoogleSyncLock(string $lockName, int $timeoutSeconds = 10): bool
+    {
+        $stmt = $this->db->prepare('SELECT GET_LOCK(?, ?)');
+        $stmt->execute([$lockName, $timeoutSeconds]);
+        return (int)$stmt->fetchColumn() === 1;
+    }
+
+    private function releaseGoogleSyncLock(string $lockName): void
+    {
+        try {
+            $stmt = $this->db->prepare('SELECT RELEASE_LOCK(?)');
+            $stmt->execute([$lockName]);
+        } catch (Throwable $e) {
+            error_log('Failed to release Google sync lock: ' . $e->getMessage());
+        }
+    }
+
+    private function executeThreeWayMerge(array $settings, string $direction = 'together', array $options = []): array
+    {
+        require_once APP_PATH . '/vendor/autoload.php';
+
+        if (!in_array($direction, ['forward', 'backward', 'together'], true)) {
+            throw new InvalidArgumentException('Invalid three-way merge direction');
+        }
+
+        $result = [
+            'added_to_db' => 0,
+            'updated_in_db' => 0,
+            'updated_in_google' => 0,
+            'added_to_google' => 0,
+            'skipped_in_google' => 0,
+            'conflicts_resolved' => 0,
+            'conflicts_detected' => 0,
+            'baseline_initialized' => false,
+            'errors' => [],
+        ];
+
+        $conflictPolicy = strtolower(trim((string)($options['conflict_policy'] ?? 'manual')));
+        if (!in_array($conflictPolicy, ['manual', 'prefer_db', 'prefer_google'], true)) {
+            $conflictPolicy = 'manual';
+        }
+        $dryRun = !empty($options['dry_run']);
+        $result['conflict_policy'] = $conflictPolicy;
+        $result['dry_run'] = $dryRun;
+
+        $lockKey = 'google_sync:' . ($settings['sheet_id'] ?? 'unknown') . ':' . ($settings['sheet_name'] ?? 'sheet');
+        $lockAcquired = false;
+        $preEntitySnapshot = [];
+
+        try {
+            $lockAcquired = $this->acquireGoogleSyncLock($lockKey, 15);
+            if (!$lockAcquired) {
+                throw new Exception('Another Google sync is already running. Please retry in a few seconds.');
+            }
+
+            // Ensure transactional support tables exist before opening any DB transaction.
+            $this->ensureGoogleSyncBaselineTable();
+
+            $baseline = $this->loadGoogleSyncBaseline();
+            $baselineWasEmpty = empty($baseline);
+
+            $client = $this->getGoogleClient($settings);
+            $service = new \Google\Service\Sheets($client);
+
+            $dbRowsByKey = $this->getDatabaseRowsByKey();
+            // Full pre-sync DB snapshot so rollback can restore websites + clients + providers + hosting accounts.
+            $preEntitySnapshot = $this->captureRollbackEntitySnapshot();
+            $googleIndex = $this->getGoogleRowsByKeyIndexed($service, $settings);
+            $googleRowsByKey = $googleIndex['rows'];
+            if (!empty($googleIndex['errors'])) {
+                $result['errors'] = array_merge($result['errors'], $googleIndex['errors']);
+            }
+
+            $allKeys = array_values(array_unique(array_merge(
+                array_keys($dbRowsByKey),
+                array_keys($googleRowsByKey),
+                array_keys($baseline)
+            )));
+
+            $fields = $this->getThreeWaySyncFields();
+            $dbPatches = [];
+            $dbCreates = [];
+            $googlePatches = [];
+            $googleAppends = [];
+            $nextBaseline = $baseline;
+
+            foreach ($allKeys as $key) {
+                $dbRow = $dbRowsByKey[$key] ?? null;
+                $googleRow = $googleRowsByKey[$key]['mapped'] ?? null;
+                $baseRow = $baseline[$key] ?? null;
+                $resolvedSnapshot = [
+                    'domain' => trim((string)($dbRow['domain'] ?? $googleRow['domain'] ?? '')),
+                    'service_type' => $this->normalizeSheetServiceType((string)($dbRow['service_type'] ?? $googleRow['service_type'] ?? 'hosting_web')),
+                ];
+
+                if ($dbRow === null && $googleRow !== null) {
+                    if (in_array($direction, ['forward', 'together'], true)) {
+                        $dbCreates[$key] = $googleRow;
+                    }
+                    $nextBaseline[$key] = $this->extractComparableSnapshot($googleRow);
+                    continue;
+                }
+
+                if ($dbRow !== null && $googleRow === null) {
+                    if (in_array($direction, ['backward', 'together'], true)) {
+                        $googleAppends[$key] = $dbRow;
+                    }
+                    $nextBaseline[$key] = $this->extractComparableSnapshot($dbRow);
+                    continue;
+                }
+
+                if ($dbRow === null && $googleRow === null) {
+                    continue;
+                }
+
+                foreach ($fields as $field) {
+                    $dbVal = $this->normalizeSyncValue($field, $dbRow[$field] ?? '');
+                    $googleVal = $this->normalizeSyncValue($field, $googleRow[$field] ?? '');
+
+                    if ($baseRow === null) {
+                        if ($dbVal === $googleVal) {
+                            $resolvedSnapshot[$field] = $dbVal;
+                            continue;
+                        }
+
+                        // First safe run with no baseline: keep divergent non-empty values as conflicts.
+                        if ($dbVal !== '' && $googleVal !== '') {
+                            $result['conflicts_detected']++;
+                            $result['errors'][] = "Conflict on {$key} field {$field}: baseline missing and values differ";
+                            continue;
+                        }
+
+                        if ($googleVal !== '' && $dbVal === '' && in_array($direction, ['forward', 'together'], true)) {
+                            $dbPatches[$key][$field] = $googleVal;
+                        } elseif ($dbVal !== '' && $googleVal === '' && in_array($direction, ['backward', 'together'], true)) {
+                            $googlePatches[$key][$field] = $dbVal;
+                        }
+
+                        $resolvedSnapshot[$field] = $googleVal !== '' ? $googleVal : $dbVal;
+                        continue;
+                    }
+
+                    $baseVal = $this->normalizeSyncValue($field, $baseRow[$field] ?? '');
+                    $dbChanged = $dbVal !== $baseVal;
+                    $googleChanged = $googleVal !== $baseVal;
+
+                    if ($dbChanged && !$googleChanged) {
+                        if (in_array($direction, ['backward', 'together'], true)) {
+                            $googlePatches[$key][$field] = $dbVal;
+                        }
+                        $resolvedSnapshot[$field] = $dbVal;
+                        continue;
+                    }
+
+                    if (!$dbChanged && $googleChanged) {
+                        if (in_array($direction, ['forward', 'together'], true)) {
+                            $dbPatches[$key][$field] = $googleVal;
+                        }
+                        $resolvedSnapshot[$field] = $googleVal;
+                        continue;
+                    }
+
+                    if ($dbChanged && $googleChanged && $dbVal !== $googleVal) {
+                        if ($conflictPolicy === 'prefer_db') {
+                            if (in_array($direction, ['backward', 'together'], true)) {
+                                $googlePatches[$key][$field] = $dbVal;
+                                $result['conflicts_resolved']++;
+                                $resolvedSnapshot[$field] = $dbVal;
+                            } else {
+                                $result['conflicts_detected']++;
+                                $result['errors'][] = "Conflict on {$key} field {$field}: prefer_db is incompatible with '{$direction}' direction";
+                                $resolvedSnapshot[$field] = $baseVal;
+                            }
+                        } elseif ($conflictPolicy === 'prefer_google') {
+                            if (in_array($direction, ['forward', 'together'], true)) {
+                                $dbPatches[$key][$field] = $googleVal;
+                                $result['conflicts_resolved']++;
+                                $resolvedSnapshot[$field] = $googleVal;
+                            } else {
+                                $result['conflicts_detected']++;
+                                $result['errors'][] = "Conflict on {$key} field {$field}: prefer_google is incompatible with '{$direction}' direction";
+                                $resolvedSnapshot[$field] = $baseVal;
+                            }
+                        } else {
+                            $result['conflicts_detected']++;
+                            $result['errors'][] = "Conflict on {$key} field {$field}: db='{$dbVal}' google='{$googleVal}' baseline='{$baseVal}'";
+                            $resolvedSnapshot[$field] = $baseVal;
+                        }
+                        continue;
+                    }
+
+                    $resolvedSnapshot[$field] = $dbVal;
+                }
+
+                $nextBaseline[$key] = $resolvedSnapshot;
+            }
+
+            if (!$dryRun && in_array($direction, ['backward', 'together'], true)) {
+                $googleApplyResult = $this->applyGooglePatches($service, $settings, $googleRowsByKey, $googlePatches);
+                $result['updated_in_google'] += $googleApplyResult['updated_in_google'];
+                $result['skipped_in_google'] += $googleApplyResult['skipped_in_google'];
+                if (!empty($googleApplyResult['errors'])) {
+                    $result['errors'] = array_merge($result['errors'], $googleApplyResult['errors']);
+                }
+
+                // Append DB-only records as new rows in Google Sheet (grouped like export).
+                if (!empty($googleAppends)) {
+                    $appendRows = $this->buildGroupedSheetRows(array_values($googleAppends));
+                    $appendResult = $this->appendRowsToGoogleSheet($service, $settings, $appendRows);
+                    $result['added_to_google'] += $appendResult['appended'] ?? 0;
+                    if (!empty($appendResult['errors'])) {
+                        $result['errors'] = array_merge($result['errors'], $appendResult['errors']);
+                    }
+                }
+            }
+
+            if ($dryRun) {
+                $result['updated_in_db'] = count($dbPatches);
+                $result['added_to_db'] = count($dbCreates);
+                $result['updated_in_google'] = count($googlePatches);
+                $result['added_to_google'] = count($googleAppends);
+            }
+
+            // Re-apply header/column formatting after any Google-side changes.
+            if (!$dryRun && in_array($direction, ['backward', 'together'], true)) {
+                $sheetId = $this->getSheetId($service, $settings);
+                if ($sheetId !== null) {
+                    $this->writeSheetHeaders($service, $settings);
+                    $totalRows = count($dbRowsByKey) + 2; // data rows + 2 header rows
+                    $this->applySheetFormatting($service, $settings, $sheetId, $totalRows);
+                }
+            }
+
+            if (!$dryRun) {
+                // Persist DB updates and baseline atomically.
+                $this->db->beginTransaction();
+                try {
+                    if (in_array($direction, ['forward', 'together'], true)) {
+                        $dbApplyResult = $this->applyDatabasePatches($dbRowsByKey, $dbPatches, $dbCreates);
+                        $result['added_to_db'] += $dbApplyResult['added_to_db'];
+                        $result['updated_in_db'] += $dbApplyResult['updated_in_db'];
+                        if (!empty($dbApplyResult['errors'])) {
+                            $result['errors'] = array_merge($result['errors'], $dbApplyResult['errors']);
+                        }
+                    }
+
+                    $this->saveGoogleSyncBaseline($nextBaseline);
+                    if ($baselineWasEmpty && !empty($nextBaseline)) {
+                        $result['baseline_initialized'] = true;
+                    }
+
+                    $this->db->commit();
+                } catch (Throwable $txe) {
+                    if ($this->db->inTransaction()) {
+                        $this->db->rollBack();
+                    }
+                    throw $txe;
+                }
+            } else {
+                $result['baseline_initialized'] = false;
+            }
+
+            // Backward-compatible keys used by current UI messaging.
+            $result['added'] = $result['added_to_db'];
+            $result['updated'] = $result['updated_in_db'];
+        } catch (Exception $e) {
+            $result['errors'][] = $e->getMessage();
+        } finally {
+            // Embed rollback snapshots.
+            // pre_merge_snapshot/added_keys are legacy website-only rollback fields.
+            // pre_entity_snapshot is the full snapshot used by the new rollback path.
+            $result['pre_merge_snapshot'] = $dbRowsByKey ?? [];
+            $result['added_keys'] = array_keys($dbCreates ?? []);
+            $result['pre_entity_snapshot'] = $preEntitySnapshot ?? [];
+            $this->logGoogleSyncAudit($direction, $conflictPolicy, $dryRun, $result);
+            if ($lockAcquired) {
+                $this->releaseGoogleSyncLock($lockKey);
+            }
+        }
+
+        return $result;
+    }
+
+    public function rollbackGoogleSync(): void
+    {
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: index.php?action=login');
+            exit;
+        }
+
+        $lang     = $_GET['lang'] ?? 'en';
+        $redirect = "index.php?action=import_export&lang={$lang}";
+        $auditId  = (int)($_GET['audit_id'] ?? 0);
+
+        if ($auditId <= 0) {
+            $_SESSION['google_sync_result'] = ['errors' => ['Invalid rollback ID.']];
+            header("Location: {$redirect}");
+            exit;
+        }
+
+        try {
+            if (!$this->tableExists('google_sheets_sync_audit')) {
+                throw new Exception('Sync audit table does not exist.');
+            }
+
+            $stmt = $this->db->prepare("SELECT result_json, direction, dry_run FROM google_sheets_sync_audit WHERE id = ?");
+            $stmt->execute([$auditId]);
+            $audit = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$audit) {
+                throw new Exception("Audit record #{$auditId} not found.");
+            }
+
+            if ((int)$audit['dry_run']) {
+                throw new Exception('Cannot roll back a dry-run operation — no changes were made.');
+            }
+
+            $resultData         = json_decode($audit['result_json'] ?? '{}', true);
+            $preEntitySnapshot  = $resultData['pre_entity_snapshot'] ?? [];
+            $preSnapshot        = $resultData['pre_merge_snapshot'] ?? [];
+            $addedKeys          = $resultData['added_keys'] ?? [];
+
+            $restored = 0;
+            $deleted  = 0;
+            $errors   = [];
+
+            if (!empty($preEntitySnapshot)) {
+                // New rollback path: restore full entities (providers, hosting, hosting_accounts, websites).
+                $this->db->beginTransaction();
+                try {
+                    $entityRestore = $this->restoreRollbackEntitySnapshot($preEntitySnapshot);
+                    $restored = (int)($entityRestore['restored_total'] ?? 0);
+                    $deleted  = (int)($entityRestore['deleted_total'] ?? 0);
+                    $errors   = $entityRestore['errors'] ?? [];
+
+                    // Keep baseline consistent with restored DB state.
+                    $this->saveGoogleSyncBaseline($this->buildCurrentDatabaseBaselineSnapshot());
+
+                    $this->db->commit();
+                } catch (Throwable $txe) {
+                    if ($this->db->inTransaction()) {
+                        $this->db->rollBack();
+                    }
+                    throw $txe;
+                }
+
+                $_SESSION['google_sync_result'] = [
+                    'rollback'  => true,
+                    'audit_id'  => $auditId,
+                    'restored'  => $restored,
+                    'deleted'   => $deleted,
+                    'errors'    => $errors,
+                ];
+            } else {
+                // Legacy rollback path: websites only.
+                if (empty($preSnapshot) && empty($addedKeys)) {
+                    throw new Exception('No rollback snapshot available for this sync operation (it may predate rollback support).');
+                }
+
+                $this->db->beginTransaction();
+                try {
+                    // Restore rows that existed before the sync.
+                    $addedKeySet = array_flip($addedKeys);
+                    foreach ($preSnapshot as $key => $row) {
+                        if (isset($addedKeySet[$key])) {
+                            continue; // these will be deleted instead
+                        }
+                        $websiteId = (int)($row['id'] ?? 0);
+                        if ($websiteId <= 0) {
+                            continue;
+                        }
+                        if ($this->websiteModel->updateWebsite($websiteId, $row)) {
+                            $restored++;
+                        } else {
+                            $errors[] = "Failed to restore row for {$key}";
+                        }
+                    }
+
+                    // Delete rows that were created during the sync.
+                    foreach ($addedKeys as $key) {
+                        $parts       = explode('|', $key, 2);
+                        $domain      = trim($parts[0] ?? '');
+                        $serviceType = trim($parts[1] ?? '');
+                        if ($domain === '') {
+                            continue;
+                        }
+                        $del = $this->db->prepare(
+                            "SELECT id FROM websites WHERE domain = ? AND service_type = ?"
+                        );
+                        $del->execute([$domain, $serviceType]);
+                        foreach ($del->fetchAll(PDO::FETCH_COLUMN, 0) as $delId) {
+                            if ($this->websiteModel->deleteWebsite((int)$delId)) {
+                                $deleted++;
+                            } else {
+                                $errors[] = "Failed to delete synced row for {$key}";
+                            }
+                        }
+                    }
+
+                    // Keep baseline consistent with restored DB state.
+                    $this->saveGoogleSyncBaseline($this->buildCurrentDatabaseBaselineSnapshot());
+
+                    $this->db->commit();
+                } catch (Throwable $txe) {
+                    if ($this->db->inTransaction()) {
+                        $this->db->rollBack();
+                    }
+                    throw $txe;
+                }
+
+                $_SESSION['google_sync_result'] = [
+                    'rollback'  => true,
+                    'audit_id'  => $auditId,
+                    'restored'  => $restored,
+                    'deleted'   => $deleted,
+                    'errors'    => $errors,
+                ];
+            }
+        } catch (Exception $e) {
+            $_SESSION['google_sync_result'] = ['errors' => [$e->getMessage()]];
+        }
+
+        header("Location: {$redirect}");
+        exit;
+    }
+
+    private function buildCurrentDatabaseBaselineSnapshot(): array
+    {
+        $rowsByKey = $this->getDatabaseRowsByKey();
+        $baseline = [];
+
+        foreach ($rowsByKey as $key => $row) {
+            $baseline[$key] = $this->extractComparableSnapshot($row);
+        }
+
+        return $baseline;
+    }
+
+    private function captureRollbackEntitySnapshot(): array
+    {
+        return [
+            'providers'        => $this->fetchTableRowsForRollback('providers'),
+            'hosting'          => $this->fetchTableRowsForRollback('hosting'),
+            'hosting_accounts' => $this->fetchTableRowsForRollback('hosting_accounts'),
+            'websites'         => $this->fetchTableRowsForRollback('websites'),
+        ];
+    }
+
+    private function fetchTableRowsForRollback(string $table): array
+    {
+        if (!$this->tableExists($table)) {
+            return [];
+        }
+
+        try {
+            $stmt = $this->db->query("SELECT * FROM `{$table}` ORDER BY id ASC");
+            return $stmt ? $stmt->fetchAll(PDO::FETCH_ASSOC) : [];
+        } catch (Throwable $e) {
+            error_log("fetchTableRowsForRollback error ({$table}): " . $e->getMessage());
+            return [];
+        }
+    }
+
+    private function rollbackInsertableColumns(string $table): array
+    {
+        $stmt = $this->db->prepare(
+            "SELECT COLUMN_NAME
+             FROM information_schema.COLUMNS
+             WHERE TABLE_SCHEMA = DATABASE()
+               AND TABLE_NAME = ?
+               AND EXTRA NOT LIKE '%GENERATED%'
+             ORDER BY ORDINAL_POSITION ASC"
+        );
+        $stmt->execute([$table]);
+        return $stmt->fetchAll(PDO::FETCH_COLUMN, 0) ?: [];
+    }
+
+    private function restoreTableRowsFromSnapshot(string $table, array $rows): array
+    {
+        $stats = ['deleted' => 0, 'restored' => 0, 'errors' => []];
+
+        if (!$this->tableExists($table)) {
+            return $stats;
+        }
+
+        try {
+            $countStmt = $this->db->query("SELECT COUNT(*) FROM `{$table}`");
+            $stats['deleted'] = (int)($countStmt ? $countStmt->fetchColumn() : 0);
+
+            $this->db->exec("DELETE FROM `{$table}`");
+
+            if (empty($rows)) {
+                return $stats;
+            }
+
+            $columns = $this->rollbackInsertableColumns($table);
+            if (empty($columns)) {
+                return $stats;
+            }
+
+            $columnSql = implode(', ', array_map(static fn($c) => "`{$c}`", $columns));
+            $placeholders = implode(', ', array_fill(0, count($columns), '?'));
+            $insertSql = "INSERT INTO `{$table}` ({$columnSql}) VALUES ({$placeholders})";
+            $insertStmt = $this->db->prepare($insertSql);
+
+            foreach ($rows as $row) {
+                $params = [];
+                foreach ($columns as $col) {
+                    $params[] = $row[$col] ?? null;
+                }
+                $insertStmt->execute($params);
+                $stats['restored']++;
+            }
+        } catch (Throwable $e) {
+            $stats['errors'][] = "Failed restoring table {$table}: " . $e->getMessage();
+        }
+
+        return $stats;
+    }
+
+    private function restoreRollbackEntitySnapshot(array $snapshot): array
+    {
+        $result = [
+            'restored_total' => 0,
+            'deleted_total' => 0,
+            'errors' => [],
+        ];
+
+        $this->db->exec('SET FOREIGN_KEY_CHECKS=0');
+        try {
+            // Delete in child->parent order, then restore parent->child.
+            $deleteOrder = ['websites', 'hosting_accounts', 'hosting', 'providers'];
+            $restoreOrder = ['providers', 'hosting', 'hosting_accounts', 'websites'];
+
+            foreach ($deleteOrder as $table) {
+                $stats = $this->restoreTableRowsFromSnapshot($table, []);
+                $result['deleted_total'] += (int)($stats['deleted'] ?? 0);
+                if (!empty($stats['errors'])) {
+                    $result['errors'] = array_merge($result['errors'], $stats['errors']);
+                }
+            }
+
+            foreach ($restoreOrder as $table) {
+                $rows = $snapshot[$table] ?? [];
+                $stats = $this->restoreTableRowsFromSnapshot($table, is_array($rows) ? $rows : []);
+                $result['restored_total'] += (int)($stats['restored'] ?? 0);
+                if (!empty($stats['errors'])) {
+                    $result['errors'] = array_merge($result['errors'], $stats['errors']);
+                }
+            }
+        } finally {
+            $this->db->exec('SET FOREIGN_KEY_CHECKS=1');
+        }
+
+        return $result;
+    }
+
+    private function tableExists(string $table): bool
+    {
+        try {
+            $stmt = $this->db->prepare(
+                "SELECT COUNT(*) FROM information_schema.TABLES
+                 WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ?"
+            );
+            $stmt->execute([$table]);
+            return (int)$stmt->fetchColumn() > 0;
+        } catch (Throwable $e) {
+            return false;
+        }
+    }
+
+    /**
+     * Apply consistent formatting to Google Sheet
+     * Used by both export and merge operations
+     */
+    private function writeSheetHeaders(\Google\Service\Sheets $service, array $settings): void
+    {
+        $row1 = [
+            'Clienti',
+            'Informazioni per il cliente', '', '',
+            'Informazioni sul servizio', '', '', '', '', '', '', '', '', '', '', '', '', '',
+        ];
+        $row2 = [
+            'Nome',
+            'Indirizzo', 'Email', 'P.IVA',
+            'Tipologia di Servizi', 'Dettaglio Servizi', 'Email Assegnata',
+            'Propietario', 'Registrante', 'Scadenza',
+            'Costo Server (iva esclusa)', 'Prezzo di vendita (iva esclusa)',
+            'Direct DNS A', 'User Name cpanel', 'Email panel', 'Bug report',
+            'Costo di manutezione sito', 'Notes',
+        ];
+        $service->spreadsheets_values->update(
+            $settings['sheet_id'],
+            $settings['sheet_name'] . '!A1:R2',
+            new \Google\Service\Sheets\ValueRange(['values' => [$row1, $row2]]),
+            ['valueInputOption' => 'USER_ENTERED']
+        );
+    }
+
+    private function applySheetFormatting($service, $settings, $sheetId, $totalRows)
+    {
+        $lastRow = max($totalRows, 3);
+
+        $hexToRgb = function ($hex) {
+            $hex = ltrim($hex, '#');
+            return [
+                'red'   => hexdec(substr($hex, 0, 2)) / 255,
+                'green' => hexdec(substr($hex, 2, 2)) / 255,
+                'blue'  => hexdec(substr($hex, 4, 2)) / 255,
+            ];
+        };
+
+        // Row 1: dark shades; Row 2: mid shades; both use white text
+        $colors = [
+            'row1Blue'  => '#1565c0',
+            'row1Red'   => '#c62828',
+            'row1Green' => '#1b5e20',
+            'row2Blue'  => '#1e88e5',
+            'row2Red'   => '#e53935',
+            'row2Green' => '#2e7d32',
+            'white'     => '#FFFFFF',
+            'textDark'  => '#2E2E2E',
+        ];
+
+        // Column width specifications (in pixels) — A through R (18 columns)
+        $columnWidths = [
+            'A' => 200,  // Nome
+            'B' => 220,  // Indirizzo
+            'C' => 220,  // Email
+            'D' => 150,  // P.IVA
+            'E' => 150,  // Tipologia di Servizi
+            'F' => 200,  // Dettaglio Servizi
+            'G' => 220,  // Email Assegnata
+            'H' => 140,  // Propietario
+            'I' => 140,  // Registrante
+            'J' => 130,  // Scadenza
+            'K' => 160,  // Costo Server
+            'L' => 170,  // Prezzo di vendita
+            'M' => 130,  // Direct DNS A
+            'N' => 160,  // User Name cpanel
+            'O' => 220,  // Email panel
+            'P' => 200,  // Bug report
+            'Q' => 200,  // Costo di manutezione sito
+            'R' => 200,  // Notes
+        ];
+
+        // Build column-width requests for all 18 columns (A–R)
+        $colKeys  = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R'];
+        $requests = [];
+        foreach ($colKeys as $idx => $key) {
+            $requests[] = new \Google\Service\Sheets\Request([
+                'updateDimensionProperties' => [
+                    'range' => [
+                        'sheetId'    => $sheetId,
+                        'dimension'  => 'COLUMNS',
+                        'startIndex' => $idx,
+                        'endIndex'   => $idx + 1,
+                    ],
+                    'properties' => ['pixelSize' => $columnWidths[$key]],
+                    'fields'     => 'pixelSize',
+                ],
+            ]);
+        }
+
+        // Row-height: row 1 = 50px, row 2 = 60px (accommodates wrapped header text)
+        $requests[] = new \Google\Service\Sheets\Request([
+            'updateDimensionProperties' => [
+                'range' => ['sheetId' => $sheetId, 'dimension' => 'ROWS', 'startIndex' => 0, 'endIndex' => 1],
+                'properties' => ['pixelSize' => 50],
+                'fields' => 'pixelSize',
+            ],
+        ]);
+        $requests[] = new \Google\Service\Sheets\Request([
+            'updateDimensionProperties' => [
+                'range' => ['sheetId' => $sheetId, 'dimension' => 'ROWS', 'startIndex' => 1, 'endIndex' => 2],
+                'properties' => ['pixelSize' => 60],
+                'fields' => 'pixelSize',
+            ],
+        ]);
+        if ($lastRow > 2) {
+            $requests[] = new \Google\Service\Sheets\Request([
+                'updateDimensionProperties' => [
+                    'range' => ['sheetId' => $sheetId, 'dimension' => 'ROWS', 'startIndex' => 2, 'endIndex' => $lastRow],
+                    'properties' => ['pixelSize' => 34],
+                    'fields' => 'pixelSize',
+                ],
+            ]);
+        }
+
+        // ── Unmerge first two rows, then re-apply merges ──────────────────────
+        $requests[] = new \Google\Service\Sheets\Request([
+            'unmergeCells' => [
+                'range' => ['sheetId' => $sheetId, 'startRowIndex' => 0, 'endRowIndex' => 2,
+                            'startColumnIndex' => 0, 'endColumnIndex' => 18],
+            ],
+        ]);
+        // Merge B1:D1  (indices 1–3 inclusive → endIndex 4)
+        $requests[] = new \Google\Service\Sheets\Request([
+            'mergeCells' => [
+                'range' => ['sheetId' => $sheetId, 'startRowIndex' => 0, 'endRowIndex' => 1,
+                            'startColumnIndex' => 1, 'endColumnIndex' => 4],
+                'mergeType' => 'MERGE_ALL',
+            ],
+        ]);
+        // Merge E1:R1  (indices 4–17 inclusive → endIndex 18)
+        $requests[] = new \Google\Service\Sheets\Request([
+            'mergeCells' => [
+                'range' => ['sheetId' => $sheetId, 'startRowIndex' => 0, 'endRowIndex' => 1,
+                            'startColumnIndex' => 4, 'endColumnIndex' => 18],
+                'mergeType' => 'MERGE_ALL',
+            ],
+        ]);
+
+        // ── Row 1 cell formatting ─────────────────────────────────────────────
+        // A1 — blue
+        $requests[] = new \Google\Service\Sheets\Request([
+            'repeatCell' => [
+                'range' => ['sheetId' => $sheetId, 'startRowIndex' => 0, 'endRowIndex' => 1,
+                            'startColumnIndex' => 0, 'endColumnIndex' => 1],
+                'cell' => ['userEnteredFormat' => [
+                    'backgroundColor'    => $hexToRgb($colors['row1Blue']),
+                    'textFormat'         => ['bold' => true, 'foregroundColor' => $hexToRgb($colors['white']), 'fontSize' => 13],
+                    'horizontalAlignment'=> 'CENTER', 'verticalAlignment' => 'MIDDLE',
+                    'wrapStrategy'       => 'WRAP',
+                ]],
+                'fields' => 'userEnteredFormat(backgroundColor,textFormat,horizontalAlignment,verticalAlignment,wrapStrategy)',
+            ],
+        ]);
+        // B1:D1 — red
+        $requests[] = new \Google\Service\Sheets\Request([
+            'repeatCell' => [
+                'range' => ['sheetId' => $sheetId, 'startRowIndex' => 0, 'endRowIndex' => 1,
+                            'startColumnIndex' => 1, 'endColumnIndex' => 4],
+                'cell' => ['userEnteredFormat' => [
+                    'backgroundColor'    => $hexToRgb($colors['row1Red']),
+                    'textFormat'         => ['bold' => true, 'foregroundColor' => $hexToRgb($colors['white']), 'fontSize' => 15],
+                    'horizontalAlignment'=> 'CENTER', 'verticalAlignment' => 'MIDDLE',
+                    'wrapStrategy'       => 'WRAP',
+                ]],
+                'fields' => 'userEnteredFormat(backgroundColor,textFormat,horizontalAlignment,verticalAlignment,wrapStrategy)',
+            ],
+        ]);
+        // E1:R1 — green
+        $requests[] = new \Google\Service\Sheets\Request([
+            'repeatCell' => [
+                'range' => ['sheetId' => $sheetId, 'startRowIndex' => 0, 'endRowIndex' => 1,
+                            'startColumnIndex' => 4, 'endColumnIndex' => 18],
+                'cell' => ['userEnteredFormat' => [
+                    'backgroundColor'    => $hexToRgb($colors['row1Green']),
+                    'textFormat'         => ['bold' => true, 'foregroundColor' => $hexToRgb($colors['white']), 'fontSize' => 14],
+                    'horizontalAlignment'=> 'CENTER', 'verticalAlignment' => 'MIDDLE',
+                    'wrapStrategy'       => 'WRAP',
+                ]],
+                'fields' => 'userEnteredFormat(backgroundColor,textFormat,horizontalAlignment,verticalAlignment,wrapStrategy)',
+            ],
+        ]);
+
+        // ── Row 2 cell formatting ─────────────────────────────────────────────
+        // A2 — blue
+        $requests[] = new \Google\Service\Sheets\Request([
+            'repeatCell' => [
+                'range' => ['sheetId' => $sheetId, 'startRowIndex' => 1, 'endRowIndex' => 2,
+                            'startColumnIndex' => 0, 'endColumnIndex' => 1],
+                'cell' => ['userEnteredFormat' => [
+                    'backgroundColor'    => $hexToRgb($colors['row2Blue']),
+                    'textFormat'         => ['bold' => true, 'foregroundColor' => $hexToRgb($colors['white']), 'fontSize' => 10],
+                    'horizontalAlignment'=> 'CENTER', 'verticalAlignment' => 'MIDDLE',
+                    'wrapStrategy'       => 'WRAP',
+                ]],
+                'fields' => 'userEnteredFormat(backgroundColor,textFormat,horizontalAlignment,verticalAlignment,wrapStrategy)',
+            ],
+        ]);
+        // B2:D2 — red
+        $requests[] = new \Google\Service\Sheets\Request([
+            'repeatCell' => [
+                'range' => ['sheetId' => $sheetId, 'startRowIndex' => 1, 'endRowIndex' => 2,
+                            'startColumnIndex' => 1, 'endColumnIndex' => 4],
+                'cell' => ['userEnteredFormat' => [
+                    'backgroundColor'    => $hexToRgb($colors['row2Red']),
+                    'textFormat'         => ['bold' => true, 'foregroundColor' => $hexToRgb($colors['white']), 'fontSize' => 10],
+                    'horizontalAlignment'=> 'CENTER', 'verticalAlignment' => 'MIDDLE',
+                    'wrapStrategy'       => 'WRAP',
+                ]],
+                'fields' => 'userEnteredFormat(backgroundColor,textFormat,horizontalAlignment,verticalAlignment,wrapStrategy)',
+            ],
+        ]);
+        // E2:R2 — green
+        $requests[] = new \Google\Service\Sheets\Request([
+            'repeatCell' => [
+                'range' => ['sheetId' => $sheetId, 'startRowIndex' => 1, 'endRowIndex' => 2,
+                            'startColumnIndex' => 4, 'endColumnIndex' => 18],
+                'cell' => ['userEnteredFormat' => [
+                    'backgroundColor'    => $hexToRgb($colors['row2Green']),
+                    'textFormat'         => ['bold' => true, 'foregroundColor' => $hexToRgb($colors['white']), 'fontSize' => 10],
+                    'horizontalAlignment'=> 'CENTER', 'verticalAlignment' => 'MIDDLE',
+                    'wrapStrategy'       => 'WRAP',
+                ]],
+                'fields' => 'userEnteredFormat(backgroundColor,textFormat,horizontalAlignment,verticalAlignment,wrapStrategy)',
+            ],
+        ]);
+
+        // ── Data rows (row 3 onwards) ─────────────────────────────────────────
+        $requests[] = new \Google\Service\Sheets\Request([
+            'repeatCell' => [
+                'range' => ['sheetId' => $sheetId, 'startRowIndex' => 2, 'endRowIndex' => $lastRow,
+                            'startColumnIndex' => 0, 'endColumnIndex' => 18],
+                'cell' => ['userEnteredFormat' => [
+                    'wrapStrategy'       => 'WRAP',
+                    'horizontalAlignment'=> 'CENTER', 'verticalAlignment' => 'MIDDLE',
+                    'textFormat'         => ['foregroundColor' => $hexToRgb($colors['textDark']), 'fontSize' => 11],
+                ]],
+                'fields' => 'userEnteredFormat(wrapStrategy,horizontalAlignment,verticalAlignment,textFormat)',
+            ],
+        ]);
+        // Column A data rows — bold
+        $requests[] = new \Google\Service\Sheets\Request([
+            'repeatCell' => [
+                'range' => ['sheetId' => $sheetId, 'startRowIndex' => 2, 'endRowIndex' => $lastRow,
+                            'startColumnIndex' => 0, 'endColumnIndex' => 1],
+                'cell' => ['userEnteredFormat' => [
+                    'textFormat'         => ['bold' => true, 'foregroundColor' => $hexToRgb($colors['textDark']), 'fontSize' => 11],
+                    'wrapStrategy'       => 'WRAP',
+                    'horizontalAlignment'=> 'CENTER', 'verticalAlignment' => 'MIDDLE',
+                ]],
+                'fields' => 'userEnteredFormat(textFormat,wrapStrategy,horizontalAlignment,verticalAlignment)',
+            ],
+        ]);
+
+        $service->spreadsheets->batchUpdate(
+            $settings['sheet_id'],
+            new \Google\Service\Sheets\BatchUpdateSpreadsheetRequest(['requests' => $requests])
+        );
+    }
+
+    private function mergeBidirectional($googleData, $dbData, $settings)
+    {
+        return $this->executeThreeWayMerge($settings, 'together', [
+            'conflict_policy' => 'manual',
+            'dry_run' => false,
+        ]);
     }
 
     // Diagnostic endpoint for debugging Google Sheets issues
@@ -2001,14 +3034,23 @@ class SettingsController
 
         $wordPressSiteModel = new WordPressSite($this->db);
         
-        // Get all websites
+        // Get all websites and keep only domain-like records.
+        // Previous code used $website['name'], which does not exist on websites rows,
+        // causing the selector list to be empty.
         $allWebsites = $this->websiteModel->getAllWebsites();
-        
-        // Filter to only include websites where type (name field) matches "domain" or "dominio" (case-insensitive)
-        $websites = array_filter($allWebsites, function($website) {
-            $type = strtolower($website['name'] ?? '');
-            return stripos($type, 'domain') !== false || stripos($type, 'dominio') !== false;
-        });
+        $websites = array_values(array_filter($allWebsites, function ($website) {
+            $serviceType = strtolower(trim((string)($website['service_type'] ?? '')));
+            if ($serviceType !== '') {
+                return in_array($serviceType, ['domain', 'dominio', 'website', 'site'], true);
+            }
+            return !empty($website['domain']);
+        }));
+        // If no typed matches exist, gracefully fall back to all websites with a domain.
+        if (empty($websites)) {
+            $websites = array_values(array_filter($allWebsites, function ($website) {
+                return !empty($website['domain']);
+            }));
+        }
 
         // Get configured WordPress sites with website info
         $wpSitesData = [];
@@ -2077,8 +3119,35 @@ class SettingsController
             exit;
         }
 
-        // Get all websites
-        $websites = $this->websiteModel->getAllWebsites();
+        // Get all websites and apply same domain-focused filter used on create page.
+        $allWebsites = $this->websiteModel->getAllWebsites();
+        $websites = array_values(array_filter($allWebsites, function ($website) {
+            $serviceType = strtolower(trim((string)($website['service_type'] ?? '')));
+            if ($serviceType !== '') {
+                return in_array($serviceType, ['domain', 'dominio', 'website', 'site'], true);
+            }
+            return !empty($website['domain']);
+        }));
+        if (empty($websites)) {
+            $websites = array_values(array_filter($allWebsites, function ($website) {
+                return !empty($website['domain']);
+            }));
+        }
+
+        // Ensure currently edited website is present even if it doesn't match filter tags.
+        $currentWebsite = $this->websiteModel->getWebsiteById((int)$wpSite['website_id']);
+        if ($currentWebsite) {
+            $exists = false;
+            foreach ($websites as $website) {
+                if ((int)$website['id'] === (int)$currentWebsite['id']) {
+                    $exists = true;
+                    break;
+                }
+            }
+            if (!$exists) {
+                $websites[] = $currentWebsite;
+            }
+        }
 
         // Get all configured WordPress sites
         $allWpSites = $wordPressSiteModel->getAllActive();

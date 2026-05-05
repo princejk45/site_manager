@@ -20,11 +20,15 @@ class DiagnosticsService
     /**
      * Fetch diagnostics for a WordPress site
      * Main orchestration method - handles all errors, stores results
-     * 
-     * @param int $websiteId ID from websites table
+     *
+     * @param int  $websiteId        ID from websites table
+     * @param bool $scoreHealthMetrics  Write composite score to health_metrics.
+     *                                  Pass false when the caller (e.g. DiagnosticsController)
+     *                                  will score using its own HealthScoreCalculator instance
+     *                                  (which has audit-trail context) to avoid a double-write.
      * @return array Result with status and data
      */
-    public function fetchDiagnostics($websiteId)
+    public function fetchDiagnostics($websiteId, bool $scoreHealthMetrics = true)
     {
         $result = [
             'success' => false,
@@ -80,6 +84,17 @@ class DiagnosticsService
             // Store security issues if present
             $latestDiag = $this->wordPressSiteModel->getLatestDiagnostics($wpSiteConfig['id']);
             $this->storeSecurityIssues($wpSiteConfig['id'], $latestDiag['id'], $normalized);
+
+            // ── Composite health score ─────────────────────────────────────────
+            // Skipped when $scoreHealthMetrics is false (caller handles scoring).
+            if ($scoreHealthMetrics) {
+                $this->storeCompositeHealthScore($websiteId, $normalized);
+            }
+
+            // ── Auto bug reports ───────────────────────────────────────────────
+            // Run BugReportGenerator so bug_reports_auto is kept current on every
+            // fetch (scheduled or on-demand), not just when analyze() is called.
+            $this->generateAutoBugReports($websiteId, $normalized);
 
             // Update success status
             $this->wordPressSiteModel->updateFetchStatus($wpSiteConfig['id'], 'healthy');
@@ -173,6 +188,44 @@ class DiagnosticsService
         }
     }
 
+    /**
+     * Compute and persist a composite health score from freshly-normalised data.
+     * Wrapped in try/catch so a health_metrics write failure never aborts the
+     * main diagnostics fetch.
+     *
+     * @param int   $websiteId  ID from the websites table (used by HealthScoreCalculator)
+     * @param array $normalized Normalised diagnostics array from DiagnosticsNormalizer::normalize()
+     */
+    private function storeCompositeHealthScore($websiteId, array $normalized)
+    {
+        try {
+            require_once APP_PATH . '/services/Health/HealthScoreCalculator.php';
+
+            // auditTrail is passed as null — storeHealthMetrics() must null-check it
+            $scorer = new HealthScoreCalculator($this->pdo, null);
+            $scorer->calculateScore($websiteId, $normalized);
+        } catch (Exception $e) {
+            error_log('DiagnosticsService: HealthScoreCalculator failed for website ' . $websiteId . ' — ' . $e->getMessage());
+        }
+    }
+    /**
+     * Run BugReportGenerator against fresh normalised data.
+     * Wrapped in try/catch so a write failure never aborts the main fetch.
+     *
+     * @param int   $websiteId
+     * @param array $normalized
+     */
+    private function generateAutoBugReports($websiteId, array $normalized)
+    {
+        try {
+            require_once APP_PATH . '/services/Diagnostics/BugReportGenerator.php';
+            // No audit trail or user context needed for automated background runs
+            $generator = new BugReportGenerator($this->pdo, null, 1);
+            $generator->generateReports($websiteId, $normalized);
+        } catch (Exception $e) {
+            error_log('DiagnosticsService: BugReportGenerator failed for website ' . $websiteId . ' — ' . $e->getMessage());
+        }
+    }
     /**
      * Get diagnostics for display
      */

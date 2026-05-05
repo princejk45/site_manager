@@ -1,5 +1,32 @@
 <?php include APP_PATH . '/includes/header.php'; ?>
-<?php include APP_PATH . '/includes/sidebar.php'; ?>
+<?php include APP_PATH . '/includes/sidebar-v2.php'; ?>
+<?php
+$website = $website ?? ['id' => 0, 'domain' => ''];
+$hasWordPressConfig = $hasWordPressConfig ?? false;
+
+$safe = static function (array $arr, string $key, string $default = 'N/A'): string {
+    $v = $arr[$key] ?? null;
+    if ($v === null || $v === '') {
+        return htmlspecialchars($default, ENT_QUOTES, 'UTF-8');
+    }
+    return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8');
+};
+
+$serviceType = $website['service_type'] ?? 'hosting_web';
+$providerLabel = __('websites.provider');
+$providerValue = $website['direct_provider_name'] ?? null;
+
+if ($serviceType === 'domain') {
+    $providerLabel = __('websites.registrar');
+}
+if ($serviceType === 'hosting_web') {
+    $providerLabel = __('websites.web_provider');
+    $providerValue = $website['hosting_account_provider_name'] ?? ($website['direct_provider_name'] ?? null);
+}
+if ($serviceType === 'hosting_mail') {
+    $providerLabel = __('websites.mail_provider');
+}
+?>
 
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
@@ -90,27 +117,43 @@
                             <table class="table table-bordered">
                                 <tr>
                                     <th><?= __('websites.domain_name') ?></th>
-                                    <td><?= htmlspecialchars($website['domain']) ?></td>
+                                    <td><?= $safe($website, 'domain') ?></td>
                                 </tr>
                                 <tr>
                                     <th style="width: 30%"><?= __('common.add_client') ?></th>
-                                    <td><?= htmlspecialchars($website['hosting_server'] ?? 'N/A') ?></td>
+                                    <td><?= $safe($website, 'hosting_server') ?></td>
                                 </tr>
                                 <tr>
                                     <th><?= __('common.type') ?></th>
-                                    <td><?= htmlspecialchars($website['name'] ?? 'N/A') ?></td>
+                                    <td><?= $safe($website, 'name') ?></td>
                                 </tr>
                                 <tr>
-                                    <th><?= __('common.registrant') ?></th>
-                                    <td><?= htmlspecialchars($website['email_server']) ?></td>
+                                    <th><?= __('websites.service_type') ?></th>
+                                    <td>
+                                        <?php
+                                        $svcType = $website['service_type'] ?? 'hosting_web';
+                                        $svcBadge = ['domain' => 'secondary', 'hosting_web' => 'info', 'hosting_mail' => 'primary'][$svcType] ?? 'info';
+                                        ?>
+                                        <span class="badge badge-<?= $svcBadge ?>"><?= htmlspecialchars(__('websites.type_' . $svcType)) ?></span>
+                                    </td>
                                 </tr>
+                                <tr>
+                                    <th><?= htmlspecialchars($providerLabel) ?></th>
+                                    <td><?= htmlspecialchars((string)($providerValue ?: 'N/A'), ENT_QUOTES, 'UTF-8') ?></td>
+                                </tr>
+                                <?php if (!empty($website['hosting_account_username'])): ?>
+                                <tr>
+                                    <th><?= __('websites.hosting_account') ?></th>
+                                    <td><?= $safe($website, 'hosting_account_username') ?></td>
+                                </tr>
+                                <?php endif; ?>
                                 <tr>
                                     <th><?= __('common.expiry_date') ?></th>
-                                    <td><?= htmlspecialchars($website['expiry_date']) ?></td>
+                                    <td><?= $safe($website, 'expiry_date', '-') ?></td>
                                 </tr>
                                 <tr>
                                     <th><?= __('hosting.server_cost') ?></th>
-                                    <td><?= htmlspecialchars($website['status']) ?></td>
+                                    <td><?= $safe($website, 'status') ?></td>
                                 </tr>
 
                             </table>
@@ -120,27 +163,31 @@
                             <table class="table table-bordered">
                                 <tr>
                                     <th style="width: 40%"><?= __('common.email') ?></th>
-                                    <td><?= htmlspecialchars($website['assigned_email'] ?? 'N/A') ?></td>
+                                    <td><?= $safe($website, 'assigned_email') ?></td>
                                 </tr>
                                 <tr>
                                     <th><?= __('common.proprietario') ?></th>
-                                    <td><?= htmlspecialchars($website['proprietario'] ?? 'N/A') ?></td>
+                                    <td><?= $safe($website, 'proprietario') ?></td>
                                 </tr>
                                 <tr>
                                     <th><?= __('common.dns_a') ?></th>
-                                    <td><?= htmlspecialchars($website['dns'] ?? 'N/A') ?></td>
+                                    <td><?= $safe($website, 'dns') ?></td>
                                 </tr>
                                 <tr>
                                     <th><?= __('common.cpanel_username') ?></th>
-                                    <td><?= htmlspecialchars($website['cpanel'] ?? 'N/A') ?></td>
+                                    <td><?= $safe($website, 'cpanel') ?></td>
                                 </tr>
                                 <tr>
                                     <th><?= __('common.panel_email') ?></th>
-                                    <td><?= htmlspecialchars($website['epanel'] ?? 'N/A') ?></td>
+                                    <td><?= $safe($website, 'epanel') ?></td>
                                 </tr>
                                 <tr>
                                     <th><?= __('common.selling_price') ?></th>
-                                    <td><?= htmlspecialchars($website['vendita']) ?></td>
+                                    <td><?= $safe($website, 'vendita', '-') ?></td>
+                                </tr>
+                                <tr>
+                                    <th><?= __('common.manutenzione_cost') ?></th>
+                                    <td><?= $safe($website, 'manutenzione', '-') ?></td>
                                 </tr>
                             </table>
                         </div>
@@ -175,6 +222,11 @@
                                 <a href="index.php?action=websites&do=edit&id=<?= $website['id'] ?>&lang=<?= $_SESSION['lang'] ?? 'it' ?>"
                                     class="btn btn-primary">
                                     <i class="fas fa-edit"></i> <?= __('common.edit') ?>
+                                </a>
+                                <a href="index.php?action=websites&do=delete&id=<?= $website['id'] ?>&lang=<?= $_SESSION['lang'] ?? 'it' ?>"
+                                    class="btn btn-danger"
+                                    onclick="return confirm('<?= addslashes(__('websites.delete_service_confirm')) ?>');">
+                                    <i class="fas fa-trash"></i> <?= __('common.delete') ?? 'Delete' ?>
                                 </a>
                             </div>
                         </div>

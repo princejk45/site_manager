@@ -1,0 +1,6 @@
+﻿Domain,Client,Status,"Expiry Date","Days Left","Health Score",Alert,"Last Check"
+expired.com,,expired,2026-04-28,-5,0,Expired,
+demo.com,,warning,2026-05-08,5,60,Critical,
+test.com,,active,2026-05-13,10,85,Critical,
+example.com,,active,2026-06-17,45,95,OK,
+other.com,,active,2026-08-01,90,100,OK,

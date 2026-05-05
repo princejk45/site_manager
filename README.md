@@ -86,10 +86,20 @@ Site Manager is a multi-user web application designed to manage multiple website
    ```
    composer install
    ```
-3. Configure your database connection in `config/database.php`
-4. Run database migrations in the `migrations` folder
-5. Set up environment variables in `.env`
-6. Configure email settings in `config/mailer.php`
+3. Open `install.php` in the browser and follow the wizard.
+4. The installer will:
+  - test DB connectivity
+  - create core application tables
+  - run all SQL files in `migrations/`
+  - create the admin account
+  - finalize installation with `config/.installed`
+5. After installation, configure SMTP and integrations from Settings.
+
+### Manual Schema Repair / Re-run
+
+If you need to repair a partially configured database on an existing instance,
+go to Settings -> Site Settings -> Database Setup and run migrations.
+This operation is designed to be safe on existing data.
 
 ## Directory Structure
 

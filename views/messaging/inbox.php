@@ -1,5 +1,6 @@
 <?php
 include APP_PATH . '/includes/header.php';
+$threads = $threads ?? [];
 // Get total unread count for sidebar badge
 $totalUnread = array_sum(array_column($threads, 'unread_count'));
 $unreadMessageCount = $totalUnread;
@@ -10,7 +11,7 @@ if (isset($_SESSION['user_id'])) {
     $threadModel = new MessageThread($GLOBALS['pdo']);
 }
 ?>
-<?php include APP_PATH . '/includes/sidebar.php'; ?>
+<?php include APP_PATH . '/includes/sidebar-v2.php'; ?>
 
 <div class="content-wrapper">
     <section class="content-header">

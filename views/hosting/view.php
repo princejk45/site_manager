@@ -1,5 +1,9 @@
 <?php include APP_PATH . '/includes/header.php'; ?>
-<?php include APP_PATH . '/includes/sidebar.php'; ?>
+<?php include APP_PATH . '/includes/sidebar-v2.php'; ?>
+<?php
+$hostingPlan = $hostingPlan ?? ['id' => 0, 'name' => '', 'service_count' => 0];
+$userRole = $userRole ?? ($_SESSION['role'] ?? 'viewer');
+?>
 
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
@@ -29,7 +33,7 @@
         <div class="container-fluid">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title"><?= htmlspecialchars($hostingPlan['server_name']) ?></h3>
+                    <h3 class="card-title"><?= htmlspecialchars($hostingPlan['name'] ?? 'N/A') ?></h3>
                 </div>
                 <div class="card-body">
                     <div class="row">
@@ -38,15 +42,15 @@
                             <table class="table table-bordered">
                                 <tr>
                                     <th style="width: 30%"><?= __('hosting.client_name') ?></th>
-                                    <td><?= htmlspecialchars($hostingPlan['server_name']) ?></td>
+                                    <td><?= htmlspecialchars($hostingPlan['name'] ?? 'N/A') ?></td>
                                 </tr>
                                 <tr>
-                                    <th><?= __('hosting.vat') ?></th>
-                                    <td><?= htmlspecialchars($hostingPlan['provider'] ?? 'N/A') ?></td>
+                                    <th><?= __('hosting.status') ?></th>
+                                    <td><?= htmlspecialchars($hostingPlan['status'] ?? 'N/A') ?></td>
                                 </tr>
                                 <tr>
-                                    <th><?= __('hosting.email') ?></th>
-                                    <td><?= htmlspecialchars($hostingPlan['email_address'] ?? 'N/A') ?></td>
+                                    <th><?= __('websites.expiring_date') ?></th>
+                                    <td><?= htmlspecialchars($hostingPlan['expiry_date'] ?? 'N/A') ?></td>
                                 </tr>
                                 <tr>
                                     <th><?= __('common.proprietario') ?></th>

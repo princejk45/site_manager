@@ -1,14 +1,14 @@
 <?php
 class SettingsModel
 {
-    private $pdo;
+    private PDO $pdo;
 
-    public function __construct($pdo)
+    public function __construct(PDO $pdo)
     {
         $this->pdo = $pdo;
     }
 
-    public function getGoogleSheetsSettings()
+    public function getGoogleSheetsSettings(): array
     {
         $stmt = $this->pdo->query("SELECT * FROM google_sheets_settings LIMIT 1");
         return $stmt->fetch(PDO::FETCH_ASSOC) ?: [
@@ -19,7 +19,7 @@ class SettingsModel
         ];
     }
 
-    public function saveGoogleSheetsSettings($data)
+    public function saveGoogleSheetsSettings(array $data)
     {
         // Check if settings already exist
         $existing = $this->getGoogleSheetsSettings();

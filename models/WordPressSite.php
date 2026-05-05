@@ -5,9 +5,9 @@
  */
 class WordPressSite
 {
-    private $pdo;
+    private PDO $pdo;
 
-    public function __construct($pdo)
+    public function __construct(PDO $pdo)
     {
         $this->pdo = $pdo;
     }
@@ -28,7 +28,7 @@ class WordPressSite
     /**
      * Get WordPress site by ID
      */
-    public function getById($id)
+    public function getById(int $id)
     {
         $stmt = $this->pdo->prepare("
             SELECT * FROM wordpress_sites 
@@ -158,8 +158,15 @@ class WordPressSite
              fetch_method,
              fetch_duration_ms,
              http_status_code,
-             response_timestamp)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+             response_timestamp,
+             ssl_valid,
+             wp_version_outdated,
+             security_issues_count,
+             uptime_percent,
+             average_response_time_ms,
+             page_load_time_ms,
+             backup_enabled)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ");
 
         return $stmt->execute([
@@ -178,7 +185,14 @@ class WordPressSite
             $diagnosticsData['fetch_method'] ?? 'on_demand',
             $diagnosticsData['fetch_duration_ms'] ?? null,
             $diagnosticsData['http_status_code'] ?? null,
-            $diagnosticsData['response_timestamp'] ?? null
+            $diagnosticsData['response_timestamp'] ?? null,
+            isset($diagnosticsData['ssl_valid']) ? (int)$diagnosticsData['ssl_valid'] : null,
+            isset($diagnosticsData['wp_version_outdated']) ? (int)$diagnosticsData['wp_version_outdated'] : null,
+            $diagnosticsData['security_issues_count'] ?? null,
+            $diagnosticsData['uptime_percent'] ?? null,
+            $diagnosticsData['average_response_time_ms'] ?? null,
+            $diagnosticsData['page_load_time_ms'] ?? null,
+            isset($diagnosticsData['backup_enabled']) ? (int)$diagnosticsData['backup_enabled'] : null,
         ]);
     }
 

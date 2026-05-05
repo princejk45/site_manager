@@ -1,12 +1,12 @@
 <?php
 class WebsiteController
 {
-    private $websiteModel;
-    private $hostingModel;
-    private $emailController;
-    private $settingsModel;
-    private $pdo;
-    public function __construct($pdo)
+    private Website $websiteModel;
+    private Hosting $hostingModel;
+    private EmailController $emailController;
+    private SettingsModel $settingsModel;
+    private PDO $pdo;
+    public function __construct(PDO $pdo)
     {
         $this->pdo = $pdo;
         $this->websiteModel = new Website($pdo);
@@ -23,47 +23,43 @@ class WebsiteController
             exit;
         }
 
-        // Get and sanitize input parameters with proper null checks
-        $search = trim($_GET['search'] ?? '');
-        $sort = $_GET['sort'] ?? 'hosting_server';
-        $order = isset($_GET['order']) && strtoupper($_GET['order']) === 'DESC' ? 'DESC' : 'ASC';
-        $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
-        $perPage = isset($_GET['per_page']) ? (int)$_GET['per_page'] : 10;
+        // Input parameters
+        $search  = trim($_GET['search'] ?? '');
+        $page    = isset($_GET['page'])     ? max(1, (int)$_GET['page'])     : 1;
+        $perPage = isset($_GET['per_page']) ? (int)$_GET['per_page']         : 10;
+        if (!in_array($perPage, [10, 30, 50])) { $perPage = 10; }
 
-        // Validate per_page options
-        $allowedPerPage = [10, 30, 50];
-        if (!in_array($perPage, $allowedPerPage)) {
-            $perPage = 10;
+        // Domain-centric grouped summaries
+        $expiryFilter    = in_array($_GET['expiry_filter'] ?? '', ['expiring'], true) ? $_GET['expiry_filter'] : '';
+        $domainSummaries = $this->websiteModel->getDomainSummaries($search, $page, $perPage, $expiryFilter);
+
+        // Annotate days_left and computed status for each service column
+        $today = new DateTimeImmutable('today');
+        foreach ($domainSummaries as &$row) {
+            foreach (['dom', 'web', 'mail'] as $prefix) {
+                $expiry = $row["{$prefix}_expiry"] ?? null;
+                if ($expiry) {
+                    $diff = $today->diff(new DateTimeImmutable($expiry));
+                    $days = $diff->invert ? -$diff->days : $diff->days;
+                    $row["{$prefix}_days_left"]       = $days;
+                    $row["{$prefix}_computed_status"] = $days < 0 ? 'expired' : ($days <= 30 ? 'expiring_soon' : 'active');
+                } else {
+                    $row["{$prefix}_days_left"]       = null;
+                    $row["{$prefix}_computed_status"] = null;
+                }
+            }
         }
+        unset($row);
 
-        // Validate sort column to prevent SQL injection
-        $allowedSorts = ['hosting_server', 'domain', 'name', 'email_server', 'expiry_date'];
-        if (!in_array($sort, $allowedSorts)) {
-            $sort = 'hosting_server';
-        }
+        $totalDomains = $this->websiteModel->getDomainCount($search, $expiryFilter);
+        $totalPages   = $perPage > 0 ? max(1, ceil($totalDomains / $perPage)) : 1;
+        $userRole     = $_SESSION['role'] ?? $_SESSION['user_role'] ?? 'viewer';
 
-        // Get websites with automatic secondary sorting by domain
-        $websites = $this->websiteModel->getWebsites($search, $sort, $order, $page, $perPage);
-
-        // Calculate dynamic status for each website
-        foreach ($websites as &$website) {
-            $website['dynamic_status'] = $this->websiteModel->calculateDynamicStatus($website['expiry_date']);
-        }
-        unset($website); // Break the reference
-
-        // Pagination calculations with zero-division protection
-        $totalWebsites = (int)$this->websiteModel->getWebsiteCount($search);
-        $totalPages = $perPage > 0 ? max(1, ceil($totalWebsites / $perPage)) : 1;
-
-        // Get hosting plans for dropdowns (if needed)
-        $hostingPlans = $this->hostingModel->getAllHostingPlans();
-
-        // Pass data to view
         require APP_PATH . '/views/websites/index.php';
     }
 
     // In WebsiteController.php
-    public function getHostingEmail($id)
+    public function getHostingEmail(int $id)
     {
         $hostingPlan = $this->hostingModel->getHostingPlanById($id);
         if (!$hostingPlan) {
@@ -73,7 +69,7 @@ class WebsiteController
         }
 
         header('Content-Type: application/json');
-        echo json_encode(['email' => $hostingPlan['email_address']]); // Make sure this matches your DB column
+        echo json_encode(['email' => $hostingPlan['email_address'] ?? '']);
         exit;
     }
 
@@ -91,53 +87,46 @@ class WebsiteController
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = [
-                'name' => $_POST['name'],
-                'domain' => $_POST['domain'],
-                'hosting_id' => $_POST['hosting_id'] ?? null,
-                'email_server' => $_POST['email_server'],
-                'expiry_date' => $_POST['expiry_date'],
-                'status' => $_POST['status'],
-                'vendita' => $_POST['vendita'],
-                'proprietario' => $_POST['proprietario'] ?? null,
-                'dns' => $_POST['dns'] ?? null,
-                'cpanel' => $_POST['cpanel'] ?? null,
-                'epanel' => $_POST['epanel'] ?? null,
-                'notes' => $_POST['notes'] ?? null,
-                'remark' => $_POST['remark'] ?? null
+                'domain'             => trim($_POST['domain'] ?? ''),
+                'service_type'       => $_POST['service_type']       ?? 'hosting_web',
+                'hosting_id'         => $_POST['hosting_id']         ?? null,
+                'hosting_account_id' => $_POST['hosting_account_id'] ?? null,
+                'provider_id'        => $_POST['provider_id']        ?? null,
+                'expiry_date'        => sm_normalize_date($_POST['expiry_date'] ?? null),
+                'status'             => 'active',
+                'notes'              => $_POST['notes']               ?? '',
             ];
 
-            // Get assigned email from hosting plan if hosting_id is provided
-            if (!empty($data['hosting_id'])) {
-                $hostingPlan = $this->hostingModel->getHostingPlanById($data['hosting_id']);
-                if ($hostingPlan) {
-                    $data['assigned_email'] = $hostingPlan['email_address'];
-                } else {
-                    $error = "Il client selezionato non è stato trovato";
-                    $website = array_merge($website, $_POST);
-                    $hostingPlans = $this->hostingModel->getAllHostingPlans();
-                    require APP_PATH . '/views/websites/form.php';
-                    return;
-                }
+            if (empty($data['domain'])) {
+                $error = 'Domain is required.';
             } else {
-                $data['assigned_email'] = ''; // No hosting plan selected
-            }
-
-            try {
-                $this->websiteModel->createWebsite($data);
-                $_SESSION['message'] = "Servizio ('{$data['domain']}') creato con successo";
-                header('Location: index.php?action=websites');
-                exit;
-            } catch (PDOException $e) {
-                $error = "Errore durante la creazione del servizio: " . $e->getMessage();
-                $website = array_merge($website, $_POST); // Preserve form input
+                try {
+                    $this->websiteModel->createWebsite($data);
+                    $_SESSION['message'] = "Service '{$data['domain']}' created successfully.";
+                    header('Location: index.php?action=websites');
+                    exit;
+                } catch (PDOException $e) {
+                    $error = 'Error creating service: ' . $e->getMessage();
+                    $website = array_merge($website, $_POST);
+                }
             }
         }
 
-        $hostingPlans = $this->hostingModel->getAllHostingPlans();
+        $hostingPlans    = $this->hostingModel->getAllHostingPlans();
+        $hostingAccounts = $this->pdo->query("
+            SELECT ha.id, ha.cpanel_username, ha.package_name, h.name AS client_name, p.name AS provider_name
+            FROM hosting_accounts ha
+            LEFT JOIN hosting  h ON h.id  = ha.client_id
+            LEFT JOIN providers p ON p.id = ha.provider_id
+            WHERE ha.status = 'active'
+            ORDER BY h.name, ha.cpanel_username
+        ")->fetchAll(PDO::FETCH_ASSOC);
+        $registrars    = $this->pdo->query("SELECT id, name FROM providers WHERE type = 'registrar' AND is_active = 1 ORDER BY name")->fetchAll(PDO::FETCH_ASSOC);
+        $mailProviders = $this->pdo->query("SELECT id, name FROM providers WHERE type = 'email'    AND is_active = 1 ORDER BY name")->fetchAll(PDO::FETCH_ASSOC);
         require APP_PATH . '/views/websites/form.php';
     }
 
-    public function view($id)
+    public function view(int $id)
     {
         if (!isset($_SESSION['user_id']) || !isset($_SESSION['LAST_ACTIVITY'])) {
             header('Location: index.php?action=login');
@@ -161,8 +150,8 @@ class WebsiteController
     }
 
     /**
-     * Fetch WordPress diagnostics for a website
-     * Called via AJAX
+     * Fetch WordPress diagnostics for a website.
+     * Called via AJAX.
      */
     public function fetch_diagnostics()
     {
@@ -173,43 +162,34 @@ class WebsiteController
                 throw new Exception('Unauthorized');
             }
 
-            $websiteId = $_GET['id'] ?? null;
-            if (!$websiteId) {
+            $websiteId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+            if ($websiteId <= 0) {
                 throw new Exception('Website ID required');
             }
 
-            // Require service classes
             require_once APP_PATH . '/services/WordPress/Exceptions.php';
             require_once APP_PATH . '/services/WordPress/WordPressApiClient.php';
             require_once APP_PATH . '/services/WordPress/DiagnosticsNormalizer.php';
             require_once APP_PATH . '/services/WordPress/DiagnosticsService.php';
             require_once APP_PATH . '/models/WordPressSite.php';
 
-            // Get PDO from globals
-            $pdo = $GLOBALS['pdo'] ?? null;
-            if (!$pdo) {
-                throw new Exception('Database connection unavailable');
-            }
-
-            // Initialize service and fetch diagnostics
-            $diagnosticsService = new DiagnosticsService($pdo);
+            $diagnosticsService = new DiagnosticsService($this->pdo);
             $result = $diagnosticsService->fetchDiagnostics($websiteId);
 
-            http_response_code($result['success'] ? 200 : 400);
+            http_response_code(!empty($result['success']) ? 200 : 400);
             echo json_encode($result);
             exit;
-
         } catch (Exception $e) {
             http_response_code(500);
             echo json_encode([
                 'success' => false,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
             exit;
         }
     }
 
-    public function edit($id)
+    public function edit(int $id)
     {
         if (!isset($_SESSION['user_id']) || !isset($_SESSION['LAST_ACTIVITY'])) {
             header('Location: index.php?action=login');
@@ -233,51 +213,41 @@ class WebsiteController
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = [
-                'name' => $_POST['name'],
-                'domain' => $_POST['domain'],
-                'hosting_id' => $_POST['hosting_id'] ?? null,
-                'email_server' => $_POST['email_server'],
-                'expiry_date' => $_POST['expiry_date'],
-                'status' => $_POST['status'],
-                'vendita' => $_POST['vendita'],
-                'proprietario' => $_POST['proprietario'] ?? null,
-                'dns' => $_POST['dns'] ?? null,
-                'cpanel' => $_POST['cpanel'] ?? null,
-                'epanel' => $_POST['epanel'] ?? null,
-                'notes' => $_POST['notes'] ?? null,
-                'remark' => $_POST['remark'] ?? null
+                'domain'             => trim($_POST['domain'] ?? ''),
+                'service_type'       => $_POST['service_type']       ?? 'hosting_web',
+                'hosting_id'         => $_POST['hosting_id']         ?? null,
+                'hosting_account_id' => $_POST['hosting_account_id'] ?? null,
+                'provider_id'        => $_POST['provider_id']        ?? null,
+                'expiry_date'        => sm_normalize_date($_POST['expiry_date'] ?? null),
+                'status'             => 'active',
+                'notes'              => $_POST['notes']               ?? '',
             ];
-
-            // Get assigned email from hosting plan if hosting_id is provided
-            if (!empty($data['hosting_id'])) {
-                $hostingPlan = $this->hostingModel->getHostingPlanById($data['hosting_id']);
-                if ($hostingPlan) {
-                    $data['assigned_email'] = $hostingPlan['email_address'];
-                } else {
-                    $error = "Selected hosting plan not found";
-                    $hostingPlans = $this->hostingModel->getAllHostingPlans();
-                    require APP_PATH . '/views/websites/form.php';
-                    return;
-                }
-            } else {
-                $data['assigned_email'] = ''; // No hosting plan selected
-            }
 
             try {
                 $this->websiteModel->updateWebsite($id, $data);
-                $_SESSION['message'] = "Il servizio '{$data['domain']}' è stato aggiornato con successo";
-                header('Location: index.php?action=websites&do=view&id=' . $website['id']);
+                $_SESSION['message'] = "Service '{$data['domain']}' updated successfully.";
+                header('Location: index.php?action=websites');
                 exit;
             } catch (PDOException $e) {
-                $error = "Errore durante l'aggiornamento del servizio:  '{$data['domain']}'  " . $e->getMessage();
+                $error = 'Error updating service: ' . $e->getMessage();
             }
         }
 
-        $hostingPlans = $this->hostingModel->getAllHostingPlans();
+        $hostingPlans    = $this->hostingModel->getAllHostingPlans();
+        $hostingAccounts = $this->pdo->query("
+            SELECT ha.id, ha.cpanel_username, ha.package_name, h.name AS client_name, p.name AS provider_name
+            FROM hosting_accounts ha
+            LEFT JOIN hosting  h ON h.id  = ha.client_id
+            LEFT JOIN providers p ON p.id = ha.provider_id
+            WHERE ha.status = 'active'
+            ORDER BY h.name, ha.cpanel_username
+        ")->fetchAll(PDO::FETCH_ASSOC);
+        $registrars    = $this->pdo->query("SELECT id, name FROM providers WHERE type = 'registrar' AND is_active = 1 ORDER BY name")->fetchAll(PDO::FETCH_ASSOC);
+        $mailProviders = $this->pdo->query("SELECT id, name FROM providers WHERE type = 'email'    AND is_active = 1 ORDER BY name")->fetchAll(PDO::FETCH_ASSOC);
         require APP_PATH . '/views/websites/form.php';
     }
 
-    public function delete($id)
+    public function delete(int $id)
     {
         if (!isset($_SESSION['user_id']) || !isset($_SESSION['LAST_ACTIVITY'])) {
             header('Location: index.php?action=login');
@@ -302,8 +272,8 @@ class WebsiteController
             exit;
         }
 
-        // Get and validate IDs
-        $ids = array_filter(array_map('intval', explode(',', $_POST['ids'])));
+        $rawIds = trim((string)($_POST['ids'] ?? ''));
+        $ids = array_values(array_unique(array_filter(array_map('intval', explode(',', $rawIds)))));
         
         if (empty($ids)) {
             $_SESSION['error'] = "No items selected";
@@ -312,13 +282,18 @@ class WebsiteController
         }
 
         try {
+            $this->pdo->beginTransaction();
             $deleted = 0;
             foreach ($ids as $id) {
                 $this->websiteModel->deleteWebsite($id);
                 $deleted++;
             }
+            $this->pdo->commit();
             $_SESSION['message'] = "$deleted servizio/i eliminato/i con successo";
         } catch (Exception $e) {
+            if ($this->pdo->inTransaction()) {
+                $this->pdo->rollBack();
+            }
             $_SESSION['error'] = "Errore durante l'eliminazione: " . $e->getMessage();
         }
 
@@ -327,7 +302,7 @@ class WebsiteController
     }
 
 
-    public function renew($id)
+    public function renew(int $id)
     {
 
         if (!isset($_SESSION['user_id']) || !isset($_SESSION['LAST_ACTIVITY'])) {
@@ -370,6 +345,26 @@ class WebsiteController
         }
     }
 
+    private function logTask(string $type, string $label, string $status = 'completed', ?array $result = null): void
+    {
+        try {
+            $exists = $this->pdo->query(
+                "SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES
+                 WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'task_queue'"
+            )->fetchColumn();
+            if (!$exists) return;
+            $uid = isset($_SESSION['user_id']) ? (int)$_SESSION['user_id'] : null;
+            $stmt = $this->pdo->prepare(
+                "INSERT INTO task_queue (type, label, status, created_by, started_at, completed_at, progress, result_json)
+                 VALUES (?, ?, ?, ?, NOW(), NOW(), ?, ?)"
+            );
+            $stmt->execute([$type, $label, $status, $uid, $status === 'completed' ? 100 : 0,
+                $result ? json_encode($result) : null]);
+        } catch (Exception $e) {
+            error_log("WebsiteController::logTask error: " . $e->getMessage());
+        }
+    }
+
     public function export()
     {
         if (!isset($_SESSION['user_id']) || !isset($_SESSION['LAST_ACTIVITY'])) {
@@ -381,6 +376,7 @@ class WebsiteController
         $filepath = EXPORT_PATH . '/' . $filename;
 
         if (file_exists($filepath)) {
+            $this->logTask('export_websites', 'Export Websites (XLSX)', 'completed', ['file' => $filename]);
             header('Content-Description: File Transfer');
             header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
             header('Content-Disposition: attachment; filename="' . basename($filepath) . '"');
@@ -415,6 +411,11 @@ class WebsiteController
 
                     if (move_uploaded_file($file['tmp_name'], $uploadPath)) {
                         $result = $this->websiteModel->importFromExcel($uploadPath);
+
+                        $this->logTask('import_websites', 'Import Websites (XLSX)', 'completed', [
+                            'imported' => $result['imported'], 'updated' => $result['updated'],
+                            'skipped' => $result['skipped'], 'errors' => count($result['errors'] ?? []),
+                        ]);
 
                         $_SESSION['import_result'] = [
                             'imported' => $result['imported'],
@@ -521,12 +522,51 @@ class WebsiteController
     private function prepareExportData(): array
     {
         $headers = [
-            ['Informazioni per il cliente', '', '', '', 'Informazioni sul servizio'],
-            ['Name', 'Address', 'Email', 'P.IVA', 'TIPOLOGIA DI SERVIZI', 'DETTAGLIO SERVIZI', 'EMAIL ASSEGNATA']
+            [
+                'Clienti',
+                'Informazioni per il cliente',
+                '',
+                '',
+                'Informazioni sul servizio',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                ''
+            ],
+            [
+                'Nome',
+                'Indirizzo',
+                'Email',
+                'P.IVA',
+                'Tipologia di Servizi',
+                'Dettaglio Servizi',
+                'Email Assegnata',
+                'Propietario',
+                'Registrante',
+                'Scadenza',
+                'Costo Server (iva inclusa)',
+                'Prezzo di vendita (iva inclusa)',
+                'Direct DNS A',
+                'User Name cpanel',
+                'Email panel',
+                'Bug report',
+                'Costo di manutenzione sito',
+                'Notes'
+            ]
         ];
 
-        $data = $this->websiteModel->prepareForGoogleSheets();
-        return array_merge($headers, $data);
+        $prepared = $this->websiteModel->prepareForGoogleSheets();
+        $rows = $prepared['data'] ?? [];
+
+        return array_merge($headers, $rows);
     }
 
     private function clearSheet(Google\Service\Sheets $service, array $settings): void
@@ -555,7 +595,7 @@ class WebsiteController
 
     private function getSheetData(Google\Service\Sheets $service, array $settings): array
     {
-        $range = $settings['sheet_name'] . '!A:Z';
+        $range = $settings['sheet_name'] . '!A2:Z';
         $response = $service->spreadsheets_values->get($settings['sheet_id'], $range);
         return $response->getValues() ?: [];
     }
@@ -563,7 +603,14 @@ class WebsiteController
     private function analyzeSync(array $dbData, array $sheetData): array
     {
         $dbDomains = array_column($dbData, 'domain');
-        $sheetDomains = array_column(array_slice($sheetData, 2), 5); // Skip headers
+        $sheetDomains = [];
+        foreach ($sheetData as $row) {
+            $domain = strtolower(trim((string)($row[5] ?? '')));
+            if ($domain === '' || $domain === 'dettaglio servizi') {
+                continue;
+            }
+            $sheetDomains[] = $domain;
+        }
 
         $toExport = array_diff($dbDomains, $sheetDomains);
         $toImport = array_diff($sheetDomains, $dbDomains);

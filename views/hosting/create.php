@@ -27,9 +27,9 @@
 
                         <div class="form-row">
                             <div class="form-group col-md-6">
-                                <label for="server_name"><?= __('hosting.client_name') ?></label>
-                                <input type="text" class="form-control" id="server_name" name="server_name"
-                                    value="<?= isset($hostingPlan) ? htmlspecialchars($hostingPlan['server_name']) : '' ?>"
+                                <label for="name"><?= __('hosting.client_name') ?></label>
+                                <input type="text" class="form-control" id="name" name="name"
+                                    value="<?= isset($hostingPlan) ? htmlspecialchars($hostingPlan['name'] ?? '') : '' ?>"
                                     required>
                             </div>
                             <div class="form-group col-md-6">

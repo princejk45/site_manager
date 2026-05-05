@@ -1,8 +1,8 @@
 <?php
 class CronScheduler
 {
-    private $pdo;
-    private $timezone;
+    private PDO $pdo;
+    private string $timezone;
 
     /**
      * Standard cron intervals
@@ -15,7 +15,7 @@ class CronScheduler
         'monthly' => '0 0 1 * *'
     ];
 
-    public function __construct($pdo)
+    public function __construct(PDO $pdo)
     {
         $this->pdo = $pdo;
         $this->timezone = date_default_timezone_get();
@@ -45,7 +45,7 @@ class CronScheduler
     /**
      * Save cPanel cron settings
      */
-    public function saveCpanelSettings($data)
+    public function saveCpanelSettings(array $data): bool
     {
         try {
             // Encrypt API token
@@ -75,6 +75,14 @@ class CronScheduler
             error_log("Error saving cPanel settings: " . $e->getMessage());
             return false;
         }
+    }
+
+    /**
+     * Get next cron execution time from cPanel API
+     */
+    private function getNextRunFromCpanelAPI(array $cpanelSettings): array
+    {
+        return $this->getNextRunFromCpanelAPIInternal($cpanelSettings);
     }
 
     /**
@@ -135,7 +143,7 @@ class CronScheduler
     /**
      * Fetch next execution from cPanel API v2
      */
-    private function getNextRunFromCpanelAPI($cpanelSettings)
+    private function getNextRunFromCpanelAPIInternal(array $cpanelSettings): array
     {
         try {
             $host = $cpanelSettings['cpanel_host'];
@@ -256,7 +264,7 @@ class CronScheduler
             $now = new DateTime('now', new DateTimeZone($this->timezone));
             $nextRun = clone $now;
             $nextRun->add(new DateInterval('PT1M'));
-            $nextRun->setSeconds(0);
+            $nextRun->setTime($nextRun->format('H'), $nextRun->format('i'), 0);
 
             // Simple calculation for common patterns
             // This is a simplified version - for production use a library like cronexpr

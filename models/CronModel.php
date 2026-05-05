@@ -1,43 +1,44 @@
 <?php
 class CronModel
 {
-    private $pdo;
-    private $cronScheduler;
+    private PDO $pdo;
+    private CronScheduler $cronScheduler;
 
-    public function __construct($pdo)
+    public function __construct(PDO $pdo)
     {
         $this->pdo = $pdo;
         $this->cronScheduler = new CronScheduler($pdo);
     }
 
-    public function getCronStatus()
+    public function getCronStatus(): bool
     {
         $stmt = $this->pdo->query("SELECT is_active FROM cron_settings LIMIT 1");
         return (bool) $stmt->fetchColumn();
     }
 
-    public function updateCronStatus($isActive)
+    public function updateCronStatus(bool $isActive): bool
     {
         $stmt = $this->pdo->prepare("UPDATE cron_settings SET is_active = ?");
         return $stmt->execute([$isActive ? 1 : 0]);
     }
 
-    public function updateLastRunTime()
+    public function updateLastRunTime(): bool
     {
         $stmt = $this->pdo->prepare("UPDATE cron_settings SET last_run = NOW()");
         return $stmt->execute();
     }
 
-    public function getLastRunTime()
+    public function getLastRunTime(): ?string
     {
         $stmt = $this->pdo->query("SELECT last_run FROM cron_settings LIMIT 1");
-        return $stmt->fetchColumn();
+        $lastRun = $stmt->fetchColumn();
+        return $lastRun === false ? null : (string)$lastRun;
     }
 
     /**
      * Get comprehensive cron diagnostics
      */
-    public function getDiagnostics()
+    public function getDiagnostics(): array
     {
         try {
             $websiteModel = new Website($this->pdo);

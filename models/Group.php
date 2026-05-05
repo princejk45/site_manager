@@ -31,7 +31,7 @@ class Group
         }
     }
 
-    public function getUserGroups($userId)
+    public function getUserGroups(int $userId)
     {
         $stmt = $this->db->prepare("
             SELECT g.* FROM groups g

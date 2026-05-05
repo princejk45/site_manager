@@ -51,7 +51,7 @@ class MessageThread
     }
 
     // Ensure user is a participant of the thread
-    public function ensureUserIsParticipant($threadId, $userId)
+    public function ensureUserIsParticipant($threadId, int $userId)
     {
         // Check if user is already a participant
         $stmt = $this->db->prepare("
@@ -71,7 +71,7 @@ class MessageThread
         }
     }
 
-    public function getThreadMessages($threadId, $userId)
+    public function getThreadMessages($threadId, int $userId)
     {
         // Mark as read
         $this->markAsRead($threadId, $userId);
@@ -88,7 +88,7 @@ class MessageThread
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function markAsRead($threadId, $userId)
+    public function markAsRead($threadId, int $userId)
     {
         $stmt = $this->db->prepare("
             UPDATE thread_participants 
@@ -98,7 +98,7 @@ class MessageThread
         $stmt->execute([$threadId, $userId]);
     }
 
-    public function getUnreadCount($userId)
+    public function getUnreadCount(int $userId)
     {
         $stmt = $this->db->prepare("
             SELECT COUNT(*) 
@@ -113,7 +113,7 @@ class MessageThread
     }
 
     // NEW METHODS NEEDED BY CONTROLLER
-    public function getUserThreads($userId)
+    public function getUserThreads(int $userId)
     {
         $stmt = $this->db->prepare("
             SELECT 
@@ -222,7 +222,7 @@ class MessageThread
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function getMessagesSinceRead($threadId, $userId)
+    public function getMessagesSinceRead($threadId, int $userId)
     {
         // Get last read time for user in this thread
         $stmt = $this->db->prepare("
@@ -288,7 +288,7 @@ class MessageThread
     }
 
     // Toggle star on thread
-    public function toggleStar($threadId, $userId)
+    public function toggleStar($threadId, int $userId)
     {
         $stmt = $this->db->prepare("SELECT is_starred FROM thread_participants WHERE thread_id = ? AND user_id = ?");
         $stmt->execute([$threadId, $userId]);
@@ -302,7 +302,7 @@ class MessageThread
     }
 
     // Check if thread is starred
-    public function isStarred($threadId, $userId)
+    public function isStarred($threadId, int $userId)
     {
         $stmt = $this->db->prepare("SELECT is_starred FROM thread_participants WHERE thread_id = ? AND user_id = ?");
         $stmt->execute([$threadId, $userId]);
@@ -311,7 +311,7 @@ class MessageThread
     }
 
     // Get starred threads for user
-    public function getStarredThreads($userId)
+    public function getStarredThreads(int $userId)
     {
         $stmt = $this->db->prepare("
             SELECT 
@@ -338,7 +338,7 @@ class MessageThread
     }
 
     // Mark thread as read
-    public function markThreadAsRead($threadId, $userId)
+    public function markThreadAsRead($threadId, int $userId)
     {
         $stmt = $this->db->prepare("UPDATE thread_participants SET last_read_at = NOW() WHERE thread_id = ? AND user_id = ?");
         $stmt->execute([$threadId, $userId]);
@@ -346,7 +346,7 @@ class MessageThread
     }
 
     // Mark thread as unread
-    public function markThreadAsUnread($threadId, $userId)
+    public function markThreadAsUnread($threadId, int $userId)
     {
         $stmt = $this->db->prepare("UPDATE thread_participants SET last_read_at = NULL WHERE thread_id = ? AND user_id = ?");
         $stmt->execute([$threadId, $userId]);
@@ -354,7 +354,7 @@ class MessageThread
     }
 
     // Bulk mark as read
-    public function bulkMarkAsRead($threadIds, $userId)
+    public function bulkMarkAsRead($threadIds, int $userId)
     {
         if (empty($threadIds)) return false;
         
@@ -379,7 +379,7 @@ class MessageThread
     }
 
     // Bulk mark as unread
-    public function bulkMarkAsUnread($threadIds, $userId)
+    public function bulkMarkAsUnread($threadIds, int $userId)
     {
         if (empty($threadIds)) return false;
         
@@ -404,7 +404,7 @@ class MessageThread
     }
 
     // Bulk star threads
-    public function bulkStar($threadIds, $userId, $starred = true)
+    public function bulkStar($threadIds, int $userId, $starred = true)
     {
         if (empty($threadIds)) return false;
         $placeholders = implode(',', array_fill(0, count($threadIds), '?'));

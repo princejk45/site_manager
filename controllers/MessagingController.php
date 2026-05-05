@@ -1,11 +1,11 @@
 <?php
 class MessagingController
 {
-    private $threadModel;
-    private $groupModel;
-    private $userModel;
-    private $emailModel;
-    private $emailTemplate;
+    private MessageThread $threadModel;
+    private Group $groupModel;
+    private User $userModel;
+    private Email $emailModel;
+    private EmailTemplate $emailTemplate;
 
     public function __construct($threadModel, $groupModel, $userModel, $emailModel, $db = null)
     {
@@ -193,7 +193,7 @@ class MessagingController
     }
 
     // Show edit form
-    public function showEditGroup($id)
+    public function showEditGroup(int $id)
     {
         if (!$id) {
             header('Location: ?action=messaging&do=groups');

@@ -11,6 +11,11 @@ if (!ini_get('sys_temp_dir') || !is_writable(ini_get('sys_temp_dir'))) {
 // Define base path FIRST
 define('BASE_PATH', realpath(dirname(__DIR__)));
 define('APP_PATH', BASE_PATH);
+// Define web path for use in href/src attributes
+define('WEB_PATH', '/fullmidia/site_manager');
+if (file_exists(APP_PATH . '/vendor/autoload.php')) {
+    require_once APP_PATH . '/vendor/autoload.php';
+}
 // Define default language
 define('DEFAULT_LANG', 'it');
 
@@ -32,6 +37,11 @@ session_start([
     'cookie_httponly' => true,
     'use_strict_mode' => true
 ]);
+
+// Initialize dashboard version (default to v2 - modern)
+if (!isset($_SESSION['dashboard_version'])) {
+    $_SESSION['dashboard_version'] = 'v2';
+}
 
 // Initialize language
 // Check if language is set in GET parameter
@@ -73,10 +83,103 @@ function __(string $key, array $params = []): string
     return $value;
 }
 
+function sm_parse_date_value(mixed $value, bool $allowTime = false): ?DateTimeImmutable
+{
+    if ($value instanceof DateTimeInterface) {
+        return DateTimeImmutable::createFromInterface($value);
+    }
+
+    if ($value === null) {
+        return null;
+    }
+
+    if (is_int($value) || is_float($value) || (is_string($value) && preg_match('/^\d+(?:\.\d+)?$/', trim($value)))) {
+        $numeric = (float) $value;
+        if ($numeric > 1000 && class_exists('PhpOffice\\PhpSpreadsheet\\Shared\\Date')) {
+            try {
+                $dt = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($numeric);
+                return DateTimeImmutable::createFromMutable($dt);
+            } catch (Throwable) {
+                // Fall through to string parsing.
+            }
+        }
+    }
+
+    $raw = trim((string) $value);
+    if ($raw === '') {
+        return null;
+    }
+
+    $formats = $allowTime
+        ? ['d-m-Y H:i:s', 'd-m-Y H:i', 'd/m/Y H:i:s', 'd/m/Y H:i', 'Y-m-d H:i:s', 'Y-m-d H:i', 'Y-m-d\TH:i', 'Y-m-d']
+        : ['d-m-Y', 'd/m/Y', 'Y-m-d', 'd.m.Y'];
+
+    foreach ($formats as $format) {
+        $parsed = DateTimeImmutable::createFromFormat($format, $raw);
+        if ($parsed instanceof DateTimeImmutable) {
+            return $parsed;
+        }
+    }
+
+    try {
+        return new DateTimeImmutable($raw);
+    } catch (Exception) {
+        return null;
+    }
+}
+
+function sm_normalize_date(mixed $value, ?string $default = null): ?string
+{
+    $parsed = sm_parse_date_value($value, false);
+    if ($parsed instanceof DateTimeImmutable) {
+        return $parsed->format('Y-m-d');
+    }
+
+    return $default;
+}
+
+function sm_format_date(mixed $value, string $fallback = ''): string
+{
+    $parsed = sm_parse_date_value($value, false);
+    return $parsed instanceof DateTimeImmutable ? $parsed->format('d-m-Y') : $fallback;
+}
+
+function sm_format_datetime(mixed $value, bool $includeSeconds = false, string $fallback = ''): string
+{
+    $parsed = sm_parse_date_value($value, true);
+    if (!$parsed instanceof DateTimeImmutable) {
+        return $fallback;
+    }
+
+    return $parsed->format($includeSeconds ? 'd-m-Y H:i:s' : 'd-m-Y H:i');
+}
+
+function sm_form_date_value(mixed $value): string
+{
+    return sm_format_date($value, '');
+}
+
+function sm_form_datetime_local_value(mixed $value): string
+{
+    $parsed = sm_parse_date_value($value, true);
+    return $parsed instanceof DateTimeImmutable ? $parsed->format('d-m-Y H:i') : '';
+}
+
 // Load configuration files (auth.php already loaded above)
 require APP_PATH . '/config/database.php';
 require APP_PATH . '/config/mailer.php';
 require APP_PATH . '/config/constants.php';
+
+if (!isset($dbConfig) || !is_array($dbConfig)) {
+    $dbConfig = [
+        'host' => 'localhost',
+        'username' => 'root',
+        'password' => '',
+        'database' => 'website_manager',
+        'charset' => 'utf8mb4',
+        'socket' => '/Applications/XAMPP/xamppfiles/var/mysql/mysql.sock',
+    ];
+}
 
 // Session timeout and security management
 if (isset($_SESSION['LAST_ACTIVITY'])) {

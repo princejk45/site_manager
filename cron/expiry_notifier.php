@@ -136,14 +136,49 @@ function recordNotificationSent($pdo, $websiteId, $notificationType, $dryRun): b
             VALUES (?, ?, CURRENT_TIMESTAMP)
             ON DUPLICATE KEY UPDATE sent_at = CURRENT_TIMESTAMP
         ");
-        return $stmt->execute([$websiteId, $notificationType]);
+        $ok = $stmt->execute([$websiteId, $notificationType]);
     } catch (PDOException $e) {
         cronLog("DB error recording '$notificationType': " . $e->getMessage(), "ERROR");
         return false;
     }
+
+    // Also write to notification_events (best-effort)
+    try {
+        $tableCheck = $pdo->query(
+            "SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES
+             WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'notification_events'"
+        )->fetchColumn();
+
+        if ($tableCheck) {
+            $site = $pdo->prepare(
+                "SELECT hosting_id, COALESCE(service_type, 'hosting_web') AS service_type FROM websites WHERE id = ?"
+            );
+            $site->execute([$websiteId]);
+            $row = $site->fetch();
+            $clientId   = $row['hosting_id'] ?? null;
+            $serviceType = $row['service_type'] ?? 'hosting_web';
+
+            $ne = $pdo->prepare(
+                "INSERT INTO notification_events
+                 (client_id, website_id, service_type, event_type, severity, channel, payload_json, sent_at, status)
+                 VALUES (?, ?, ?, ?, 'info', 'email', ?, NOW(), 'sent')"
+            );
+            $ne->execute([
+                $clientId,
+                $websiteId,
+                $serviceType,
+                'expiry_' . $notificationType,
+                json_encode(['notification_type' => $notificationType, 'triggered_by' => 'cron']),
+            ]);
+        }
+    } catch (Exception $e) {
+        cronLog("notification_events insert skipped: " . $e->getMessage(), "WARN");
+    }
+
+    return $ok ?? false;
 }
 
-// Main processing
+// Main processing — driven by automation rules
 $results = [
     'websites_checked' => 0,
     'notifications_sent' => 0,
@@ -153,93 +188,120 @@ $results = [
 ];
 
 try {
-    $websites = $websiteModel->getWebsites('', 'expiry_date', 'asc', 1, PHP_INT_MAX);
-    $results['websites_checked'] = count($websites);
-    cronLog("Processing " . count($websites) . " websites");
+    // Load active automation rules for expiry notifications (replaces hardcoded thresholds)
+    $rulesStmt = $pdo->query(
+        "SELECT * FROM automation_rules
+          WHERE trigger_type = 'expiry_approaching' AND is_active = 1
+          ORDER BY trigger_threshold ASC"
+    );
+    $rules = $rulesStmt ? $rulesStmt->fetchAll(PDO::FETCH_ASSOC) : [];
 
-    foreach ($websites as $website) {
-        try {
-            $today = new DateTime('today');
-            $expiryDate = new DateTime($website['expiry_date']);
-            $expiryDate->setTime(0, 0);
+    if (empty($rules)) {
+        cronLog("No active automation rules found for trigger_type='expiry_approaching' — no notifications will be sent");
+        cronLog("Create an Automation Rule with trigger 'Expiry Approaching' to enable notifications");
+    } else {
+        cronLog("Found " . count($rules) . " active expiry rule(s)");
 
-            $interval = $today->diff($expiryDate);
-            $daysUntilExpiry = $interval->invert ? -$interval->days : $interval->days;
-            $status = $websiteModel->calculateDynamicStatus($website['expiry_date']);
+        foreach ($rules as $rule) {
+            $ruleId   = (int)$rule['id'];
+            $days     = (int)$rule['trigger_threshold'];
+            $notificationType = 'rule_' . $ruleId; // unique dedup key per rule
 
-            $notificationType = null;
-            $emailDays = null;
+            cronLog("Processing rule #{$ruleId} \"{$rule['name']}\" (threshold: {$days} days)");
 
-            // Determine notification type
-            if ($status === 'scaduto') {
-                $notificationType = 'scaduto';
-                $emailDays = 0;
-            } elseif ($daysUntilExpiry <= 30 && $daysUntilExpiry > 15) {
-                $notificationType = '30-day';
-                $emailDays = 30;
-            } elseif ($daysUntilExpiry <= 15 && $daysUntilExpiry > 1) {
-                $notificationType = '15-day';
-                $emailDays = 15;
-            } elseif ($daysUntilExpiry <= 1 && $daysUntilExpiry >= 0) {
-                $notificationType = '1-day';
-                $emailDays = 1;
-            }
-
-            if (!$notificationType) {
-                continue;
-            }
-
-            $alreadySent = hasNotificationBeenSent($pdo, $website['id'], $notificationType);
-            $shouldSend = $forceSend || !$alreadySent;
-
-            cronLog(
-                "Domain: {$website['domain']} | Status: $status | Days: $daysUntilExpiry | " .
-                "Type: $notificationType | AlreadySent: " . ($alreadySent ? 'yes' : 'no')
+            // Find websites expiring within the rule's threshold window
+            $sitesStmt = $pdo->prepare(
+                "SELECT w.id, w.domain, w.expiry_date, w.client_email
+                   FROM websites w
+                  WHERE w.expiry_date IS NOT NULL
+                    AND DATEDIFF(w.expiry_date, CURDATE()) BETWEEN 0 AND ?
+                  ORDER BY w.expiry_date"
             );
+            $sitesStmt->execute([$days]);
+            $matchingSites = $sitesStmt->fetchAll(PDO::FETCH_ASSOC);
 
-            if ($shouldSend) {
-                if ($dryRun) {
-                    cronLog("[DRY RUN] Would send '$notificationType' to {$website['domain']}", "WARN");
-                    $results['notifications_sent']++;
-                    continue;
-                }
+            $results['websites_checked'] += count($matchingSites);
+            $ruleTriggered = 0;
 
+            foreach ($matchingSites as $website) {
                 try {
-                    $sent = $emailModel->sendExpiryNotification($website['id'], $emailDays);
+                    $daysLeft    = (int)floor((strtotime($website['expiry_date']) - time()) / 86400);
+                    $alreadySent = hasNotificationBeenSent($pdo, $website['id'], $notificationType);
+                    $shouldSend  = $forceSend || !$alreadySent;
 
-                    if ($sent) {
-                        if (recordNotificationSent($pdo, $website['id'], $notificationType, false)) {
-                            cronLog(
-                                "✓ Sent and recorded '$notificationType' for {$website['domain']}"
-                            );
+                    cronLog(
+                        "Rule #{$ruleId} | Domain: {$website['domain']} | Days left: {$daysLeft} | " .
+                        "AlreadySent: " . ($alreadySent ? 'yes' : 'no')
+                    );
+
+                    if ($shouldSend) {
+                        if ($dryRun) {
+                            cronLog("[DRY RUN] Would send rule #{$ruleId} notification to {$website['domain']}", "WARN");
                             $results['notifications_sent']++;
-                        } else {
-                            $error = "Failed to record '$notificationType' for {$website['domain']}";
+                            $ruleTriggered++;
+                            continue;
+                        }
+
+                        try {
+                            $sent = $emailModel->sendExpiryNotification($website['id'], $days);
+
+                            if ($sent) {
+                                recordNotificationSent($pdo, $website['id'], $notificationType, false);
+
+                                // Log execution to automation_rule_executions
+                                $logStmt = $pdo->prepare(
+                                    "INSERT INTO automation_rule_executions
+                                     (rule_id, website_id, trigger_value, action_result, executed_at)
+                                     VALUES (?, ?, ?, 'email_sent', NOW())"
+                                );
+                                $logStmt->execute([$ruleId, $website['id'], "{$daysLeft} days left"]);
+
+                                cronLog("✓ Sent rule #{$ruleId} notification for {$website['domain']}");
+                                $results['notifications_sent']++;
+                                $ruleTriggered++;
+                            } else {
+                                // Log failure in executions table
+                                $logStmt = $pdo->prepare(
+                                    "INSERT INTO automation_rule_executions
+                                     (rule_id, website_id, trigger_value, action_result, executed_at)
+                                     VALUES (?, ?, ?, 'email_failed', NOW())"
+                                );
+                                $logStmt->execute([$ruleId, $website['id'], "{$daysLeft} days left"]);
+
+                                $error = "Failed to send rule #{$ruleId} email for {$website['domain']}";
+                                cronLog($error, "ERROR");
+                                $results['errors'][] = $error;
+                            }
+                        } catch (Exception $e) {
+                            $error = "Exception sending rule #{$ruleId} for {$website['domain']}: " . $e->getMessage();
                             cronLog($error, "ERROR");
                             $results['errors'][] = $error;
                         }
                     } else {
-                        $error = "Failed to send '$notificationType' for {$website['domain']}";
-                        cronLog($error, "ERROR");
-                        $results['errors'][] = $error;
+                        cronLog("⊘ Skipping rule #{$ruleId} for {$website['domain']} — already sent");
+                        $results['notifications_skipped']++;
                     }
                 } catch (Exception $e) {
-                    $error = "Exception for {$website['domain']}: " . $e->getMessage();
+                    $error = "Error processing website {$website['domain']}: " . $e->getMessage();
                     cronLog($error, "ERROR");
                     $results['errors'][] = $error;
                 }
-            } else {
-                cronLog("⊘ Skipping '{$notificationType}' for {$website['domain']} - already sent");
-                $results['notifications_skipped']++;
             }
-        } catch (Exception $e) {
-            $error = "Error processing website {$website['domain']}: " . $e->getMessage();
-            cronLog($error, "ERROR");
-            $results['errors'][] = $error;
+
+            // Update rule execution metadata
+            if (!$dryRun && $ruleTriggered > 0) {
+                $updStmt = $pdo->prepare(
+                    "UPDATE automation_rules
+                        SET execution_count = execution_count + ?,
+                            last_executed_at = NOW()
+                      WHERE id = ?"
+                );
+                $updStmt->execute([$ruleTriggered, $ruleId]);
+            }
         }
     }
 } catch (Exception $e) {
-    $error = "Fatal error fetching websites: " . $e->getMessage();
+    $error = "Fatal error in automation-driven cron: " . $e->getMessage();
     cronLog($error, "ERROR");
     $results['errors'][] = $error;
 }

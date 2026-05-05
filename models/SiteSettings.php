@@ -2,10 +2,10 @@
 
 class SiteSettings
 {
-    private $db;
-    private static $cache = [];
+    private PDO $db;
+    private static array $cache = [];
 
-    public function __construct($db)
+    public function __construct(PDO $db)
     {
         $this->db = $db;
     }
@@ -13,7 +13,7 @@ class SiteSettings
     /**
      * Get a single setting by key
      */
-    public function getSetting($key, $default = null)
+    public function getSetting(string $key, mixed $default = null): mixed
     {
         // Check cache first
         if (isset(self::$cache[$key])) {
@@ -40,7 +40,7 @@ class SiteSettings
     /**
      * Get multiple settings
      */
-    public function getMultiple($keys = [])
+    public function getMultiple(array $keys = []): array
     {
         try {
             if (empty($keys)) {
@@ -68,7 +68,7 @@ class SiteSettings
     /**
      * Get all settings
      */
-    public function getAllSettings()
+    public function getAllSettings(): array
     {
         return $this->getMultiple();
     }
@@ -76,7 +76,7 @@ class SiteSettings
     /**
      * Update a setting
      */
-    public function updateSetting($key, $value, $description = null)
+    public function updateSetting(string $key, mixed $value, ?string $description = null): bool
     {
         try {
             $stmt = $this->db->prepare(

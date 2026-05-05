@@ -1,5 +1,8 @@
 <?php
 include APP_PATH . '/includes/header.php';
+$threadId = isset($threadId) ? (int)$threadId : (int)($_GET['id'] ?? 0);
+$thread = $thread ?? [];
+$messages = $messages ?? [];
 // Get unread count for sidebar badge
 if (isset($_SESSION['user_id'])) {
     require_once APP_PATH . '/models/MessageThread.php';
@@ -37,7 +40,7 @@ if (isset($_SESSION['user_id'])) {
     $clientCcEmail = null;
 }
 ?>
-<?php include APP_PATH . '/includes/sidebar.php'; ?>
+<?php include APP_PATH . '/includes/sidebar-v2.php'; ?>
 
 <div class="content-wrapper">
     <section class="content-header">

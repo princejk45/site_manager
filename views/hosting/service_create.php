@@ -1,12 +1,16 @@
 <?php include APP_PATH . '/includes/header.php'; ?>
-<?php include APP_PATH . '/includes/sidebar.php'; ?>
+<?php include APP_PATH . '/includes/sidebar-v2.php'; ?>
+<?php
+$hostingPlan = $hostingPlan ?? ['id' => 0, 'name' => '', 'email_address' => ''];
+$website = $website ?? [];
+?>
 
 <div class="content-wrapper">
     <section class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1><?= __('hosting.add_service') ?> <?= htmlspecialchars($hostingPlan['server_name']) ?></h1>
+                    <h1><?= __('hosting.add_service') ?> <?= htmlspecialchars($hostingPlan['name'] ?? '') ?></h1>
                 </div>
                 <div class="col-sm-6 text-right">
                     <a href="index.php?action=hosting&do=services&id=<?= $hostingPlan['id'] ?>&lang=<?= $_SESSION['lang'] ?? 'it' ?>"
@@ -57,15 +61,16 @@
                             </div>
 
                             <div class="form-group col-md-3">
-                                <label for="email_server"><?= __('common.registrant') ?></label>
-                                <input type="text" class="form-control" id="email_server" name="email_server"
-                                    value="<?= htmlspecialchars($website['email_server'] ?? '') ?>"
+                                <label for="registrante"><?= __('common.registrant') ?></label>
+                                <input type="text" class="form-control" id="registrante" name="registrante_import"
+                                    value="<?= htmlspecialchars($website['registrante_import'] ?? '') ?>"
                                     placeholder="e.g. Serverplan, Vhosting">
                             </div>
                             <div class="form-group col-md-3">
                                 <label for="expiry_date"><?= __('common.expiry_date') ?></label>
-                                <input type="date" class="form-control" id="expiry_date" name="expiry_date"
-                                    value="<?= htmlspecialchars($website['expiry_date'] ?? '') ?>" required>
+                                <input type="text" class="form-control" id="expiry_date" name="expiry_date"
+                                    value="<?= htmlspecialchars(sm_form_date_value($website['expiry_date'] ?? '')) ?>"
+                                    placeholder="dd-mm-yyyy" inputmode="numeric" required>
                             </div>
                         </div>
                         <div class="row">

@@ -1,5 +1,14 @@
 <?php include APP_PATH . '/includes/header.php'; ?>
-<?php include APP_PATH . '/includes/sidebar.php'; ?>
+<?php include APP_PATH . '/includes/sidebar-v2.php'; ?>
+<?php
+$user = $user ?? [
+    'id' => 0,
+    'email' => '',
+    'username' => '',
+    'role' => 'viewer',
+    'is_active' => 1,
+];
+?>
 
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
